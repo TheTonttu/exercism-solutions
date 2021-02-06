@@ -30,6 +30,6 @@ fn should_plong(n: u32) -> bool {
     n % 7 == 0
 }
 
-fn no_sound(raindrop: &str) -> bool {
-    raindrop.is_empty()
+fn no_sound(sound: &str) -> bool {
+    sound.is_empty()
 }
