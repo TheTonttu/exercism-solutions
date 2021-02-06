@@ -1,5 +1,7 @@
+const MAX_CAPACITY: usize = 15; // "PlingPlangPlong" byte length.
+
 pub fn raindrops(n: u32) -> String {
-    let mut raindrop_sounds = String::with_capacity(3);
+    let mut raindrop_sounds = String::with_capacity(MAX_CAPACITY);
 
     if should_pling(n) {
         raindrop_sounds.push_str("Pling");
