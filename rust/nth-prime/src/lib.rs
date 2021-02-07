@@ -1,6 +1,10 @@
 const FIRST_PRIME:u32 = 2;
 
 pub fn nth(n: u32) -> u32 {
+    if n == 0 {
+        return FIRST_PRIME;
+    }
+
     let mut primes:Vec<u32> = Vec::new();
     primes.push(FIRST_PRIME);
 
