@@ -31,6 +31,6 @@ fn is_even(number:&u32) -> bool {
     number % 2 == 0
 }
 
-fn is_dividable_with_any(number:&u32, dividends:&[u32]) -> bool {
-    dividends.iter().any(|dividend|number % dividend == 0)
+fn is_dividable_with_any(dividend:&u32, divisors:&[u32]) -> bool {
+    divisors.iter().any(|divisor| dividend % divisor == 0)
 }
