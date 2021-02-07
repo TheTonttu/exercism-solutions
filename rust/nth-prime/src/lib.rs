@@ -5,11 +5,16 @@ pub fn nth(n: u32) -> u32 {
         return FIRST_PRIME;
     }
 
+    let primes = calculate_primes(&n);
+    primes[(n as usize)]
+}
+
+fn calculate_primes(n: &u32) -> Vec<u32> {
     let mut primes:Vec<u32> = Vec::new();
     primes.push(FIRST_PRIME);
 
     let mut prime_candidate = *primes.last().expect("There should be at least one prime value in the beginning");
-    while primes.len() <= (n as usize) {
+    while primes.len() <= (*n as usize) {
         prime_candidate += 1;
         if is_even(&prime_candidate) {
             continue;
@@ -19,7 +24,7 @@ pub fn nth(n: u32) -> u32 {
         }
         primes.push(prime_candidate);
     }
-    primes[n as usize]
+    primes
 }
 
 fn is_even(number:&u32) -> bool {
