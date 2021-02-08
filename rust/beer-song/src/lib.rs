@@ -28,7 +28,5 @@ pub fn sing(start: u32, end: u32) -> String {
     for n in (end..=start).rev() {
         verses.push(verse(n));
     }
-    let lyrics = verses.join("\n");
-
-    lyrics
+    verses.join("\n")
 }
