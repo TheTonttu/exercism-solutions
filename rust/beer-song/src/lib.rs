@@ -1,3 +1,4 @@
+// Hölökyn kölökyn
 const MAX_BEER_COUNT:u32 = 99;
 
 pub fn verse(n: u32) -> String {
@@ -15,5 +16,14 @@ pub fn verse(n: u32) -> String {
 }
 
 pub fn sing(start: u32, end: u32) -> String {
-    unimplemented!("sing verses {} to {}, inclusive", start, end)
+    assert!(start >= end);
+
+    let verse_count = (start-end)+1;
+    let mut verses = Vec::with_capacity(verse_count as usize);
+    for n in (end..=start).rev() {
+        verses.push(verse(n));
+    }
+    let lyrics = verses.join("\n");
+
+    lyrics
 }
