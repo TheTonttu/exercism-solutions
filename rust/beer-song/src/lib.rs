@@ -16,7 +16,8 @@ pub fn verse(n: u32) -> String {
 }
 
 pub fn sing(start: u32, end: u32) -> String {
-    assert!(start >= end);
+    assert!(start <= MAX_BEER_COUNT, "Take it easy! (99 beers is max)");
+    assert!(start >= end, "We should consume it. (start should be higher or same as end)");
 
     let verse_count = (start-end)+1;
     let mut verses = Vec::with_capacity(verse_count as usize);
