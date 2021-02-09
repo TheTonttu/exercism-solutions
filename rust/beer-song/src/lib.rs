@@ -17,7 +17,7 @@ pub fn verse(n: u32) -> String {
 }
 
 pub fn sing(start: u32, end: u32) -> String {
-    assert!(start <= MAX_BEER_COUNT, "Take it easy! (99 beers is max)");
+    assert!(start <= MAX_BEER_COUNT, format!("Take it easy! ({} beers is max)", MAX_BEER_COUNT));
     assert!(
         start >= end,
         "We should consume it. (start should be >= end)"
