@@ -1,12 +1,13 @@
+const EMPTY: &str = "";
+
 pub fn build_proverb(list: &[&str]) -> String {
     if list.is_empty() {
-        return String::new();
+        return EMPTY.to_string();
     }
 
     let mut proverb = String::new();
     if has_at_least_one_pair(list) {
-        let item_pairs = gather_item_pairs(list);
-        proverb.push_str(&item_pairs.concat());
+        proverb.push_str(&create_item_pairs_part(list));
     }
 
     let first_item = list.first().unwrap_or(&"nail");
@@ -19,7 +20,7 @@ fn has_at_least_one_pair(list: &[&str]) -> bool {
     list.len() >= 2
 }
 
-fn gather_item_pairs(list: &[&str]) -> Vec<String> {
+fn create_item_pairs_part(list: &[&str]) -> String {
     list.windows(2)
         .map(|item_pair| match item_pair {
             [first, second] => format!("For want of a {} the {} was lost.\n", first, second),
