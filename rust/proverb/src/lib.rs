@@ -24,7 +24,7 @@ fn create_item_pairs_part(list: &[&str]) -> String {
     list.windows(2)
         .map(|item_pair| match item_pair {
             [first, second] => format!("For want of a {} the {} was lost.\n", first, second),
-            _ => "".to_string(),
+            _ => EMPTY.to_string(),
         })
         .collect()
 }
