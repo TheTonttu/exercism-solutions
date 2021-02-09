@@ -24,8 +24,9 @@ pub fn sing(start: u32, end: u32) -> String {
     );
 
     let verse_count = (start - end) + 1;
+    let verse_range = (end..=start).rev();
     let mut verses = Vec::with_capacity(verse_count as usize);
-    for n in (end..=start).rev() {
+    for n in verse_range {
         verses.push(verse(n));
     }
     verses.join("\n")
