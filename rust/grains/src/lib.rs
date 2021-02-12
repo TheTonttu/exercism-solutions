@@ -9,6 +9,6 @@ pub fn square(s: u32) -> u64 {
 
 pub fn total() -> u64 {
     (MIN_SQUARES..=MAX_SQUARES)
-        .map(|i| square(i))
+        .map(square)
         .sum()
 }
