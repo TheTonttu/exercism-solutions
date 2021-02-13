@@ -31,7 +31,7 @@ impl PrimeGenerator {
         number % 2 == 0
     }
 
-    fn is_composite_of_previous_primes(prime_candidate: &u64, prev_primes: &Vec<u64>) -> bool {
+    fn is_composite_of_previous_primes(prime_candidate: &u64, prev_primes: &[u64]) -> bool {
         let candidate_sqrt = (*prime_candidate as f64).sqrt() as u64;
 
         for prime in prev_primes {
