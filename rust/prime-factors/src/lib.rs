@@ -16,18 +16,18 @@ pub fn factors(n: u64) -> Vec<u64> {
 
 struct PrimeGenerator {
     primes: Vec<u64>,
-    next: u64
+    next: u64,
 }
 
 impl PrimeGenerator {
     fn new() -> PrimeGenerator {
         PrimeGenerator {
-            primes: vec!(2),
-            next: 2
+            primes: vec![2],
+            next: 2,
         }
     }
 
-    fn is_even(number:&u64) -> bool {
+    fn is_even(number: &u64) -> bool {
         number % 2 == 0
     }
 
@@ -59,7 +59,7 @@ impl Iterator for PrimeGenerator {
             return Some(last_prime);
         }
 
-        let mut prime_candidate= last_prime;
+        let mut prime_candidate = last_prime;
         loop {
             prime_candidate += 1;
             if PrimeGenerator::is_even(&prime_candidate) {
@@ -74,4 +74,3 @@ impl Iterator for PrimeGenerator {
         Some(prime_candidate)
     }
 }
-
