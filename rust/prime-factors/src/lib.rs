@@ -31,8 +31,20 @@ impl Primes {
         number % 2 == 0
     }
 
-    fn is_dividable_with_any(dividend:&u64, divisors:&[u64]) -> bool {
-        divisors.iter().any(|divisor| dividend % divisor == 0)
+    fn is_composite_of_previous_primes(&self, prime_candidate:&u64) -> bool {
+        let candidate_sqrt = (*prime_candidate as f64).sqrt() as u64;
+
+        for prime in &self.primes {
+            if prime > &candidate_sqrt {
+                return false;
+            }
+
+            if prime_candidate % prime == 0 {
+                return true;
+            }
+        }
+
+        false
     }
 }
 
@@ -53,7 +65,7 @@ impl Iterator for Primes {
             if Primes::is_even(&prime_candidate) {
                 continue;
             }
-            if Primes::is_dividable_with_any(&prime_candidate, &self.primes) {
+            if self.is_composite_of_previous_primes(&prime_candidate) {
                 continue;
             }
             self.primes.push(prime_candidate);
