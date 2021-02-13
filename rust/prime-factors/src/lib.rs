@@ -1,7 +1,7 @@
 pub fn factors(n: u64) -> Vec<u64> {
     let mut factors = Vec::new();
     let mut remaining = n;
-    let mut prime_gen = Primes::new();
+    let mut prime_gen = PrimeGenerator::new();
 
     let mut prime = prime_gen.next().unwrap();
     while prime <= remaining && remaining > 0 {
@@ -14,14 +14,14 @@ pub fn factors(n: u64) -> Vec<u64> {
     factors
 }
 
-struct Primes {
+struct PrimeGenerator {
     primes: Vec<u64>,
     next: u64
 }
 
-impl Primes {
-    fn new() -> Primes {
-        Primes {
+impl PrimeGenerator {
+    fn new() -> PrimeGenerator {
+        PrimeGenerator {
             primes: vec!(2),
             next: 2
         }
@@ -31,10 +31,10 @@ impl Primes {
         number % 2 == 0
     }
 
-    fn is_composite_of_previous_primes(&self, prime_candidate:&u64) -> bool {
+    fn is_composite_of_previous_primes(prime_candidate: &u64, prev_primes: &Vec<u64>) -> bool {
         let candidate_sqrt = (*prime_candidate as f64).sqrt() as u64;
 
-        for prime in &self.primes {
+        for prime in prev_primes {
             if prime > &candidate_sqrt {
                 return false;
             }
@@ -49,7 +49,7 @@ impl Primes {
 }
 
 // Modified bad implementation from nth-prime exercise...
-impl Iterator for Primes {
+impl Iterator for PrimeGenerator {
     type Item = u64;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -62,10 +62,10 @@ impl Iterator for Primes {
         let mut prime_candidate= last_prime;
         loop {
             prime_candidate += 1;
-            if Primes::is_even(&prime_candidate) {
+            if PrimeGenerator::is_even(&prime_candidate) {
                 continue;
             }
-            if self.is_composite_of_previous_primes(&prime_candidate) {
+            if PrimeGenerator::is_composite_of_previous_primes(&prime_candidate, &self.primes) {
                 continue;
             }
             self.primes.push(prime_candidate);
