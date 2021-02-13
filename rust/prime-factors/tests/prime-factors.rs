@@ -1,4 +1,6 @@
 use prime_factors::factors;
+use prime_factors::alt_implementations::odd_iteration;
+use prime_factors::alt_implementations::every_iteration;
 
 #[test]
 fn test_no_factors() {
@@ -33,4 +35,14 @@ fn test_product_of_primes() {
 #[test]
 fn test_factors_include_large_prime() {
     assert_eq!(factors(93_819_012_551), vec![11, 9539, 894_119]);
+}
+
+#[test]
+fn test_factors_include_large_prime_every_iteration() {
+    assert_eq!(every_iteration::factors(93_819_012_551), vec![11, 9539, 894_119]);
+}
+
+#[test]
+fn test_factors_include_large_prime_odd_iteration() {
+    assert_eq!(odd_iteration::factors(93_819_012_551), vec![11, 9539, 894_119]);
 }
