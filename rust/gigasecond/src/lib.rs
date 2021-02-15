@@ -1,6 +1,9 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Duration, Utc};
+use std::ops::Add;
+
+const GIGASECOND: i64 = 1_000_000_000;
 
 // Returns a Utc DateTime one billion seconds after start.
 pub fn after(start: DateTime<Utc>) -> DateTime<Utc> {
-    unimplemented!("What time is a gigasecond later than {}", start);
+    start.add(Duration::seconds(GIGASECOND))
 }
