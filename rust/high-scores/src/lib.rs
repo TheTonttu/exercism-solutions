@@ -25,11 +25,10 @@ impl<'a> HighScores<'a> {
     pub fn personal_top_three(&self) -> Vec<u32> {
         let mut top3_scores: Vec<u32> = self.scores.iter().take(3).copied().collect();
 
-        for i in 3..self.scores.len() {
-            let score = self.scores[i];
+        for score in self.scores.iter().skip(3) {
             let lowest_index = get_lowest_value_index(&top3_scores);
-            if score > top3_scores[lowest_index] {
-                top3_scores[lowest_index] = score;
+            if *score > top3_scores[lowest_index] {
+                top3_scores[lowest_index] = *score;
             }
         }
 
