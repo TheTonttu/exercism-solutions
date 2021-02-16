@@ -2,14 +2,12 @@ use std::cmp::Ordering;
 
 #[derive(Debug)]
 pub struct HighScores<'a> {
-    scores: &'a[u32]
+    scores: &'a [u32],
 }
 
-impl <'a> HighScores<'a> {
-    pub fn new(scores: &'a[u32]) -> Self {
-        HighScores {
-            scores
-        }
+impl<'a> HighScores<'a> {
+    pub fn new(scores: &'a [u32]) -> Self {
+        HighScores { scores }
     }
 
     pub fn scores(&self) -> &[u32] {
@@ -29,14 +27,7 @@ impl <'a> HighScores<'a> {
 
         for i in 3..self.scores.len() {
             let score = self.scores[i];
-            let mut lowest = u32::MAX;
-            let mut lowest_index = 0;
-            for ti in 0..top3_scores.len() {
-                if top3_scores[ti] < lowest {
-                    lowest = top3_scores[ti];
-                    lowest_index = ti;
-                }
-            }
+            let lowest_index = get_lowest_value_index(&top3_scores);
             if score > top3_scores[lowest_index] {
                 top3_scores[lowest_index] = score;
             }
@@ -46,6 +37,19 @@ impl <'a> HighScores<'a> {
 
         top3_scores
     }
+}
+
+fn get_lowest_value_index(values: &[u32]) -> usize {
+    let mut lowest = u32::MAX;
+    let mut index = 0;
+    for i in 0..values.len() {
+        let curr_value = values[i];
+        if curr_value < lowest {
+            lowest = curr_value;
+            index = i;
+        }
+    }
+    index
 }
 
 fn highest_to_lowest(a: &u32, b: &u32) -> Ordering {
