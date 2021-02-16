@@ -54,5 +54,5 @@ fn lowest_enumerate_value((_, value1): &(usize, &u32), (_, value2): &(usize, &u3
 }
 
 fn highest_to_lowest(a: &u32, b: &u32) -> Ordering {
-    a.cmp(b).reverse()
+    b.cmp(a)
 }
