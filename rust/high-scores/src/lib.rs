@@ -42,11 +42,15 @@ fn get_lowest_value_index(values: &[u32]) -> usize {
     let index = values
         .iter()
         .enumerate()
-        .min_by(|&(_, value1), &(_, value2)| value1.cmp(value2))
+        .min_by(lowest_enumerate_value)
         .unwrap_or((usize::MIN, &u32::MIN))
         .0;
 
     index
+}
+
+fn lowest_enumerate_value((_, value1): &(usize, &u32), (_, value2): &(usize, &u32)) -> Ordering {
+    value1.cmp(value2)
 }
 
 fn highest_to_lowest(a: &u32, b: &u32) -> Ordering {
