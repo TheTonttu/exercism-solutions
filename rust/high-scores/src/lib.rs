@@ -40,14 +40,13 @@ impl<'a> HighScores<'a> {
 }
 
 fn get_lowest_value_index(values: &[u32]) -> usize {
-    let mut lowest = u32::MAX;
-    let mut index = 0;
-    for (i, curr_value) in values.iter().enumerate() {
-        if *curr_value < lowest {
-            lowest = *curr_value;
-            index = i;
-        }
-    }
+    let index = values
+        .iter()
+        .enumerate()
+        .min_by(|&(_, item1), &(_, item2)| item1.cmp(item2))
+        .unwrap()
+        .0;
+
     index
 }
 
