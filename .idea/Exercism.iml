@@ -30,6 +30,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/reverse-string/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/gigasecond/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/gigasecond/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/high-scores/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/high-scores/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/leap/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/hello-world/target" />
@@ -43,6 +45,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/armstrong-numbers/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/reverse-string/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/gigasecond/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/high-scores/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
