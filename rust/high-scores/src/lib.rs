@@ -43,8 +43,8 @@ fn get_lowest_value_index(values: &[u32]) -> usize {
     let index = values
         .iter()
         .enumerate()
-        .min_by(|&(_, item1), &(_, item2)| item1.cmp(item2))
-        .unwrap()
+        .min_by(|&(_, value1), &(_, value2)| value1.cmp(value2))
+        .unwrap_or((usize::MIN, &u32::MIN))
         .0;
 
     index
