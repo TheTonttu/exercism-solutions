@@ -1,24 +1,18 @@
+const SILENCE_REPLY: &str = "Fine. Be that way!";
+const SHOUT_QUESTION_REPLY: &str = "Calm down, I know what I'm doing!";
 const QUESTION_REPLY: &str = "Sure.";
 const SHOUT_REPLY: &str = "Whoa, chill out!";
-const SHOUT_QUESTION_REPLY: &str = "Calm down, I know what I'm doing!";
-const SILENCE_REPLY: &str = "Fine. Be that way!";
 const ELSE_REPLY: &str = "Whatever.";
 
 pub fn reply(message: &str) -> &str {
-    let trimmed_message = message.trim();
-
-    if is_silence(trimmed_message) {
-        SILENCE_REPLY
-    } else if is_question(trimmed_message) {
-        if is_shouting(trimmed_message) {
-            SHOUT_QUESTION_REPLY
-        } else {
-            QUESTION_REPLY
-        }
-    } else if is_shouting(trimmed_message) {
-        SHOUT_REPLY
-    } else {
-        ELSE_REPLY
+    match message.trim() {
+        m if is_silence(m) => SILENCE_REPLY,
+        m if is_question(m) => match m {
+            q if is_shouting(q) => SHOUT_QUESTION_REPLY,
+            _ => QUESTION_REPLY,
+        },
+        m if is_shouting(m) => SHOUT_REPLY,
+        _ => ELSE_REPLY,
     }
 }
 
