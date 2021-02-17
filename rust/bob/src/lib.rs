@@ -27,9 +27,8 @@ fn is_question(message: &str) -> bool {
 fn is_shouting(message: &str) -> bool {
     let alphabetic_chars: Vec<char> = message.chars().filter(|c| c.is_alphabetic()).collect();
 
-    if alphabetic_chars.is_empty() {
-        false
-    } else {
-        alphabetic_chars.iter().all(|c| c.is_uppercase())
+    match alphabetic_chars {
+        ac if ac.is_empty() => false,
+        ac => ac.iter().all(|c| c.is_uppercase()),
     }
 }
