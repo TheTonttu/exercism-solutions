@@ -46,8 +46,8 @@ fn extract_hours_from_minutes(minutes: i32) -> (i32, i32) {
     match minutes {
         min if min > 0 => (minutes / MINUTES_IN_HOUR, minutes % MINUTES_IN_HOUR),
         min if min < 0 => {
-            let hours = (min.abs() as f32 / MINUTES_IN_HOUR as f32).ceil() as i32;
-            (-(hours % HOURS_IN_DAY),(MINUTES_IN_HOUR + (min % MINUTES_IN_HOUR)) % MINUTES_IN_HOUR)
+            let hours = -(min.abs() as f32 / MINUTES_IN_HOUR as f32).ceil() as i32;
+            (hours, (MINUTES_IN_HOUR + (min % MINUTES_IN_HOUR)) % MINUTES_IN_HOUR)
         },
         _ => (0, 0),
     }
