@@ -13,14 +13,14 @@ impl Clock {
     pub fn new(hours: i32, minutes: i32) -> Self {
         let (extracted_hours, extracted_minutes) = extract_hours_from_minutes(minutes);
 
-        let positive_hours = match hours + extracted_hours {
-            h if h >= 0 => h % HOURS_IN_DAY,
+        let normalized_hours = match hours + extracted_hours {
+            h if h > 0 => h % HOURS_IN_DAY,
             h if h < 0 => (HOURS_IN_DAY - (h.abs() % HOURS_IN_DAY)) % HOURS_IN_DAY,
             _ => 0,
         };
 
         Clock {
-            hours: positive_hours,
+            hours: normalized_hours,
             minutes: extracted_minutes,
         }
     }
