@@ -72,7 +72,6 @@ fn test_graph_with_one_attribute() {
 }
 
 #[test]
-#[ignore]
 fn test_graph_with_attributes() {
     let nodes = vec![
         Node::new("a").with_attrs(&[("color", "green")]),

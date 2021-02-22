@@ -87,10 +87,14 @@ pub mod graph {
         }
 
         pub mod edge {
+            use std::collections::HashMap;
+            use std::iter::FromIterator;
+
             #[derive(Clone, Debug, PartialEq)]
             pub struct Edge {
                 node_from: String,
                 node_to: String,
+                pub attrs: HashMap<String, String>,
             }
 
             impl Edge {
@@ -98,11 +102,20 @@ pub mod graph {
                     Self {
                         node_from: node_from_name.to_string(),
                         node_to: node_to_name.to_string(),
+                        attrs: HashMap::new(),
                     }
                 }
 
                 pub fn with_attrs(&self, attributes: &[(&str, &str)]) -> Self {
-                    unimplemented!("with_attrs")
+                    Self {
+                        node_from: self.node_from.clone(),
+                        node_to: self.node_to.clone(),
+                        attrs: HashMap::from_iter(
+                            attributes
+                                .iter()
+                                .map(|(a, b)| (a.to_string(), b.to_string())),
+                        ),
+                    }
                 }
             }
         }
