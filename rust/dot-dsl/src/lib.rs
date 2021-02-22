@@ -1,7 +1,7 @@
 pub mod graph {
-    use std::collections::HashMap;
-    use crate::graph::graph_items::node::Node;
     use crate::graph::graph_items::edge::Edge;
+    use crate::graph::graph_items::node::Node;
+    use std::collections::HashMap;
     use std::iter::FromIterator;
 
     pub struct Graph {
@@ -54,13 +54,17 @@ pub mod graph {
             impl Node {
                 pub fn new(node_name: &str) -> Self {
                     Self {
-                        attrs: HashMap::new()
+                        attrs: HashMap::new(),
                     }
                 }
 
                 pub fn with_attrs(&self, attributes: &[(&str, &str)]) -> Self {
                     Self {
-                        attrs: HashMap::from_iter(attributes.iter().map(|(a,b)|(a.to_string(), b.to_string())))
+                        attrs: HashMap::from_iter(
+                            attributes
+                                .iter()
+                                .map(|(a, b)| (a.to_string(), b.to_string())),
+                        ),
                     }
                 }
 
