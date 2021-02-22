@@ -28,7 +28,11 @@ pub mod graph {
         }
 
         pub fn with_edges(&self, edges: &[Edge]) -> Self {
-            unimplemented!("with_edges")
+            Self {
+                nodes: self.nodes.to_vec(),
+                edges: edges.to_vec(),
+                attrs: self.attrs.clone(),
+            }
         }
 
         pub fn with_attrs(&self, attributes: &[(&str, &str)]) -> Self {
@@ -76,11 +80,17 @@ pub mod graph {
 
         pub mod edge {
             #[derive(Clone, Debug, PartialEq)]
-            pub struct Edge {}
+            pub struct Edge {
+                node_from: String,
+                node_to: String,
+            }
 
             impl Edge {
                 pub fn new(node_from_name: &str, node_to_name: &str) -> Self {
-                    unimplemented!("new node");
+                    Self {
+                        node_from: node_from_name.to_string(),
+                        node_to: node_to_name.to_string(),
+                    }
                 }
 
                 pub fn with_attrs(&self, attributes: &[(&str, &str)]) -> Self {

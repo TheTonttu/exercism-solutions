@@ -44,7 +44,6 @@ fn test_graph_with_one_node_with_keywords() {
 }
 
 #[test]
-#[ignore]
 fn test_graph_with_one_edge() {
     let edges = vec![Edge::new("a", "b")];
 
