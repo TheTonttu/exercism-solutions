@@ -2,6 +2,7 @@ pub mod graph {
     use std::collections::HashMap;
     use crate::graph::graph_items::node::Node;
     use crate::graph::graph_items::edge::Edge;
+    use std::iter::FromIterator;
 
     pub struct Graph {
         pub nodes: Vec<Node>,
@@ -19,7 +20,11 @@ pub mod graph {
         }
 
         pub fn with_nodes(&self, nodes: &[Node]) -> Self {
-            unimplemented!("with_nodes")
+            Self {
+                nodes: nodes.to_vec(),
+                edges: self.edges.to_vec(),
+                attrs: self.attrs.clone(),
+            }
         }
 
         pub fn with_edges(&self, edges: &[Edge]) -> Self {
@@ -38,12 +43,13 @@ pub mod graph {
     pub mod graph_items {
 
         pub mod node {
-            #[derive(Debug, PartialEq)]
+            #[derive(Clone, Copy, Debug, PartialEq)]
             pub struct Node {}
 
             impl Node {
                 pub fn new(node_name: &str) -> Self {
-                    unimplemented!("new node");
+                    Node {
+                    }
                 }
 
                 pub fn with_attrs(&self, attributes: &[(&str, &str)]) -> Self {
@@ -57,7 +63,7 @@ pub mod graph {
         }
 
         pub mod edge {
-            #[derive(Debug, PartialEq)]
+            #[derive(Clone, Copy, Debug, PartialEq)]
             pub struct Edge {}
 
             impl Edge {
