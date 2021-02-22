@@ -12,7 +12,7 @@ pub mod graph {
 
     impl Graph {
         pub fn new() -> Self {
-            Graph {
+            Self {
                 nodes: vec![],
                 edges: vec![],
                 attrs: HashMap::new(),
@@ -43,17 +43,25 @@ pub mod graph {
     pub mod graph_items {
 
         pub mod node {
-            #[derive(Clone, Copy, Debug, PartialEq)]
-            pub struct Node {}
+            use std::collections::HashMap;
+            use std::iter::FromIterator;
+
+            #[derive(Clone, Debug, PartialEq)]
+            pub struct Node {
+                pub attrs: HashMap<String, String>,
+            }
 
             impl Node {
                 pub fn new(node_name: &str) -> Self {
-                    Node {
+                    Self {
+                        attrs: HashMap::new()
                     }
                 }
 
                 pub fn with_attrs(&self, attributes: &[(&str, &str)]) -> Self {
-                    unimplemented!("with_attrs")
+                    Self {
+                        attrs: HashMap::from_iter(attributes.iter().map(|(a,b)|(a.to_string(), b.to_string())))
+                    }
                 }
 
                 pub fn get_attr(&self, attribute_name: &str) -> Option<&str> {
@@ -63,7 +71,7 @@ pub mod graph {
         }
 
         pub mod edge {
-            #[derive(Clone, Copy, Debug, PartialEq)]
+            #[derive(Clone, Debug, PartialEq)]
             pub struct Edge {}
 
             impl Edge {
