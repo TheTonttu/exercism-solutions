@@ -36,7 +36,15 @@ pub mod graph {
         }
 
         pub fn with_attrs(&self, attributes: &[(&str, &str)]) -> Self {
-            unimplemented!("with_attrs")
+            Self {
+                nodes: self.nodes.to_vec(),
+                edges: self.edges.to_vec(),
+                attrs: HashMap::from_iter(
+                    attributes
+                        .iter()
+                        .map(|(a, b)| (a.to_string(), b.to_string())),
+                ),
+            }
         }
 
         pub fn get_node(&self, node_name: &str) -> Option<Node> {

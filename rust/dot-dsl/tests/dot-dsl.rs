@@ -57,7 +57,6 @@ fn test_graph_with_one_edge() {
 }
 
 #[test]
-#[ignore]
 fn test_graph_with_one_attribute() {
     let graph = Graph::new().with_attrs(&[("foo", "1")]);
 
