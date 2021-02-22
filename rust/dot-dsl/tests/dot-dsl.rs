@@ -118,7 +118,6 @@ fn test_graph_with_attributes() {
 }
 
 #[test]
-#[ignore]
 fn test_graph_stores_attributes() {
     let attributes = [("foo", "bar"), ("bat", "baz"), ("bim", "bef")];
     let graph = Graph::new().with_nodes(

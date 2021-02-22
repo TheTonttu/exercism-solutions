@@ -48,7 +48,7 @@ pub mod graph {
         }
 
         pub fn get_node(&self, node_name: &str) -> Option<Node> {
-            unimplemented!("get_node")
+            self.nodes.iter().find(|n| n.name == node_name).cloned()
         }
     }
 
@@ -60,18 +60,21 @@ pub mod graph {
 
             #[derive(Clone, Debug, PartialEq)]
             pub struct Node {
+                pub name: String,
                 pub attrs: HashMap<String, String>,
             }
 
             impl Node {
                 pub fn new(node_name: &str) -> Self {
                     Self {
+                        name: node_name.to_string(),
                         attrs: HashMap::new(),
                     }
                 }
 
                 pub fn with_attrs(&self, attributes: &[(&str, &str)]) -> Self {
                     Self {
+                        name: self.name.clone(),
                         attrs: HashMap::from_iter(
                             attributes
                                 .iter()
@@ -81,7 +84,8 @@ pub mod graph {
                 }
 
                 pub fn get_attr(&self, attribute_name: &str) -> Option<&str> {
-                    unimplemented!("with_attrs")
+                    // FIXME: Dios mio...
+                    self.attrs.get(attribute_name).map(|attr| &attr[..])
                 }
             }
         }
