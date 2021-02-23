@@ -1,4 +1,7 @@
 pub mod graph {
+
+    pub mod graph_items;
+
     use crate::graph::graph_items::edge::Edge;
     use crate::graph::graph_items::node::Node;
     use std::collections::HashMap;
@@ -45,73 +48,6 @@ pub mod graph {
     impl Default for Graph {
         fn default() -> Self {
             Self::new()
-        }
-    }
-
-    pub mod graph_items {
-
-        pub mod node {
-
-            use std::collections::HashMap;
-
-            #[derive(Clone, Debug, PartialEq)]
-            pub struct Node {
-                pub name: String,
-                pub attrs: HashMap<String, String>,
-            }
-
-            impl Node {
-                pub fn new(node_name: &str) -> Self {
-                    Self {
-                        name: node_name.to_string(),
-                        attrs: HashMap::new(),
-                    }
-                }
-
-                pub fn with_attrs(mut self, attributes: &[(&str, &str)]) -> Self {
-                    self.attrs.extend(
-                        attributes
-                            .iter()
-                            .map(|(k, v)| (k.to_string(), v.to_string())),
-                    );
-                    self
-                }
-
-                pub fn get_attr(&self, attribute_name: &str) -> Option<&str> {
-                    self.attrs.get(attribute_name).map(|attr| attr.as_str())
-                }
-            }
-        }
-
-        pub mod edge {
-
-            use std::collections::HashMap;
-
-            #[derive(Clone, Debug, PartialEq)]
-            pub struct Edge {
-                node_from: String,
-                node_to: String,
-                pub attrs: HashMap<String, String>,
-            }
-
-            impl Edge {
-                pub fn new(node_from_name: &str, node_to_name: &str) -> Self {
-                    Self {
-                        node_from: node_from_name.to_string(),
-                        node_to: node_to_name.to_string(),
-                        attrs: HashMap::new(),
-                    }
-                }
-
-                pub fn with_attrs(mut self, attributes: &[(&str, &str)]) -> Self {
-                    self.attrs.extend(
-                        attributes
-                            .iter()
-                            .map(|(k, v)| (k.to_string(), v.to_string())),
-                    );
-                    self
-                }
-            }
         }
     }
 }
