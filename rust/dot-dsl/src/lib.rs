@@ -32,7 +32,7 @@ pub mod graph {
             self.attrs.extend(
                 attributes
                     .iter()
-                    .map(|(a, b)| (a.to_string(), b.to_string())),
+                    .map(|(k, v)| (k.to_string(), v.to_string())),
             );
             self
         }
@@ -72,7 +72,7 @@ pub mod graph {
                     self.attrs.extend(
                         attributes
                             .iter()
-                            .map(|(a, b)| (a.to_string(), b.to_string())),
+                            .map(|(k, v)| (k.to_string(), v.to_string())),
                     );
                     self
                 }
@@ -107,7 +107,7 @@ pub mod graph {
                     self.attrs.extend(
                         attributes
                             .iter()
-                            .map(|(a, b)| (a.to_string(), b.to_string())),
+                            .map(|(k, v)| (k.to_string(), v.to_string())),
                     );
                     self
                 }
