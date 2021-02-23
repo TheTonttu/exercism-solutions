@@ -18,31 +18,22 @@ pub mod graph {
             }
         }
 
-        pub fn with_nodes(&self, nodes: &[Node]) -> Self {
-            Self {
-                nodes: nodes.to_vec(),
-                edges: self.edges.to_vec(),
-                attrs: self.attrs.clone(),
-            }
+        pub fn with_nodes(mut self, nodes: &[Node]) -> Self {
+            self.nodes.extend(nodes.iter().cloned());
+            self
         }
 
-        pub fn with_edges(&self, edges: &[Edge]) -> Self {
-            Self {
-                nodes: self.nodes.to_vec(),
-                edges: edges.to_vec(),
-                attrs: self.attrs.clone(),
-            }
+        pub fn with_edges(mut self, edges: &[Edge]) -> Self {
+            self.edges.extend(edges.iter().cloned());
+            self
         }
 
-        pub fn with_attrs(&self, attributes: &[(&str, &str)]) -> Self {
-            Self {
-                nodes: self.nodes.to_vec(),
-                edges: self.edges.to_vec(),
-                attrs: attributes
-                    .iter()
-                    .map(|(a, b)| (a.to_string(), b.to_string()))
-                    .collect(),
-            }
+        pub fn with_attrs(mut self, attributes: &[(&str, &str)]) -> Self {
+            self.attrs.extend(attributes
+                .iter()
+                .map(|(a, b)| (a.to_string(), b.to_string()))
+                .collect::<HashMap<String, String>>());
+            self
         }
 
         pub fn get_node(&self, node_name: &str) -> Option<Node> {
