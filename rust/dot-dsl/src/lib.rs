@@ -2,7 +2,6 @@ pub mod graph {
     use crate::graph::graph_items::edge::Edge;
     use crate::graph::graph_items::node::Node;
     use std::collections::HashMap;
-    use std::iter::FromIterator;
 
     pub struct Graph {
         pub nodes: Vec<Node>,
@@ -39,11 +38,10 @@ pub mod graph {
             Self {
                 nodes: self.nodes.to_vec(),
                 edges: self.edges.to_vec(),
-                attrs: HashMap::from_iter(
-                    attributes
-                        .iter()
-                        .map(|(a, b)| (a.to_string(), b.to_string())),
-                ),
+                attrs: attributes
+                    .iter()
+                    .map(|(a, b)| (a.to_string(), b.to_string()))
+                    .collect(),
             }
         }
 
@@ -56,7 +54,6 @@ pub mod graph {
 
         pub mod node {
             use std::collections::HashMap;
-            use std::iter::FromIterator;
 
             #[derive(Clone, Debug, PartialEq)]
             pub struct Node {
@@ -75,11 +72,10 @@ pub mod graph {
                 pub fn with_attrs(&self, attributes: &[(&str, &str)]) -> Self {
                     Self {
                         name: self.name.clone(),
-                        attrs: HashMap::from_iter(
-                            attributes
-                                .iter()
-                                .map(|(a, b)| (a.to_string(), b.to_string())),
-                        ),
+                        attrs: attributes
+                            .iter()
+                            .map(|(a, b)| (a.to_string(), b.to_string()))
+                            .collect(),
                     }
                 }
 
@@ -92,7 +88,6 @@ pub mod graph {
 
         pub mod edge {
             use std::collections::HashMap;
-            use std::iter::FromIterator;
 
             #[derive(Clone, Debug, PartialEq)]
             pub struct Edge {
@@ -114,11 +109,10 @@ pub mod graph {
                     Self {
                         node_from: self.node_from.clone(),
                         node_to: self.node_to.clone(),
-                        attrs: HashMap::from_iter(
-                            attributes
-                                .iter()
-                                .map(|(a, b)| (a.to_string(), b.to_string())),
-                        ),
+                        attrs: attributes
+                            .iter()
+                            .map(|(a, b)| (a.to_string(), b.to_string()))
+                            .collect(),
                     }
                 }
             }
