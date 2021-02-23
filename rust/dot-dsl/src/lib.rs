@@ -12,8 +12,8 @@ pub mod graph {
     impl Graph {
         pub fn new() -> Self {
             Self {
-                nodes: vec![],
-                edges: vec![],
+                nodes: Vec::new(),
+                edges: Vec::new(),
                 attrs: HashMap::new(),
             }
         }
