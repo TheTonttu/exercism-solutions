@@ -38,8 +38,8 @@ pub mod graph {
             self
         }
 
-        pub fn get_node(&self, node_name: &str) -> Option<Node> {
-            self.nodes.iter().find(|n| n.name == node_name).cloned()
+        pub fn get_node(&self, node_name: &str) -> Option<&Node> {
+            self.nodes.iter().find(|n| n.name == node_name)
         }
     }
 
