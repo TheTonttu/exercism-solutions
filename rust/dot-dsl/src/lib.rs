@@ -29,10 +29,12 @@ pub mod graph {
         }
 
         pub fn with_attrs(mut self, attributes: &[(&str, &str)]) -> Self {
-            self.attrs.extend(attributes
-                .iter()
-                .map(|(a, b)| (a.to_string(), b.to_string()))
-                .collect::<HashMap<String, String>>());
+            self.attrs.extend(
+                attributes
+                    .iter()
+                    .map(|(a, b)| (a.to_string(), b.to_string()))
+                    .collect::<HashMap<String, String>>(),
+            );
             self
         }
 
@@ -50,6 +52,7 @@ pub mod graph {
     pub mod graph_items {
 
         pub mod node {
+
             use std::collections::HashMap;
 
             #[derive(Clone, Debug, PartialEq)]
@@ -66,14 +69,14 @@ pub mod graph {
                     }
                 }
 
-                pub fn with_attrs(&self, attributes: &[(&str, &str)]) -> Self {
-                    Self {
-                        name: self.name.clone(),
-                        attrs: attributes
+                pub fn with_attrs(mut self, attributes: &[(&str, &str)]) -> Self {
+                    self.attrs.extend(
+                        attributes
                             .iter()
                             .map(|(a, b)| (a.to_string(), b.to_string()))
-                            .collect(),
-                    }
+                            .collect::<HashMap<String, String>>(),
+                    );
+                    self
                 }
 
                 pub fn get_attr(&self, attribute_name: &str) -> Option<&str> {
@@ -84,6 +87,7 @@ pub mod graph {
         }
 
         pub mod edge {
+
             use std::collections::HashMap;
 
             #[derive(Clone, Debug, PartialEq)]
@@ -102,15 +106,14 @@ pub mod graph {
                     }
                 }
 
-                pub fn with_attrs(&self, attributes: &[(&str, &str)]) -> Self {
-                    Self {
-                        node_from: self.node_from.clone(),
-                        node_to: self.node_to.clone(),
-                        attrs: attributes
+                pub fn with_attrs(mut self, attributes: &[(&str, &str)]) -> Self {
+                    self.attrs.extend(
+                        attributes
                             .iter()
                             .map(|(a, b)| (a.to_string(), b.to_string()))
-                            .collect(),
-                    }
+                            .collect::<HashMap<String, String>>(),
+                    );
+                    self
                 }
             }
         }
