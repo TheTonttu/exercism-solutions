@@ -80,8 +80,7 @@ pub mod graph {
                 }
 
                 pub fn get_attr(&self, attribute_name: &str) -> Option<&str> {
-                    // FIXME: Dios mio...
-                    self.attrs.get(attribute_name).map(|attr| &attr[..])
+                    self.attrs.get(attribute_name).map(|attr| attr.as_str())
                 }
             }
         }
