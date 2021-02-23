@@ -32,8 +32,7 @@ pub mod graph {
             self.attrs.extend(
                 attributes
                     .iter()
-                    .map(|(a, b)| (a.to_string(), b.to_string()))
-                    .collect::<HashMap<String, String>>(),
+                    .map(|(a, b)| (a.to_string(), b.to_string())),
             );
             self
         }
@@ -73,8 +72,7 @@ pub mod graph {
                     self.attrs.extend(
                         attributes
                             .iter()
-                            .map(|(a, b)| (a.to_string(), b.to_string()))
-                            .collect::<HashMap<String, String>>(),
+                            .map(|(a, b)| (a.to_string(), b.to_string())),
                     );
                     self
                 }
@@ -109,8 +107,7 @@ pub mod graph {
                     self.attrs.extend(
                         attributes
                             .iter()
-                            .map(|(a, b)| (a.to_string(), b.to_string()))
-                            .collect::<HashMap<String, String>>(),
+                            .map(|(a, b)| (a.to_string(), b.to_string())),
                     );
                     self
                 }
