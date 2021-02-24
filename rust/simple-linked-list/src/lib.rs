@@ -1,27 +1,33 @@
 use std::iter::FromIterator;
+use std::borrow::Borrow;
 
 pub struct SimpleLinkedList<T> {
-    // Delete this field
-    // dummy is needed to avoid unused parameter error during compilation
-    dummy: ::std::marker::PhantomData<T>,
+    head: Option<Box<Node<T>>>,
 }
 
 impl<T> SimpleLinkedList<T> {
     pub fn new() -> Self {
-        unimplemented!()
+        Self {
+            head: None,
+        }
     }
 
-    // You may be wondering why it's necessary to have is_empty()
-    // when it can easily be determined from len().
-    // It's good custom to have both because len() can be expensive for some types,
-    // whereas is_empty() is almost always cheap.
-    // (Also ask yourself whether len() is expensive for SimpleLinkedList)
     pub fn is_empty(&self) -> bool {
-        unimplemented!()
+        self.head.is_none()
     }
 
     pub fn len(&self) -> usize {
-        unimplemented!()
+        let mut len: usize = 0;
+        let mut next_node = self.head.borrow();
+        loop {
+            match next_node {
+                Some(h) => {
+                    len += 1;
+                    next_node = &h.next;
+                },
+                None => return len,
+            }
+        }
     }
 
     pub fn push(&mut self, _element: T) {
@@ -62,4 +68,9 @@ impl<T> Into<Vec<T>> for SimpleLinkedList<T> {
     fn into(self) -> Vec<T> {
         unimplemented!()
     }
+}
+
+struct Node<T> {
+    data: T,
+    pub next: Option<Box<Node<T>>>,
 }
