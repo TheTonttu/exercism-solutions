@@ -1,5 +1,5 @@
-use std::iter::FromIterator;
 use std::borrow::Borrow;
+use std::iter::FromIterator;
 
 pub struct SimpleLinkedList<T> {
     head: Option<Box<Node<T>>>,
@@ -7,9 +7,7 @@ pub struct SimpleLinkedList<T> {
 
 impl<T> SimpleLinkedList<T> {
     pub fn new() -> Self {
-        Self {
-            head: None,
-        }
+        Self { head: None }
     }
 
     pub fn is_empty(&self) -> bool {
@@ -24,14 +22,17 @@ impl<T> SimpleLinkedList<T> {
                 Some(h) => {
                     len += 1;
                     next_node = &h.next;
-                },
+                }
                 None => return len,
             }
         }
     }
 
-    pub fn push(&mut self, _element: T) {
-        unimplemented!()
+    pub fn push(&mut self, element: T) {
+        self.head = Some(Box::new(Node {
+            data: element,
+            next: self.head.take(),
+        }));
     }
 
     pub fn pop(&mut self) -> Option<T> {
@@ -71,6 +72,6 @@ impl<T> Into<Vec<T>> for SimpleLinkedList<T> {
 }
 
 struct Node<T> {
-    data: T,
+    pub data: T,
     pub next: Option<Box<Node<T>>>,
 }
