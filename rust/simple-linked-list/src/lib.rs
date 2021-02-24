@@ -36,7 +36,13 @@ impl<T> SimpleLinkedList<T> {
     }
 
     pub fn pop(&mut self) -> Option<T> {
-        unimplemented!()
+        match self.head.take() {
+            Some(h) => {
+                self.head = h.next;
+                Some(h.data)
+            }
+            None => None,
+        }
     }
 
     pub fn peek(&self) -> Option<&T> {
