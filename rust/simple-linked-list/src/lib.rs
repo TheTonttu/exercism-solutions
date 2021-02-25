@@ -65,6 +65,7 @@ where
             reversed_list.push(node.data.clone());
             next_node = &node.next
         }
+
         reversed_list
     }
 }
@@ -78,6 +79,7 @@ where
         for item in iter {
             list.push(item);
         }
+
         list
     }
 }
@@ -97,6 +99,15 @@ where
         }
 
         vector
+    }
+}
+
+impl<T> Default for SimpleLinkedList<T>
+where
+    T: Clone,
+{
+    fn default() -> Self {
+        Self::new()
     }
 }
 
