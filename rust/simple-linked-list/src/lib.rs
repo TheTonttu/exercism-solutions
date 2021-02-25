@@ -1,11 +1,11 @@
 use std::borrow::Borrow;
 use std::iter::FromIterator;
 
-pub struct SimpleLinkedList<T> {
+pub struct SimpleLinkedList<T> where T: Clone {
     head: Option<Box<Node<T>>>,
 }
 
-impl<T> SimpleLinkedList<T> {
+impl<T> SimpleLinkedList<T> where T: Clone {
     pub fn new() -> Self {
         Self { head: None }
     }
@@ -50,11 +50,17 @@ impl<T> SimpleLinkedList<T> {
     }
 
     pub fn rev(self) -> SimpleLinkedList<T> {
-        unimplemented!()
+        let mut reversed_list = SimpleLinkedList::new();
+        let mut next_node = self.head.borrow();
+        while let Some(node) = next_node {
+            reversed_list.push(node.data.clone());
+            next_node = &node.next
+        }
+        reversed_list
     }
 }
 
-impl<T> FromIterator<T> for SimpleLinkedList<T> {
+impl<T> FromIterator<T> for SimpleLinkedList<T> where T: Clone {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         let mut list = Self::new();
         for item in iter {
@@ -64,20 +70,23 @@ impl<T> FromIterator<T> for SimpleLinkedList<T> {
     }
 }
 
-// In general, it would be preferable to implement IntoIterator for SimpleLinkedList<T>
-// instead of implementing an explicit conversion to a vector. This is because, together,
-// FromIterator and IntoIterator enable conversion between arbitrary collections.
-// Given that implementation, converting to a vector is trivial:
-//
-// let vec: Vec<_> = simple_linked_list.into_iter().collect();
-//
-// The reason this exercise's API includes an explicit conversion to Vec<T> instead
-// of IntoIterator is that implementing that interface is fairly complicated, and
-// demands more of the student than we expect at this point in the track.
-
-impl<T> Into<Vec<T>> for SimpleLinkedList<T> {
+impl<T> Into<Vec<T>> for SimpleLinkedList<T> where T: Clone {
     fn into(self) -> Vec<T> {
-        unimplemented!()
+        let mut vector = Vec::new();
+
+        let mut next_node = self.head.borrow();
+        loop {
+            match next_node {
+                Some(h) => {
+                    vector.push(h.data.clone());
+                    next_node = &h.next;
+                }
+                None => break,
+            }
+        }
+        // Meh...
+        vector.reverse();
+        vector
     }
 }
 
