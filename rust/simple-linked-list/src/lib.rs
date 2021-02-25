@@ -75,14 +75,9 @@ impl<T> Into<Vec<T>> for SimpleLinkedList<T> where T: Clone {
         let mut vector = Vec::new();
 
         let mut next_node = self.head.borrow();
-        loop {
-            match next_node {
-                Some(h) => {
-                    vector.push(h.data.clone());
-                    next_node = &h.next;
-                }
-                None => break,
-            }
+        while let Some(node) = next_node {
+            vector.push(node.data.clone());
+            next_node = &node.next;
         }
         // Meh...
         vector.reverse();
