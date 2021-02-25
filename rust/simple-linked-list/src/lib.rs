@@ -52,7 +52,8 @@ impl<T> SimpleLinkedList<T> where T: Clone {
     /// Returns a new instance of `SimpleLinkedList<T>` with elements in reverse order.
     ///
     /// # Remarks
-    /// The unit tests do not unambiguous indicate should the original linked list be modified or new instance returned because the original list is not asserted in the unit tests. Assuming for now that new instance is wanted because the method return type is a linked list.
+    /// The unit tests do not unambiguous indicate should the original linked list be modified or new instance returned because the original list is not asserted in the unit tests.
+    /// Assuming for now that new instance is wanted because the method return type is a linked list.
     pub fn rev(self) -> SimpleLinkedList<T> {
 
         let mut reversed_list = SimpleLinkedList::new();
