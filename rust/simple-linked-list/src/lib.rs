@@ -1,17 +1,11 @@
 use std::borrow::Borrow;
 use std::iter::FromIterator;
 
-pub struct SimpleLinkedList<T>
-where
-    T: Clone,
-{
+pub struct SimpleLinkedList<T> {
     head: Option<Box<Node<T>>>,
 }
 
-impl<T> SimpleLinkedList<T>
-where
-    T: Clone,
-{
+impl<T: Clone> SimpleLinkedList<T> {
     pub fn new() -> Self {
         Self { head: None }
     }
@@ -21,7 +15,7 @@ where
     }
 
     pub fn len(&self) -> usize {
-        let mut len: usize = 0;
+        let mut len = 0;
 
         let mut next_node = self.head.borrow();
         while let Some(node) = next_node {
@@ -70,10 +64,7 @@ where
     }
 }
 
-impl<T> FromIterator<T> for SimpleLinkedList<T>
-where
-    T: Clone,
-{
+impl<T: Clone> FromIterator<T> for SimpleLinkedList<T> {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         let mut list = Self::new();
         for item in iter {
@@ -84,10 +75,7 @@ where
     }
 }
 
-impl<T> Into<Vec<T>> for SimpleLinkedList<T>
-where
-    T: Clone,
-{
+impl<T: Clone> Into<Vec<T>> for SimpleLinkedList<T> {
     fn into(self) -> Vec<T> {
         let mut vector = Vec::new();
 
@@ -102,16 +90,13 @@ where
     }
 }
 
-impl<T> Default for SimpleLinkedList<T>
-where
-    T: Clone,
-{
+impl<T: Clone> Default for SimpleLinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
 struct Node<T> {
-    pub data: T,
-    pub next: Option<Box<Node<T>>>,
+    data: T,
+    next: Option<Box<Node<T>>>,
 }
