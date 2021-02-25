@@ -22,16 +22,14 @@ where
 
     pub fn len(&self) -> usize {
         let mut len: usize = 0;
+
         let mut next_node = self.head.borrow();
-        loop {
-            match next_node {
-                Some(node) => {
-                    len += 1;
-                    next_node = &node.next;
-                }
-                None => return len,
-            }
+        while let Some(node) = next_node {
+            len += 1;
+            next_node = &node.next;
         }
+
+        len
     }
 
     pub fn push(&mut self, element: T) {
