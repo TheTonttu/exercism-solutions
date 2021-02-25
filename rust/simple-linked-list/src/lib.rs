@@ -1,11 +1,17 @@
 use std::borrow::Borrow;
 use std::iter::FromIterator;
 
-pub struct SimpleLinkedList<T> where T: Clone {
+pub struct SimpleLinkedList<T>
+where
+    T: Clone,
+{
     head: Option<Box<Node<T>>>,
 }
 
-impl<T> SimpleLinkedList<T> where T: Clone {
+impl<T> SimpleLinkedList<T>
+where
+    T: Clone,
+{
     pub fn new() -> Self {
         Self { head: None }
     }
@@ -19,9 +25,9 @@ impl<T> SimpleLinkedList<T> where T: Clone {
         let mut next_node = self.head.borrow();
         loop {
             match next_node {
-                Some(h) => {
+                Some(node) => {
                     len += 1;
-                    next_node = &h.next;
+                    next_node = &node.next;
                 }
                 None => return len,
             }
@@ -37,9 +43,9 @@ impl<T> SimpleLinkedList<T> where T: Clone {
 
     pub fn pop(&mut self) -> Option<T> {
         match self.head.take() {
-            Some(h) => {
-                self.head = h.next;
-                Some(h.data)
+            Some(node) => {
+                self.head = node.next;
+                Some(node.data)
             }
             None => None,
         }
@@ -55,7 +61,6 @@ impl<T> SimpleLinkedList<T> where T: Clone {
     /// The unit tests do not unambiguous indicate should the original linked list be modified or new instance returned because the original list is not asserted in the unit tests.
     /// Assuming for now that new instance is wanted because the method return type is a linked list.
     pub fn rev(self) -> SimpleLinkedList<T> {
-
         let mut reversed_list = SimpleLinkedList::new();
         let mut next_node = self.head.borrow();
         while let Some(node) = next_node {
@@ -66,7 +71,10 @@ impl<T> SimpleLinkedList<T> where T: Clone {
     }
 }
 
-impl<T> FromIterator<T> for SimpleLinkedList<T> where T: Clone {
+impl<T> FromIterator<T> for SimpleLinkedList<T>
+where
+    T: Clone,
+{
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         let mut list = Self::new();
         for item in iter {
@@ -76,7 +84,10 @@ impl<T> FromIterator<T> for SimpleLinkedList<T> where T: Clone {
     }
 }
 
-impl<T> Into<Vec<T>> for SimpleLinkedList<T> where T: Clone {
+impl<T> Into<Vec<T>> for SimpleLinkedList<T>
+where
+    T: Clone,
+{
     fn into(self) -> Vec<T> {
         let mut vector = Vec::new();
 
