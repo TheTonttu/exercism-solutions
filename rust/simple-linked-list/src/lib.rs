@@ -49,7 +49,12 @@ impl<T> SimpleLinkedList<T> where T: Clone {
         self.head.as_ref().map(|h| &h.data)
     }
 
+    /// Returns a new instance of `SimpleLinkedList<T>` with elements in reverse order.
+    ///
+    /// # Remarks
+    /// The unit tests do not unambiguous indicate should the original linked list be modified or new instance returned because the original list is not asserted in the unit tests. Assuming for now that new instance is wanted because the method return type is a linked list.
     pub fn rev(self) -> SimpleLinkedList<T> {
+
         let mut reversed_list = SimpleLinkedList::new();
         let mut next_node = self.head.borrow();
         while let Some(node) = next_node {
@@ -74,13 +79,13 @@ impl<T> Into<Vec<T>> for SimpleLinkedList<T> where T: Clone {
     fn into(self) -> Vec<T> {
         let mut vector = Vec::new();
 
-        let mut next_node = self.head.borrow();
-        while let Some(node) = next_node {
-            vector.push(node.data.clone());
-            next_node = &node.next;
+        // A new list instance is created so we can just pop the contents without affecting the original linked list.
+        let mut new_reversed = self.rev();
+
+        while let Some(value) = new_reversed.pop() {
+            vector.push(value);
         }
-        // Meh...
-        vector.reverse();
+
         vector
     }
 }
