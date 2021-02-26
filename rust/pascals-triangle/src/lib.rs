@@ -55,7 +55,7 @@ fn extract_value_from_entries(entries: (Option<u32>, Option<u32>)) -> u32 {
 fn get_above_entries(prev_row: &[u32], curr_item_index: usize) -> (Option<u32>, Option<u32>) {
     let left_entry_index = (curr_item_index as i32) - 1;
     let left_entry = match left_entry_index {
-        i if i.is_positive() || i == 0 => prev_row.get(i as usize).copied(),
+        i if i.is_positive() || i.is_zero() => prev_row.get(i as usize).copied(),
         i if i.is_negative() => None,
         _ => None,
     };
@@ -70,5 +70,15 @@ fn get_previous_row(pascals_triangle: &[Vec<u32>], curr_row_index: u32) -> Optio
         i if i.is_positive() || i == 0 => pascals_triangle.get(i as usize),
         i if i.is_negative() => None,
         _ => None,
+    }
+}
+
+trait Zero {
+    fn is_zero(&self) -> bool;
+}
+
+impl Zero for i32 {
+    fn is_zero(&self) -> bool {
+        *self == 0
     }
 }
