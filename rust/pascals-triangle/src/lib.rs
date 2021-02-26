@@ -17,28 +17,30 @@ impl PascalsTriangle {
 fn create_pascals_triangle(row_count: u32) -> Vec<Vec<u32>> {
     let mut pascals_triangle: Vec<Vec<u32>> = Vec::with_capacity(row_count as usize);
 
-    let mut row_item_count = 1;
     for i in 0..row_count {
-        let mut row = Vec::with_capacity(row_item_count);
-
         let maybe_prev_row = get_previous_row(&pascals_triangle, i);
 
-        match maybe_prev_row {
-            Some(prev_row) => {
-                for item_index in 0..row_item_count {
-                    let entries = get_above_entries(prev_row, item_index);
-                    let value = extract_value_from_entries(entries);
-                    row.push(value);
-                }
-            }
-            None => row.push(1u32),
-        }
+        let row = create_row(i, maybe_prev_row);
         pascals_triangle.push(row);
-
-        row_item_count += 1;
     }
 
     pascals_triangle
+}
+
+fn create_row(row_index: u32, maybe_prev_row: Option<&Vec<u32>>) -> Vec<u32> {
+    let row_item_count = 1 + row_index as usize;
+    let mut row = Vec::with_capacity(row_item_count);
+    match maybe_prev_row {
+        Some(prev_row) => {
+            for item_index in 0..row_item_count {
+                let entries = get_above_entries(prev_row, item_index);
+                let value = extract_value_from_entries(entries);
+                row.push(value);
+            }
+        }
+        None => row.push(1u32),
+    }
+    row
 }
 
 fn extract_value_from_entries(entries: (Option<u32>, Option<u32>)) -> u32 {
