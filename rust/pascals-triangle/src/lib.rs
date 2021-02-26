@@ -30,8 +30,8 @@ fn create_pascals_triangle(row_count: u32) -> Vec<Vec<u32>> {
                     let value = extract_value_from_entries(entries);
                     row.push(value);
                 }
-            },
-            None => row.push(1u32)
+            }
+            None => row.push(1u32),
         }
         pascals_triangle.push(row);
 
@@ -50,23 +50,23 @@ fn extract_value_from_entries(entries: (Option<u32>, Option<u32>)) -> u32 {
     }
 }
 
-fn get_above_entries(prev_row: &Vec<u32>, curr_item_index: usize) -> (Option<u32>, Option<u32>) {
+fn get_above_entries(prev_row: &[u32], curr_item_index: usize) -> (Option<u32>, Option<u32>) {
     let left_entry_index = (curr_item_index as i32) - 1;
     let left_entry = match left_entry_index {
         i if i.is_positive() || i == 0 => prev_row.get(i as usize).copied(),
         i if i.is_negative() => None,
-        _ => None
+        _ => None,
     };
 
     let right_entry = prev_row.get(curr_item_index).copied();
     (left_entry, right_entry)
 }
 
-fn get_previous_row(pascals_triangle: &Vec<Vec<u32>>, curr_row_index: u32) -> Option<&Vec<u32>> {
+fn get_previous_row(pascals_triangle: &[Vec<u32>], curr_row_index: u32) -> Option<&Vec<u32>> {
     let prev_row_index = (curr_row_index as i32) - 1;
     match prev_row_index {
         i if i.is_positive() || i == 0 => pascals_triangle.get(i as usize),
         i if i.is_negative() => None,
-        _ => None
+        _ => None,
     }
 }
