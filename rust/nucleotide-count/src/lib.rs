@@ -7,19 +7,23 @@ pub fn count(nucleotide: char, dna: &str) -> Result<usize, char> {
     if !VALID_NUCLEOTIDES.contains(&nucleotide) {
         return Err(nucleotide);
     }
-    // TODO: Combine counting and early error return to combined iteration.
-    if let Some(invalid) = dna.chars().find(|n| !VALID_NUCLEOTIDES.contains(n)) {
-        return Err(invalid);
+
+    let mut count = 0;
+    for char in dna.chars() {
+        match char {
+            counted if nucleotide == counted => count += 1,
+            invalid if !VALID_NUCLEOTIDES.contains(&invalid) => return Err(invalid),
+            _ => (),
+        }
     }
 
-    let count = dna.chars().filter(|n| *n == nucleotide).count();
     Ok(count)
 }
 
 pub fn nucleotide_counts(dna: &str) -> Result<HashMap<char, usize>, char> {
     let mut nucleotide_counts = VALID_NUCLEOTIDES
         .iter()
-        .map(|n| (*n, 0 as usize))
+        .map(|n| (*n, 0))
         .collect::<HashMap<char, usize>>();
 
     for nucleotide in dna.chars() {
