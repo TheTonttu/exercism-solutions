@@ -17,10 +17,10 @@ impl PascalsTriangle {
 fn create_pascals_triangle(row_count: u32) -> Vec<Vec<u32>> {
     let mut pascals_triangle: Vec<Vec<u32>> = Vec::with_capacity(row_count as usize);
 
-    for i in 0..row_count {
-        let maybe_prev_row = get_previous_row(&pascals_triangle, i);
+    for row_index in 0..row_count {
+        let maybe_prev_row = get_previous_row(&pascals_triangle, row_index);
 
-        let row = create_row(i, maybe_prev_row);
+        let row = create_row(row_index, maybe_prev_row);
         pascals_triangle.push(row);
     }
 
