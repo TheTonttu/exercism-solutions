@@ -16,9 +16,9 @@ pub fn nucleotide_counts(dna: &str) -> Result<HashMap<char, usize>, char> {
         .collect::<HashMap<char, usize>>();
 
     for nucleotide in dna.chars() {
-        match nucleotide_counts.entry(nucleotide) {
-            Entry::Occupied(mut entry) => *entry.get_mut() += 1,
-            Entry::Vacant(_) => return Err(nucleotide),
+        match nucleotide_counts.get_mut(&nucleotide) {
+            Some(count) => *count += 1,
+            None => return Err(nucleotide),
         }
     }
 
