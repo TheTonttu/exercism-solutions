@@ -1,4 +1,5 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::hash_map::Entry;
+use std::collections::HashMap;
 
 const VALID_NUCLEOTIDES: [char; 4] = ['A', 'C', 'G', 'T'];
 
@@ -16,29 +17,15 @@ pub fn count(nucleotide: char, dna: &str) -> Result<usize, char> {
 }
 
 pub fn nucleotide_counts(dna: &str) -> Result<HashMap<char, usize>, char> {
-    // TODO: Not very efficient as we do multiple iterations on dna + use count function to do another iteration
+    let mut nucleotide_counts = VALID_NUCLEOTIDES
+        .iter()
+        .map(|n| (*n, 0 as usize))
+        .collect::<HashMap<char, usize>>();
 
-    let mut uniques = HashSet::new();
-
-    let mut nucleotide_counts = HashMap::with_capacity(VALID_NUCLEOTIDES.len());
-    dna.chars()
-        .collect::<Vec<char>>()
-        .retain(|n| uniques.insert(*n));
-
-    for nucleotide in uniques {
-        match count(nucleotide, dna) {
-            Ok(count) => {
-                nucleotide_counts.insert(nucleotide, count);
-            }
-            Err(invalid) => {
-                return Err(invalid);
-            }
-        }
-    }
-
-    for nucleotide in &VALID_NUCLEOTIDES {
-        if !nucleotide_counts.contains_key(nucleotide) {
-            nucleotide_counts.insert(*nucleotide, 0);
+    for nucleotide in dna.chars() {
+        match nucleotide_counts.entry(nucleotide) {
+            Entry::Occupied(mut entry) => *entry.get_mut() += 1,
+            Entry::Vacant(_) => return Err(nucleotide),
         }
     }
 
