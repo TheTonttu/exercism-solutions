@@ -36,11 +36,11 @@ fn get_previous_row(pascals_triangle: &[Vec<u32>], curr_row_index: u32) -> Optio
 }
 
 fn create_row(row_index: u32, maybe_prev_row: Option<&Vec<u32>>) -> Vec<u32> {
-    let row_item_count = 1 + row_index as usize;
-    let mut row = Vec::with_capacity(row_item_count);
+    let element_count = 1 + row_index as usize;
+    let mut row = Vec::with_capacity(element_count);
     match maybe_prev_row {
         Some(prev_row) => {
-            for item_index in 0..row_item_count {
+            for item_index in 0..element_count {
                 let entries = get_above_entries(prev_row, item_index);
                 let value = extract_value_from_entries(entries);
                 row.push(value);
