@@ -1,4 +1,3 @@
-use std::borrow::Borrow;
 use std::io::{Read, Result, Write};
 
 pub struct ReadStats<R> {
@@ -17,7 +16,7 @@ impl<R: Read> ReadStats<R> {
     }
 
     pub fn get_ref(&self) -> &R {
-        self.internal_reader.borrow()
+        &self.internal_reader
     }
 
     pub fn bytes_through(&self) -> usize {
@@ -58,7 +57,7 @@ impl<W: Write> WriteStats<W> {
     }
 
     pub fn get_ref(&self) -> &W {
-        self.internal_writer.borrow()
+        &self.internal_writer
     }
 
     pub fn bytes_through(&self) -> usize {
