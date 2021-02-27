@@ -27,25 +27,21 @@ fn test_count_empty() {
 }
 
 #[test]
-#[ignore]
 fn count_invalid_nucleotide() {
     assert_eq!(dna::count('X', "A"), Err('X'));
 }
 
 #[test]
-#[ignore]
 fn count_invalid_dna() {
     assert_eq!(dna::count('A', "AX"), Err('X'));
 }
 
 #[test]
-#[ignore]
 fn test_count_repetitive_cytosine() {
     assert_eq!(dna::count('C', "CCCCC"), Ok(5));
 }
 
 #[test]
-#[ignore]
 fn test_count_only_thymine() {
     assert_eq!(dna::count('T', "GGGGGTAACCCGG"), Ok(1));
 }
