@@ -30,10 +30,10 @@ impl<R: Read> ReadStats<R> {
 
 impl<R: Read> Read for ReadStats<R> {
     fn read(&mut self, buf: &mut [u8]) -> Result<usize> {
-        self.read_count += 1;
-
         let result = self.internal_reader.read(buf);
+
         if let Ok(count) = result {
+            self.read_count += 1;
             self.read_byte_count += count
         }
 
@@ -71,9 +71,10 @@ impl<W: Write> WriteStats<W> {
 
 impl<W: Write> Write for WriteStats<W> {
     fn write(&mut self, buf: &[u8]) -> Result<usize> {
-        self.write_count += 1;
         let result = self.internal_writer.write(buf);
+
         if let Ok(count) = result {
+            self.write_count += 1;
             self.write_byte_count += count
         }
 
