@@ -44,6 +44,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/simple-linked-list/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/pascals-triangle/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/pascals-triangle/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/paasio/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/paasio/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/leap/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/hello-world/target" />
@@ -64,6 +66,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/dot-dsl/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/simple-linked-list/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/pascals-triangle/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/paasio/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
