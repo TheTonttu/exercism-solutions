@@ -48,6 +48,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/paasio/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/nucleotide-count/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/nucleotide-count/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/acronym/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/acronym/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/etl/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/etl/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
@@ -73,6 +75,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/paasio/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/nucleotide-count/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/etl/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/acronym/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
