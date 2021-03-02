@@ -10,11 +10,9 @@ pub fn primes_up_to(upper_bound: u64) -> Vec<u64> {
             continue;
         }
 
-        let composites = sieve_mask
-            .iter_mut()
-            .skip(candidate * candidate)
-            .step_by(candidate);
+        let prime = candidate;
 
+        let composites = sieve_mask.iter_mut().skip(prime * prime).step_by(prime);
         for element in composites {
             *element = false;
         }
