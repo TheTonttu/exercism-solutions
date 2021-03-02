@@ -1,13 +1,26 @@
-pub fn primes_up_to(upper_bound: u64) -> Vec<u64> {
-    let mut prime_candidates = (2..=upper_bound).collect::<Vec<_>>();
+const FIRST_PRIME: usize = 2;
 
-    let mut primes = Vec::new();
-    while !prime_candidates.is_empty() {
-        let prime = prime_candidates.remove(0);
-        primes.push(prime);
-        let composites = (prime*prime..=upper_bound).step_by(prime as usize).collect::<Vec<_>>();
-        prime_candidates.retain(|c| !composites.contains(c));
+pub fn primes_up_to(upper_bound: u64) -> Vec<u64> {
+    let max = upper_bound as usize + 1;
+
+    let mut sieve_mask = vec![true; max];
+    for element in sieve_mask.iter_mut().take(FIRST_PRIME) {
+        *element = false;
     }
 
-    primes
+    for candidate in FIRST_PRIME..max {
+        if !sieve_mask[candidate] {
+            continue;
+        }
+
+        for composite in (candidate * candidate..max).step_by(candidate) {
+            sieve_mask[composite] = false
+        }
+    }
+
+    sieve_mask
+        .iter()
+        .enumerate()
+        .filter_map(|(n, is_prime)| is_prime.then(|| n as u64))
+        .collect()
 }
