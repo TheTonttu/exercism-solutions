@@ -5,7 +5,8 @@ pub fn primes_up_to(upper_bound: u64) -> Vec<u64> {
 
     let mut sieve_mask = vec![true; max];
 
-    for candidate in FIRST_PRIME..max {
+    let sqrt_max = (max as f64).sqrt() as usize;
+    for candidate in FIRST_PRIME..=sqrt_max {
         if !sieve_mask[candidate] {
             continue;
         }
