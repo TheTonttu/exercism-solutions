@@ -5,7 +5,7 @@ pub fn primes_up_to(upper_bound: u64) -> Vec<u64> {
     while !prime_candidates.is_empty() {
         let prime = prime_candidates.remove(0);
         primes.push(prime);
-        let not_primes = (prime..=upper_bound).step_by(prime as usize).collect::<Vec<_>>();
+        let not_primes = (prime*prime..=upper_bound).step_by(prime as usize).collect::<Vec<_>>();
         prime_candidates.retain(|c| !not_primes.contains(c));
     }
 
