@@ -4,9 +4,6 @@ pub fn primes_up_to(upper_bound: u64) -> Vec<u64> {
     let max = upper_bound as usize + 1;
 
     let mut sieve_mask = vec![true; max];
-    for element in sieve_mask.iter_mut().take(FIRST_PRIME) {
-        *element = false;
-    }
 
     for candidate in FIRST_PRIME..max {
         if !sieve_mask[candidate] {
@@ -26,6 +23,8 @@ pub fn primes_up_to(upper_bound: u64) -> Vec<u64> {
     sieve_mask
         .iter()
         .enumerate()
+        // Skip 0 and 1
+        .skip(2)
         .filter_map(|(n, is_prime)| is_prime.then(|| n as u64))
         .collect()
 }
