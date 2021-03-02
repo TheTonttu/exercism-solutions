@@ -13,8 +13,13 @@ pub fn primes_up_to(upper_bound: u64) -> Vec<u64> {
             continue;
         }
 
-        for composite in (candidate * candidate..max).step_by(candidate) {
-            sieve_mask[composite] = false
+        let composites = sieve_mask
+            .iter_mut()
+            .skip(candidate * candidate)
+            .step_by(candidate);
+
+        for element in composites {
+            *element = false;
         }
     }
 
