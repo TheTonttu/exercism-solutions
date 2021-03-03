@@ -26,13 +26,7 @@ impl Dna {
         let transcribed_strand = self
             .strand
             .chars()
-            .map(|dn| {
-                DNA_RNA_TRANSCRIPT
-                    .iter()
-                    .find(|(tdn, _trn)| *tdn == dn)
-                    .unwrap()
-                    .1
-            })
+            .map(transcribe_dna_nucleotide)
             .collect::<String>();
 
         Rna::new(transcribed_strand.as_str()).unwrap()
@@ -56,4 +50,12 @@ fn validate_strand(strand: &str, valid_nucleotides: &[char]) -> Result<(), usize
         Some(index) => Err(index),
         None => Ok(()),
     }
+}
+
+fn transcribe_dna_nucleotide(dna_nucleotide: char) -> char {
+    DNA_RNA_TRANSCRIPT
+        .iter()
+        .find(|(tdn, _trn)| *tdn == dna_nucleotide)
+        .unwrap()
+        .1
 }
