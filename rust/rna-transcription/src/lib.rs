@@ -15,14 +15,7 @@ pub struct Rna {
 
 impl Dna {
     pub fn new(dna: &str) -> Result<Dna, usize> {
-        let mut errors = dna
-            .chars()
-            .enumerate()
-            .skip_while(|(_i, c)| VALID_DNA_NUCLEOTIDES.contains(c));
-
-        if let Some((index, _invalid)) = errors.next() {
-            return Err(index);
-        }
+        validate_strand(dna, VALID_DNA_NUCLEOTIDES.as_ref())?;
 
         Ok(Self {
             strand: dna.to_string(),
@@ -48,17 +41,22 @@ impl Dna {
 
 impl Rna {
     pub fn new(rna: &str) -> Result<Rna, usize> {
-        let mut errors = rna
-            .chars()
-            .enumerate()
-            .skip_while(|(_i, c)| VALID_RNA_NUCLEOTIDES.contains(c));
-
-        if let Some((index, _invalid)) = errors.next() {
-            return Err(index);
-        }
+        validate_strand(rna, VALID_RNA_NUCLEOTIDES.as_ref())?;
 
         Ok(Self {
             strand: rna.to_string(),
         })
+    }
+}
+
+fn validate_strand(strand: &str, valid_nucleotides: &[char]) -> Result<(), usize> {
+    let mut errors = strand
+        .chars()
+        .enumerate()
+        .skip_while(|(_i, c)| valid_nucleotides.contains(c));
+
+    match errors.next() {
+        Some((index, _invalid)) => Err(index),
+        None => Ok(()),
     }
 }
