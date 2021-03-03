@@ -1,3 +1,6 @@
+const VALID_DNA_NUCLEOTIDES: [char; 4] = ['A', 'C', 'G', 'T'];
+const VALID_RNA_NUCLEOTIDES: [char; 4] = ['A', 'C', 'G', 'U'];
+
 #[derive(Debug, PartialEq)]
 pub struct Dna;
 
@@ -6,7 +9,16 @@ pub struct Rna;
 
 impl Dna {
     pub fn new(dna: &str) -> Result<Dna, usize> {
-        unimplemented!("Construct new Dna from '{}' string. If string contains invalid nucleotides return index of first invalid nucleotide", dna);
+        let mut errors = dna
+            .chars()
+            .enumerate()
+            .skip_while(|(i, c)| VALID_DNA_NUCLEOTIDES.contains(c));
+
+        if let Some((index, _invalid)) = errors.next() {
+            return Err(index);
+        }
+
+        Ok(Self)
     }
 
     pub fn into_rna(self) -> Rna {
@@ -16,6 +28,15 @@ impl Dna {
 
 impl Rna {
     pub fn new(rna: &str) -> Result<Rna, usize> {
-        unimplemented!("Construct new Rna from '{}' string. If string contains invalid nucleotides return index of first invalid nucleotide", rna);
+        let mut errors = rna
+            .chars()
+            .enumerate()
+            .skip_while(|(i, c)| VALID_RNA_NUCLEOTIDES.contains(c));
+
+        if let Some((index, _invalid)) = errors.next() {
+            return Err(index);
+        }
+
+        Ok(Self)
     }
 }

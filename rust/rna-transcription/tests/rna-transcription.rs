@@ -6,13 +6,11 @@ fn test_valid_dna_input() {
 }
 
 #[test]
-#[ignore]
 fn test_valid_rna_input() {
     assert!(dna::Rna::new("CGAU").is_ok());
 }
 
 #[test]
-#[ignore]
 fn test_invalid_dna_input() {
     // Invalid character
     assert_eq!(dna::Dna::new("X").err(), Some(0));
@@ -23,7 +21,6 @@ fn test_invalid_dna_input() {
 }
 
 #[test]
-#[ignore]
 fn test_invalid_rna_input() {
     // Invalid character
     assert_eq!(dna::Rna::new("X").unwrap_err(), 0);
