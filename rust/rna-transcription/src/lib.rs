@@ -2,10 +2,14 @@ const VALID_DNA_NUCLEOTIDES: [char; 4] = ['A', 'C', 'G', 'T'];
 const VALID_RNA_NUCLEOTIDES: [char; 4] = ['A', 'C', 'G', 'U'];
 
 #[derive(Debug, PartialEq)]
-pub struct Dna;
+pub struct Dna {
+    strand: String,
+}
 
 #[derive(Debug, PartialEq)]
-pub struct Rna;
+pub struct Rna {
+    strand: String,
+}
 
 impl Dna {
     pub fn new(dna: &str) -> Result<Dna, usize> {
@@ -18,7 +22,9 @@ impl Dna {
             return Err(index);
         }
 
-        Ok(Self)
+        Ok(Self {
+            strand: dna.to_string(),
+        })
     }
 
     pub fn into_rna(self) -> Rna {
@@ -37,6 +43,8 @@ impl Rna {
             return Err(index);
         }
 
-        Ok(Self)
+        Ok(Self {
+            strand: rna.to_string(),
+        })
     }
 }
