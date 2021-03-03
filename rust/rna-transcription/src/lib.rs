@@ -1,6 +1,8 @@
 const VALID_DNA_NUCLEOTIDES: [char; 4] = ['A', 'C', 'G', 'T'];
 const VALID_RNA_NUCLEOTIDES: [char; 4] = ['A', 'C', 'G', 'U'];
 
+const DNA_RNA_TRANSCRIPT: [(char, char); 4] = [('G', 'C'), ('C', 'G'), ('T', 'A'), ('A', 'U')];
+
 #[derive(Debug, PartialEq)]
 pub struct Dna {
     strand: String,
@@ -16,7 +18,7 @@ impl Dna {
         let mut errors = dna
             .chars()
             .enumerate()
-            .skip_while(|(i, c)| VALID_DNA_NUCLEOTIDES.contains(c));
+            .skip_while(|(_i, c)| VALID_DNA_NUCLEOTIDES.contains(c));
 
         if let Some((index, _invalid)) = errors.next() {
             return Err(index);
@@ -28,7 +30,19 @@ impl Dna {
     }
 
     pub fn into_rna(self) -> Rna {
-        unimplemented!("Transform Dna {:?} into corresponding Rna", self);
+        let transcribed_strand = self
+            .strand
+            .chars()
+            .map(|dn| {
+                DNA_RNA_TRANSCRIPT
+                    .iter()
+                    .find(|(tdn, _trn)| *tdn == dn)
+                    .unwrap()
+                    .1
+            })
+            .collect::<String>();
+
+        Rna::new(transcribed_strand.as_str()).unwrap()
     }
 }
 
@@ -37,7 +51,7 @@ impl Rna {
         let mut errors = rna
             .chars()
             .enumerate()
-            .skip_while(|(i, c)| VALID_RNA_NUCLEOTIDES.contains(c));
+            .skip_while(|(_i, c)| VALID_RNA_NUCLEOTIDES.contains(c));
 
         if let Some((index, _invalid)) = errors.next() {
             return Err(index);
