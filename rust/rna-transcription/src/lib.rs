@@ -15,10 +15,8 @@ pub struct Rna {
 
 impl Dna {
     pub fn new(dna: &str) -> Result<Dna, usize> {
-        validate_strand(dna, VALID_DNA_NUCLEOTIDES.as_ref())?;
-
-        Ok(Self {
-            strand: dna.to_string(),
+        validate_strand(dna, VALID_DNA_NUCLEOTIDES.as_ref()).map(|valid_strand| Self {
+            strand: valid_strand.to_string(),
         })
     }
 
@@ -35,20 +33,18 @@ impl Dna {
 
 impl Rna {
     pub fn new(rna: &str) -> Result<Rna, usize> {
-        validate_strand(rna, VALID_RNA_NUCLEOTIDES.as_ref())?;
-
-        Ok(Self {
-            strand: rna.to_string(),
+        validate_strand(rna, VALID_RNA_NUCLEOTIDES.as_ref()).map(|valid_strand| Self {
+            strand: valid_strand.to_string(),
         })
     }
 }
 
-fn validate_strand(strand: &str, valid_nucleotides: &[char]) -> Result<(), usize> {
+fn validate_strand<'a>(strand: &'a str, valid_nucleotides: &[char]) -> Result<&'a str, usize> {
     let any_error = strand.chars().position(|c| !valid_nucleotides.contains(&c));
 
     match any_error {
         Some(index) => Err(index),
-        None => Ok(()),
+        None => Ok(strand),
     }
 }
 
