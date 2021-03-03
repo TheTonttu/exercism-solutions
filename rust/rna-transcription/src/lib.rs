@@ -50,13 +50,10 @@ impl Rna {
 }
 
 fn validate_strand(strand: &str, valid_nucleotides: &[char]) -> Result<(), usize> {
-    let mut errors = strand
-        .chars()
-        .enumerate()
-        .skip_while(|(_i, c)| valid_nucleotides.contains(c));
+    let any_error = strand.chars().position(|c| !valid_nucleotides.contains(&c));
 
-    match errors.next() {
-        Some((index, _invalid)) => Err(index),
+    match any_error {
+        Some(index) => Err(index),
         None => Ok(()),
     }
 }
