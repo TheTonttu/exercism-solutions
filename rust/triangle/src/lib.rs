@@ -21,6 +21,6 @@ impl Triangle {
     }
 
     pub fn is_isosceles(&self) -> bool {
-        unimplemented!("Determine if the Triangle is isosceles.");
+        self.sides.iter().collect::<HashSet<_>>().len() == 2
     }
 }
