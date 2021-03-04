@@ -8,7 +8,6 @@ fn positive_length_sides_are_ok() {
 }
 
 #[test]
-#[ignore]
 fn zero_length_sides_are_illegal() {
     let sides = [0, 0, 0];
     let triangle = Triangle::build(sides);
@@ -16,7 +15,6 @@ fn zero_length_sides_are_illegal() {
 }
 
 #[test]
-#[ignore]
 fn one_length_zero_side_first() {
     let sides = [0, 2, 2];
     let triangle = Triangle::build(sides);
@@ -24,7 +22,6 @@ fn one_length_zero_side_first() {
 }
 
 #[test]
-#[ignore]
 fn one_length_zero_side_second() {
     let sides = [2, 0, 2];
     let triangle = Triangle::build(sides);
@@ -32,7 +29,6 @@ fn one_length_zero_side_second() {
 }
 
 #[test]
-#[ignore]
 fn one_length_zero_side_third() {
     let sides = [2, 2, 0];
     let triangle = Triangle::build(sides);
