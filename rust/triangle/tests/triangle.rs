@@ -36,7 +36,6 @@ fn one_length_zero_side_third() {
 }
 
 #[test]
-#[ignore]
 fn equilateral_triangles_have_equal_sides() {
     let sides = [2, 2, 2];
     let triangle = Triangle::build(sides).unwrap();
@@ -45,7 +44,6 @@ fn equilateral_triangles_have_equal_sides() {
 }
 
 #[test]
-#[ignore]
 fn larger_equilateral_triangles_have_equal_sides() {
     let sides = [10, 10, 10];
     let triangle = Triangle::build(sides).unwrap();
