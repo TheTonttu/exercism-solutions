@@ -56,6 +56,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/sieve/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/rna-transcription/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/rna-transcription/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/triangle/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/triangle/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/leap/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/hello-world/target" />
@@ -82,6 +84,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/acronym/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/sieve/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/rna-transcription/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/triangle/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
