@@ -6,9 +6,9 @@ pub struct Triangle {
 
 impl Triangle {
     pub fn build(sides: [u64; 3]) -> Option<Triangle> {
-        match sides.iter().any(|s| *s == 0) {
-            true => None,
-            false => Some(Triangle { sides }),
+        match is_valid_sides(sides) {
+            true => Some(Triangle { sides }),
+            false => None,
         }
     }
 
@@ -23,4 +23,8 @@ impl Triangle {
     pub fn is_isosceles(&self) -> bool {
         self.sides.iter().collect::<HashSet<_>>().len() == 2
     }
+}
+
+fn is_valid_sides(sides: [u64; 3]) -> bool {
+    !sides.iter().any(|s| *s == 0)
 }
