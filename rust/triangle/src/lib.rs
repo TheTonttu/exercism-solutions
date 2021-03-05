@@ -26,5 +26,11 @@ impl Triangle {
 }
 
 fn is_valid_sides(sides: [u64; 3]) -> bool {
-    !sides.iter().any(|s| *s == 0)
+    if sides.iter().any(|s| *s == 0) {
+        return false;
+    }
+
+    let perimeter = sides.iter().sum::<u64>();
+    // a+b > c == (a+b+c)-c > c
+    sides.iter().all(|s| perimeter - *s >= *s)
 }
