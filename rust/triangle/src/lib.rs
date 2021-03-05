@@ -1,11 +1,14 @@
+use num_traits::Num;
 use std::collections::HashSet;
+use std::hash::Hash;
+use std::iter::Sum;
 
-pub struct Triangle {
-    sides: [u64; 3],
+pub struct Triangle<T> {
+    sides: [T; 3],
 }
 
-impl Triangle {
-    pub fn build(sides: [u64; 3]) -> Option<Triangle> {
+impl<'a, T: 'a + Hash + Eq + Num + PartialOrd + Copy + Ord + Sum> Triangle<T> {
+    pub fn build(sides: [T; 3]) -> Option<Triangle<T>> {
         match is_valid_sides(sides) {
             true => Some(Triangle { sides }),
             false => None,
@@ -25,12 +28,12 @@ impl Triangle {
     }
 }
 
-fn is_valid_sides(sides: [u64; 3]) -> bool {
-    if sides.iter().any(|s| *s == 0) {
+fn is_valid_sides<'a, T: 'a + Num + PartialOrd + Copy + Sum>(sides: [T; 3]) -> bool {
+    if sides.iter().any(|s| (*s).is_zero()) {
         return false;
     }
 
-    let perimeter = sides.iter().sum::<u64>();
+    let perimeter = sides.iter().copied().sum::<T>();
     // a+b > c == (a+b+c)-c > c
     sides.iter().all(|s| perimeter - *s >= *s)
 }

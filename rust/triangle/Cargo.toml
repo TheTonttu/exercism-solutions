@@ -3,5 +3,8 @@ edition = "2018"
 name = "triangle"
 version = "0.0.0"
 
+[dependencies]
+num-traits = "0.2"
+
 [features]
 generic = []
