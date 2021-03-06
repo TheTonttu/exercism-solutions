@@ -26,13 +26,13 @@ impl<'a, T: 'a + Num + PartialOrd + Copy + Sum> Triangle<T> {
     }
 
     pub fn is_isosceles(&self) -> bool {
-        (self.sides[0] == self.sides[1])
-            || (self.sides[1] == self.sides[2])
-            || (self.sides[0] == self.sides[2])
+        let (a, b, c) = (self.sides[0], self.sides[1], self.sides[2]);
+        (a == b) || (b == c) || (a == c)
     }
 }
 
 fn is_valid_sides<'a, T: 'a + Num + PartialOrd + Copy + Sum>(sides: [T; 3]) -> bool {
+    // a == 0 || b == 0 || c == 0
     if sides.iter().any(|s| (*s).is_zero()) {
         return false;
     }
