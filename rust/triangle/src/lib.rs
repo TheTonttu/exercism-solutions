@@ -34,13 +34,13 @@ impl<T: Num + PartialOrd + Copy> Triangle<T> {
 
     pub fn is_isosceles(&self) -> bool {
         let (a, b, c) = (self.a, self.b, self.c);
-        (a == b) || (b == c) || (a == c)
+        a == b || b == c || a == c
     }
 }
 
 fn is_each_side_valid<T: Num + PartialOrd + Copy>(sides: [T; 3]) -> bool {
     // a == 0 || b == 0 || c == 0
-    if sides.iter().any(|s| (*s).is_zero()) {
+    if sides.iter().any(|side| (*side).is_zero()) {
         return false;
     }
 
@@ -51,5 +51,5 @@ fn is_each_side_valid<T: Num + PartialOrd + Copy>(sides: [T; 3]) -> bool {
     // let perimeter = sides.iter().copied().sum::<T>();
 
     // a+b > c == (a+b+c)-c > c
-    sides.iter().all(|s| perimeter - *s >= *s)
+    sides.iter().all(|side| perimeter - *side >= *side)
 }
