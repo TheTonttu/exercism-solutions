@@ -1,23 +1,23 @@
 use std::collections::HashMap;
 
-pub struct School {
-    roster: HashMap<u32, Vec<String>>,
+pub struct School<'a> {
+    roster: HashMap<u32, Vec<&'a str>>,
 }
 
-impl School {
+impl<'a> School<'a> {
     pub fn new() -> Self {
         School {
             roster: HashMap::new(),
         }
     }
 
-    pub fn add(&mut self, grade: u32, student: &str) {
+    pub fn add(&mut self, grade: u32, student: &'a str) {
         match self.roster.get_mut(&grade) {
             Some(students) => {
-                students.push(student.to_string());
+                students.push(student);
             }
             None => {
-                self.roster.insert(grade, vec![student.to_string()]);
+                self.roster.insert(grade, vec![student]);
             }
         }
     }
@@ -48,7 +48,7 @@ impl School {
     }
 }
 
-impl Default for School {
+impl Default for School<'_> {
     fn default() -> Self {
         School::new()
     }
