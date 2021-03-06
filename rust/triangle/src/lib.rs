@@ -10,7 +10,7 @@ impl<T: Num + PartialOrd + Copy> Triangle<T> {
     pub fn build(sides: [T; 3]) -> Option<Triangle<T>> {
         match is_each_side_valid(sides) {
             true => {
-                let (a, b, c) = (sides[0], sides[1], sides[2]);
+                let [a, b, c] = sides;
                 Some(Triangle { a, b, c })
             }
             false => None,
@@ -43,7 +43,8 @@ fn is_each_side_valid<T: Num + PartialOrd + Copy>(sides: [T; 3]) -> bool {
     if sides.iter().any(|s| (*s).is_zero()) {
         return false;
     }
-    let (a, b, c) = (sides[0], sides[1], sides[2]);
+
+    let [a, b, c] = sides;
 
     // No need for iter Sum trait
     let perimeter = a + b + c;
