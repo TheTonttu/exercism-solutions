@@ -12,14 +12,8 @@ impl<'a> School<'a> {
     }
 
     pub fn add(&mut self, grade: u32, student: &'a str) {
-        match self.roster.get_mut(&grade) {
-            Some(students) => {
-                students.push(student);
-            }
-            None => {
-                self.roster.insert(grade, vec![student]);
-            }
-        }
+        let grade_students = self.roster.entry(grade).or_insert(Vec::new());
+        grade_students.push(student);
     }
 
     pub fn grades(&self) -> Vec<u32> {
@@ -33,9 +27,9 @@ impl<'a> School<'a> {
     // the internal structure can be completely arbitrary. The tradeoff is that some data
     // must be copied each time `grade` is called.
     pub fn grade(&self, grade: u32) -> Vec<String> {
-        match self.roster.get_key_value(&grade) {
-            Some((_, students)) => {
-                let mut student_list = students
+        match self.roster.get(&grade) {
+            Some(grade_students) => {
+                let mut student_list = grade_students
                     .iter()
                     .map(|s| s.to_string())
                     .collect::<Vec<String>>();
