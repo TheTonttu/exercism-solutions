@@ -7,7 +7,7 @@ pub struct Triangle<T> {
 
 impl<'a, T: 'a + Num + PartialOrd + Copy + Sum> Triangle<T> {
     pub fn build(sides: [T; 3]) -> Option<Triangle<T>> {
-        match is_valid_sides(sides) {
+        match is_each_side_valid(sides) {
             true => Some(Triangle { sides }),
             false => None,
         }
@@ -33,7 +33,7 @@ impl<'a, T: 'a + Num + PartialOrd + Copy + Sum> Triangle<T> {
     }
 }
 
-fn is_valid_sides<'a, T: 'a + Num + PartialOrd + Copy + Sum>(sides: [T; 3]) -> bool {
+fn is_each_side_valid<'a, T: 'a + Num + PartialOrd + Copy + Sum>(sides: [T; 3]) -> bool {
     // a == 0 || b == 0 || c == 0
     if sides.iter().any(|s| (*s).is_zero()) {
         return false;
