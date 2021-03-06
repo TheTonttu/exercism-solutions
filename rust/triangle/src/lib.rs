@@ -14,11 +14,13 @@ impl<'a, T: 'a + Num + PartialOrd + Copy + Sum> Triangle<T> {
     }
 
     pub fn is_equilateral(&self) -> bool {
-        // a==b && b==c
-        self.sides.windows(2).all(|window| match window {
-            [s1, s2] => s1 == s2,
-            _ => false,
-        })
+        let (a, b, c) = (self.sides[0], self.sides[1], self.sides[2]);
+        a == b && b == c
+
+        // self.sides.windows(2).all(|window| match window {
+        //     [s1, s2] => s1 == s2,
+        //     _ => false,
+        // })
     }
 
     pub fn is_scalene(&self) -> bool {
