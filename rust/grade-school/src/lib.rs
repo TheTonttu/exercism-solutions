@@ -12,7 +12,7 @@ impl<'a> School<'a> {
     }
 
     pub fn add(&mut self, grade: u32, student: &'a str) {
-        let grade_students = self.roster.entry(grade).or_insert(Vec::new());
+        let grade_students = self.roster.entry(grade).or_insert_with(Vec::new);
         grade_students.push(student);
     }
 
