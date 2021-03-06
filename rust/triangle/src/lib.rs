@@ -1,13 +1,11 @@
 use num_traits::Num;
-use std::collections::HashSet;
-use std::hash::Hash;
 use std::iter::Sum;
 
 pub struct Triangle<T> {
     sides: [T; 3],
 }
 
-impl<'a, T: 'a + Hash + Eq + Num + PartialOrd + Copy + Ord + Sum> Triangle<T> {
+impl<'a, T: 'a + Num + PartialOrd + Copy + Sum> Triangle<T> {
     pub fn build(sides: [T; 3]) -> Option<Triangle<T>> {
         match is_valid_sides(sides) {
             true => Some(Triangle { sides }),
@@ -16,15 +14,21 @@ impl<'a, T: 'a + Hash + Eq + Num + PartialOrd + Copy + Ord + Sum> Triangle<T> {
     }
 
     pub fn is_equilateral(&self) -> bool {
-        self.sides.iter().min() == self.sides.iter().max()
+        // a==b && b==c
+        self.sides.windows(2).all(|window| match window {
+            [s1, s2] => s1 == s2,
+            _ => false,
+        })
     }
 
     pub fn is_scalene(&self) -> bool {
-        self.sides.iter().count() == self.sides.iter().collect::<HashSet<_>>().len()
+        !(self.is_equilateral() || self.is_isosceles())
     }
 
     pub fn is_isosceles(&self) -> bool {
-        self.sides.iter().collect::<HashSet<_>>().len() == 2
+        (self.sides[0] == self.sides[1])
+            || (self.sides[1] == self.sides[2])
+            || (self.sides[0] == self.sides[2])
     }
 }
 
