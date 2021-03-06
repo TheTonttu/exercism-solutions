@@ -22,10 +22,6 @@ impl<'a> School<'a> {
         grades
     }
 
-    // If `grade` returned a reference, `School` would be forced to keep a `Vec<String>`
-    // internally to lend out. By returning an owned vector of owned `String`s instead,
-    // the internal structure can be completely arbitrary. The tradeoff is that some data
-    // must be copied each time `grade` is called.
     pub fn grade(&self, grade: u32) -> Vec<String> {
         match self.roster.get(&grade) {
             Some(grade_students) => {
