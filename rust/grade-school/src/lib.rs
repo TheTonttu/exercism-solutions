@@ -1,7 +1,7 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 pub struct School {
-    roster: HashMap<String, u32>,
+    roster: HashMap<u32, Vec<String>>,
 }
 
 impl School {
@@ -12,19 +12,18 @@ impl School {
     }
 
     pub fn add(&mut self, grade: u32, student: &str) {
-        let student_name = student.to_string();
-        self.roster.insert(student_name, grade);
+        match self.roster.get_mut(&grade) {
+            Some(students) => {
+                students.push(student.to_string());
+            }
+            None => {
+                self.roster.insert(grade, vec![student.to_string()]);
+            }
+        }
     }
 
     pub fn grades(&self) -> Vec<u32> {
-        let unique_grades = self.roster.values().collect::<HashSet<_>>();
-        let mut grades = unique_grades
-            .iter()
-            // kek
-            .copied()
-            .copied()
-            .collect::<Vec<_>>();
-
+        let mut grades = self.roster.keys().copied().collect::<Vec<_>>();
         grades.sort_unstable();
         grades
     }
@@ -34,15 +33,18 @@ impl School {
     // the internal structure can be completely arbitrary. The tradeoff is that some data
     // must be copied each time `grade` is called.
     pub fn grade(&self, grade: u32) -> Vec<String> {
-        let mut students = self
-            .roster
-            .iter()
-            .filter(|(_k, v)| **v == grade)
-            .map(|(k, _v)| k.clone())
-            .collect::<Vec<_>>();
+        match self.roster.get_key_value(&grade) {
+            Some((_, students)) => {
+                let mut student_list = students
+                    .iter()
+                    .map(|s| s.to_string())
+                    .collect::<Vec<String>>();
 
-        students.sort();
-        students
+                student_list.sort();
+                student_list
+            }
+            None => Vec::new(),
+        }
     }
 }
 
