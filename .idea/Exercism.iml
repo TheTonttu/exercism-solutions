@@ -60,6 +60,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/triangle/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/grade-school/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/grade-school/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/binary-search/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/binary-search/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/leap/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/hello-world/target" />
@@ -88,6 +90,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/rna-transcription/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/triangle/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/grade-school/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/binary-search/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
