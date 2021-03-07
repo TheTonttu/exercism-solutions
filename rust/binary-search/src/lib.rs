@@ -2,9 +2,8 @@ use std::cmp::Ordering;
 
 pub fn find(array: &[i32], key: i32) -> Option<usize> {
     let mid_index = match array.len() {
-        0 | 1 => 0,
-        2..=usize::MAX => (array.len() - 1) / 2,
-        _ => panic!("wat"),
+        len if len >= 3 => (len - 1) / 2,
+        _ => 0,
     };
 
     match array.get(mid_index) {
