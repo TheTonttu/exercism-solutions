@@ -6,7 +6,6 @@ fn finds_a_value_in_an_array_with_one_element() {
 }
 
 #[test]
-#[ignore]
 fn finds_first_value_in_an_array_with_two_element() {
     assert_eq!(find(&[1, 2], 1), Some(0));
 }
