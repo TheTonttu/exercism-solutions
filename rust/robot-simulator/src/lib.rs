@@ -45,8 +45,18 @@ impl Robot {
         self
     }
 
-    pub fn advance(self) -> Self {
-        unimplemented!()
+    pub fn advance(mut self) -> Self {
+        let movement = match self.dir {
+            North => (0, 1),
+            East => (1, 0),
+            South => (0, -1),
+            West => (-1, 0)
+        };
+
+        self.x_pos += movement.0;
+        self.y_pos += movement.1;
+
+        self
     }
 
     pub fn instructions(self, instructions: &str) -> Self {
