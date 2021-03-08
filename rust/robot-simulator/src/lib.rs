@@ -61,18 +61,17 @@ impl Robot {
         self
     }
 
-    pub fn instructions(mut self, instructions: &str) -> Self {
-        // Probably not very efficient if we are cloning all the time...
-        for c in instructions.chars() {
-            let temp = match c {
-                'A' => self.advance(),
-                'L' => self.turn_left(),
-                'R' => self.turn_right(),
-                _ => self,
-            };
-            self = temp;
+    pub fn instructions(self, instructions: &str) -> Self {
+        instructions.chars().fold(self, |robot, instr| robot.exec_instruction(instr))
+    }
+
+    fn exec_instruction(self, instruction: char) -> Self {
+        match instruction {
+            'A' => self.advance(),
+            'L' => self.turn_left(),
+            'R' => self.turn_right(),
+            _ => self,
         }
-        self
     }
 
     pub fn position(&self) -> (i32, i32) {
