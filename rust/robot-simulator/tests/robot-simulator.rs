@@ -8,7 +8,6 @@ fn robots_are_created_with_position_and_direction() {
 }
 
 #[test]
-#[ignore]
 fn positions_can_be_negative() {
     let robot = Robot::new(-1, -1, Direction::South);
     assert_eq!((-1, -1), robot.position());
