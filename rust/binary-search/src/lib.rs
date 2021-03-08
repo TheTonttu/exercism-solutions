@@ -1,25 +1,16 @@
 use std::cmp::Ordering;
 
-pub fn find(array: &[i32], key: i32) -> Option<usize> {
-    let mid_index = match array.len() {
+pub fn find<K: Ord, A: AsRef<[K]>>(array: A, key: K) -> Option<usize> {
+    let values = array.as_ref();
+
+    let mid_index = match values.len() {
         len if len >= 3 => (len - 1) / 2,
         _ => 0,
     };
 
-    match array.get(mid_index) {
-        Some(mid_value) => {
-            match mid_value.cmp(&key) {
-                Ordering::Less => match find(&array[mid_index + 1..], key) {
-                    Some(sub_index) => Some((mid_index + 1) + sub_index),
-                    None => None,
-                },
-                Ordering::Equal => Some(mid_index),
-                Ordering::Greater => match find(&array[0..mid_index], key) {
-                    Some(sub_index) => Some(sub_index),
-                    None => None,
-                },
-            }
-        }
-        None => None
+    match key.cmp(values.get(mid_index)?) {
+        Ordering::Less => find(&values[0..mid_index], key),
+        Ordering::Equal => Some(mid_index),
+        Ordering::Greater => find(&values[mid_index + 1..], key).map(|i| i + mid_index + 1),
     }
 }
