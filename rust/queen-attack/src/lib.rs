@@ -23,6 +23,20 @@ impl ChessPosition {
     fn is_valid_position(rank: &i32, file: &i32) -> bool {
         (0..=ChessPosition::MAX_FILE).contains(file) && (0..=ChessPosition::MAX_RANK).contains(rank)
     }
+
+    fn is_same_file(&self, other: &ChessPosition) -> bool {
+        self.file == other.file
+    }
+
+    fn is_same_rank(&self, other: &ChessPosition) -> bool {
+        self.rank == other.rank
+    }
+
+    fn is_diagonal_to(&self, other: &ChessPosition) -> bool {
+        // Positions are diagonal if difference in coordinates is equal
+        // |x1 - x2| == |y1 - y2|
+        (self.file - other.file).abs() == (self.rank - other.rank).abs()
+    }
 }
 
 impl Queen {
@@ -31,12 +45,8 @@ impl Queen {
     }
 
     pub fn can_attack(&self, other: &Queen) -> bool {
-        let (f1, r1) = (self.position.file, self.position.rank);
-        let (f2, r2) = (other.position.file, other.position.rank);
-
-        f1 == f2 || r1 == r2
-            // Positions are diagonal if difference in coordinates is equal
-            // |x1 - x2| == |y1 - y2|
-            || (f1 - f2).abs() == (r1 - r2).abs()
+        self.position.is_same_file(&other.position)
+            || self.position.is_same_rank(&other.position)
+            || self.position.is_diagonal_to(&other.position)
     }
 }
