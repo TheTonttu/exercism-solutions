@@ -1,5 +1,4 @@
-// The code below is a stub. Just enough to satisfy the compiler.
-// In order to pass the tests you can add-to or change any of this code.
+use crate::Direction::{East, North, South, West};
 
 #[derive(PartialEq, Debug)]
 pub enum Direction {
@@ -24,12 +23,26 @@ impl Robot {
         }
     }
 
-    pub fn turn_right(self) -> Self {
-        unimplemented!()
+    pub fn turn_right(mut self) -> Self {
+        let new_dir = match self.dir {
+            North => East,
+            East => South,
+            South => West,
+            West => North,
+        };
+        self.dir = new_dir;
+        self
     }
 
-    pub fn turn_left(self) -> Self {
-        unimplemented!()
+    pub fn turn_left(mut self) -> Self {
+        let new_dir = match self.dir {
+            North => West,
+            East => North,
+            South => East,
+            West => South,
+        };
+        self.dir = new_dir;
+        self
     }
 
     pub fn advance(self) -> Self {
