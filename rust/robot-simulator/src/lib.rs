@@ -1,6 +1,6 @@
-use crate::Direction::{East, North, South, West};
+use crate::Direction::{North, East, South, West};
 
-#[derive(PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Direction {
     North,
     East,
@@ -8,6 +8,7 @@ pub enum Direction {
     West,
 }
 
+#[derive(Clone, Copy)]
 pub struct Robot {
     dir: Direction,
     x_pos: i32,
@@ -60,11 +61,18 @@ impl Robot {
         self
     }
 
-    pub fn instructions(self, instructions: &str) -> Self {
-        unimplemented!(
-            "Follow the given sequence of instructions: {}",
-            instructions
-        )
+    pub fn instructions(mut self, instructions: &str) -> Self {
+        // Probably not very efficient if we are cloning all the time...
+        for c in instructions.chars() {
+            let wut = match c {
+                'A' => self.advance(),
+                'L' => self.turn_left(),
+                'R' => self.turn_right(),
+                _ => self,
+            };
+            self = wut;
+        }
+        self
     }
 
     pub fn position(&self) -> (i32, i32) {
