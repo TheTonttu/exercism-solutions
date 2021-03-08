@@ -62,6 +62,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/grade-school/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/binary-search/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/binary-search/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/queen-attack/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/queen-attack/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/robot-simulator/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/robot-simulator/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
@@ -94,6 +96,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/grade-school/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/binary-search/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/robot-simulator/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/queen-attack/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
