@@ -1,4 +1,4 @@
-use crate::Direction::{North, East, South, West};
+use crate::Direction::{East, North, South, West};
 
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Direction {
@@ -62,7 +62,7 @@ impl Robot {
     }
 
     pub fn instructions(self, instructions: &str) -> Self {
-        instructions.chars().fold(self, |robot, instr| robot.exec_instruction(instr))
+        instructions.chars().fold(self, Robot::exec_instruction)
     }
 
     fn exec_instruction(self, instruction: char) -> Self {
