@@ -50,11 +50,12 @@ impl Robot {
             North => (0, 1),
             East => (1, 0),
             South => (0, -1),
-            West => (-1, 0)
+            West => (-1, 0),
         };
 
-        self.x_pos += movement.0;
-        self.y_pos += movement.1;
+        let (mov_x, mov_y) = movement;
+        self.x_pos += mov_x;
+        self.y_pos += mov_y;
 
         self
     }
