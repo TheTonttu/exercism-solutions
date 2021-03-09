@@ -20,14 +20,14 @@ impl Frame {
 }
 
 pub struct BowlingGame {
-    frameless_rolls: Vec<u16>,
+    pending_rolls: Vec<u16>,
     frames: Vec<Frame>,
 }
 
 impl BowlingGame {
     pub fn new() -> Self {
         Self {
-            frameless_rolls: vec![],
+            pending_rolls: vec![],
             frames: Vec::with_capacity(FRAMES_PER_GAME as usize),
         }
     }
@@ -36,27 +36,37 @@ impl BowlingGame {
         match (self.frames.len(), pins) {
             (frame_count, _) if frame_count >= FRAMES_PER_GAME => Err(Error::GameComplete),
             (_, pins) if (0..=MAX_PINS_PER_ROLL).contains(&pins) => {
-                self.frameless_rolls.push(pins);
+                self.pending_rolls.push(pins);
 
-                match self.frameless_rolls.as_slice() {
+                match self.pending_rolls.as_slice() {
                     // Strike
                     [r1, r2, r3] if *r1 == 10 => {
                         self.frames.push(Frame::new(&[*r1, *r2, *r3]));
-                        self.frameless_rolls.remove(0);
+                        self.pending_rolls.remove(0);
+                        println!("Strike!");
                     }
                     // Spare
                     [r1, r2, r3] if *r1 + *r2 == 10 => {
                         self.frames.push(Frame::new(&[*r1, *r2, *r3]));
-                        self.frameless_rolls.remove(0);
-                        self.frameless_rolls.remove(0);
+                        self.pending_rolls.remove(0);
+                        self.pending_rolls.remove(0);
+                        println!("Spare!");
                     }
+                    // Open + 1 roll, e.g. after strike
+                    [r1, r2, _] if *r1 + *r2 < 10 => {
+                        self.frames.push(Frame::new(&[*r1, *r2]));
+                        self.pending_rolls.remove(0);
+                        self.pending_rolls.remove(0);
+                        println!("Open! + 1 roll");
+                    },
                     // Open
                     [r1, r2] if *r1 + *r2 < 10 => {
                         self.frames.push(Frame::new(&[*r1, *r2]));
-                        self.frameless_rolls.remove(0);
-                        self.frameless_rolls.remove(0);
+                        self.pending_rolls.remove(0);
+                        self.pending_rolls.remove(0);
+                        println!("Open!");
                     }
-                    // No complete frame so let's wait
+                    // Rolls don't count as complete frame so let's wait
                     _ => {}
                 }
 
