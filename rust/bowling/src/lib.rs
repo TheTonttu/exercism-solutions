@@ -19,3 +19,10 @@ impl BowlingGame {
         unimplemented!("Return the score if the game is complete, or None if not.");
     }
 }
+
+impl Default for BowlingGame {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
