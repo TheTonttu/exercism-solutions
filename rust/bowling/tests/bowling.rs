@@ -33,7 +33,6 @@ fn you_cannot_score_a_game_with_no_rolls() {
 }
 
 #[test]
-#[ignore]
 fn a_game_score_is_none_if_fewer_than_ten_frames_have_been_rolled() {
     let mut game = BowlingGame::new();
 
@@ -46,7 +45,6 @@ fn a_game_score_is_none_if_fewer_than_ten_frames_have_been_rolled() {
 }
 
 #[test]
-#[ignore]
 fn a_roll_is_err_if_the_game_is_done() {
     let mut game = BowlingGame::new();
 
