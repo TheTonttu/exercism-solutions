@@ -257,7 +257,6 @@ fn all_strikes_is_a_perfect_score_of_300() {
 }
 
 #[test]
-#[ignore]
 fn you_cannot_roll_more_than_ten_pins_in_a_single_frame() {
     let mut game = BowlingGame::new();
 
@@ -266,7 +265,6 @@ fn you_cannot_roll_more_than_ten_pins_in_a_single_frame() {
 }
 
 #[test]
-#[ignore]
 fn first_bonus_ball_after_a_final_strike_cannot_score_an_invalid_number_of_pins() {
     let mut game = BowlingGame::new();
 
@@ -280,7 +278,6 @@ fn first_bonus_ball_after_a_final_strike_cannot_score_an_invalid_number_of_pins(
 }
 
 #[test]
-#[ignore]
 fn the_two_balls_after_a_final_strike_cannot_score_an_invalid_number_of_pins() {
     let mut game = BowlingGame::new();
 

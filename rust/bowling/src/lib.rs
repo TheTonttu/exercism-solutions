@@ -43,7 +43,7 @@ impl BowlingGame {
                     [r1, r2, r3] if *r1 == 10 => {
                         self.frames.push(Frame::new(&[*r1, *r2, *r3]));
                         self.pending_rolls.remove(0);
-                        println!("Strike!");
+                        Ok(())
                     }
                     // Spare
                     [r1, r2, r3] if *r1 + *r2 == 10 => {
@@ -51,6 +51,7 @@ impl BowlingGame {
                         self.pending_rolls.remove(0);
                         self.pending_rolls.remove(0);
                         println!("Spare!");
+                        Ok(())
                     }
                     // Open + 1 roll, e.g. after strike
                     [r1, r2, _] if *r1 + *r2 < 10 => {
@@ -58,6 +59,7 @@ impl BowlingGame {
                         self.pending_rolls.remove(0);
                         self.pending_rolls.remove(0);
                         println!("Open! + 1 roll");
+                        Ok(())
                     },
                     // Open
                     [r1, r2] if *r1 + *r2 < 10 => {
@@ -65,12 +67,15 @@ impl BowlingGame {
                         self.pending_rolls.remove(0);
                         self.pending_rolls.remove(0);
                         println!("Open!");
-                    }
+                        Ok(())
+                    },
+                    // Two consecutive rolls can only have at max 10 pins
+                    [r1, r2] if *r1 + *r2 > 10 => {
+                        Err(Error::NotEnoughPinsLeft)
+                    },
                     // Rolls don't count as complete frame so let's wait
-                    _ => {}
+                    _ => Ok(())
                 }
-
-                Ok(())
             }
             _ => Err(Error::NotEnoughPinsLeft),
         }
