@@ -38,7 +38,7 @@ impl BowlingGame {
 
     pub fn score(&self) -> Option<u16> {
         match self.frame_count {
-            FRAMES_PER_GAME => Some(self.roll_count),
+            FRAMES_PER_GAME => Some(self.score),
             _ => None,
         }
     }

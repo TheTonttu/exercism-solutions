@@ -57,7 +57,6 @@ fn a_roll_is_err_if_the_game_is_done() {
 }
 
 #[test]
-#[ignore]
 fn twenty_zero_pin_rolls_scores_zero() {
     let mut game = BowlingGame::new();
 
