@@ -8,17 +8,15 @@ pub enum Error {
 }
 
 pub struct BowlingGame {
-    roll_count: u16,
+    rolls: Vec<u16>,
     frame_count: u16,
-    score: u16,
 }
 
 impl BowlingGame {
     pub fn new() -> Self {
         Self {
+            rolls: vec![],
             frame_count: 0,
-            roll_count: 0,
-            score: 0,
         }
     }
 
@@ -26,10 +24,9 @@ impl BowlingGame {
         match (self.frame_count, pins) {
             (frame_count, _) if frame_count >= FRAMES_PER_GAME => Err(Error::GameComplete),
             (_, pins) if (0..=MAX_PINS_PER_ROLL).contains(&pins) => {
-                self.roll_count += 1;
+                self.rolls.push(pins);
                 // TODO: Proper open frame management
-                self.frame_count = self.roll_count / 2;
-                self.score += pins;
+                self.frame_count = self.rolls.len() as u16 / 2;
                 Ok(())
             }
             _ => Err(Error::NotEnoughPinsLeft),
@@ -38,7 +35,7 @@ impl BowlingGame {
 
     pub fn score(&self) -> Option<u16> {
         match self.frame_count {
-            FRAMES_PER_GAME => Some(self.score),
+            FRAMES_PER_GAME => Some(self.rolls.iter().sum()),
             _ => None,
         }
     }
