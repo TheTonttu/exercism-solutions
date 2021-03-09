@@ -7,27 +7,34 @@ pub enum Error {
 }
 
 pub struct BowlingGame {
+    roll_count: u16,
     score: u16,
 }
 
 impl BowlingGame {
     pub fn new() -> Self {
-        Self { score: 0 }
+        Self {
+            roll_count: 0,
+            score: 0,
+        }
     }
 
     pub fn roll(&mut self, pins: u16) -> Result<(), Error> {
         match pins {
             0..=MAX_PINS_PER_ROLL => {
+                self.roll_count += 1;
                 self.score += pins;
                 Ok(())
             }
-            _ => Err(Error::NotEnoughPinsLeft)
+            _ => Err(Error::NotEnoughPinsLeft),
         }
-
     }
 
     pub fn score(&self) -> Option<u16> {
-        unimplemented!("Return the score if the game is complete, or None if not.");
+        match self.roll_count {
+            1..=u16::MAX => Some(self.roll_count),
+            _ => None,
+        }
     }
 }
 
