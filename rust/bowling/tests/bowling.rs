@@ -68,7 +68,6 @@ fn twenty_zero_pin_rolls_scores_zero() {
 }
 
 #[test]
-#[ignore]
 fn ten_frames_without_a_strike_or_spare() {
     let mut game = BowlingGame::new();
 
@@ -81,7 +80,6 @@ fn ten_frames_without_a_strike_or_spare() {
 }
 
 #[test]
-#[ignore]
 fn spare_in_the_first_frame_followed_by_zeros() {
     let mut game = BowlingGame::new();
 
@@ -96,7 +94,6 @@ fn spare_in_the_first_frame_followed_by_zeros() {
 }
 
 #[test]
-#[ignore]
 fn points_scored_in_the_roll_after_a_spare_are_counted_twice_as_a_bonus() {
     let mut game = BowlingGame::new();
 
