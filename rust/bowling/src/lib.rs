@@ -14,13 +14,14 @@ pub enum Error {
 enum FrameType {
     Open,
     Spare,
-    Strike
+    Strike,
+    LastFrame,
 }
 
 #[derive(Debug)]
 struct Frame {
     rolls: Vec<u16>,
-    frame_type: FrameType
+    frame_type: FrameType,
 }
 
 impl Frame {
@@ -29,11 +30,11 @@ impl Frame {
             [r1] if *r1 == 10 => FrameType::Strike,
             [r1, r2] if *r1 + *r2 == 10 => FrameType::Spare,
             [r1, r2] if *r1 + *r2 < 10 => FrameType::Open,
-            _ => unimplemented!("Unsupported {:?}", rolls)
+            _ => FrameType::LastFrame,
         };
         Self {
             rolls: Vec::from(rolls),
-            frame_type
+            frame_type,
         }
     }
 }
@@ -53,12 +54,19 @@ impl BowlingGame {
 
     pub fn roll(&mut self, pins: u16) -> Result<(), Error> {
         // TODO: Get rid of collect
-        match try_create_frame(self.pending_rolls.iter().chain(once(&pins)).copied().collect::<Vec<u16>>(), self.frames.len() + 1)? {
+        match try_create_frame(
+            self.pending_rolls
+                .iter()
+                .chain(once(&pins))
+                .copied()
+                .collect::<Vec<u16>>(),
+            self.frames.len() + 1,
+        )? {
             Some(frame) => {
                 self.frames.push(frame);
                 self.pending_rolls.clear();
                 Ok(())
-            },
+            }
             None => {
                 self.pending_rolls.push(pins);
                 Ok(())
@@ -71,22 +79,31 @@ impl BowlingGame {
             FRAMES_PER_GAME => {
                 let mut score = 0;
 
-                self.frames.iter().enumerate().for_each(|(e,f)| println!("{}. {:?}", e+1, f));
-                
+                self.frames
+                    .iter()
+                    .enumerate()
+                    .for_each(|(e, f)| println!("{}. {:?}", e + 1, f));
+
                 for (index, frame) in self.frames.iter().enumerate() {
                     let roll_points: u16 = frame.rolls.iter().sum();
 
                     let bonus_roll_count = match frame.frame_type {
-                        FrameType::Open => 0,
+                        FrameType::Open | FrameType::LastFrame => 0,
                         FrameType::Spare => 1,
                         FrameType::Strike => 2,
                     };
-                    let bonus = self.frames.iter().skip(index+1).flat_map(|f| f.rolls.iter()).take(bonus_roll_count).sum::<u16>();
+                    let bonus = self
+                        .frames
+                        .iter()
+                        .skip(index + 1)
+                        .flat_map(|f| f.rolls.iter())
+                        .take(bonus_roll_count)
+                        .sum::<u16>();
                     score += roll_points + bonus;
                 }
 
                 Some(score)
-            },
+            }
             _ => None,
         }
     }
@@ -98,21 +115,38 @@ impl Default for BowlingGame {
     }
 }
 
-fn try_create_frame<T: AsRef<[u16]>>(rolls: T, frame_number: usize) -> Result<Option<Frame>, Error> {
+fn try_create_frame<T: AsRef<[u16]>>(
+    rolls: T,
+    frame_number: usize,
+) -> Result<Option<Frame>, Error> {
     let rolls = rolls.as_ref();
     println!("{:?}", rolls);
     match (frame_number, rolls) {
         (frame_number, _) if frame_number > FRAMES_PER_GAME => Err(Error::GameComplete),
-        (_, [r1, r2]) if *r1 + *r2 > MAX_PINS_PER_ROLL => {
-            Err(Error::NotEnoughPinsLeft)
-        },
-        (_, [r1]) if *r1 > MAX_PINS_PER_ROLL => {
-            Err(Error::NotEnoughPinsLeft)
-        },
-        // Continue collecting
-        (_, [r1]) if *r1 < STRIKE_ROLL => {
-            Ok(None)
+        // Special last frame
+        (frame_number, last_rolls) if frame_number == FRAMES_PER_GAME => {
+            match last_rolls {
+                [r1, r2, r3]
+                    if *r1 > MAX_PINS_PER_ROLL
+                        || *r2 > MAX_PINS_PER_ROLL
+                        || *r3 > MAX_PINS_PER_ROLL
+                        || (21..30).contains(&(*r1 + *r2 + *r3)) =>
+                {
+                    Err(Error::NotEnoughPinsLeft)
+                }
+                [_, r2] if *r2 > MAX_PINS_PER_ROLL => Err(Error::NotEnoughPinsLeft),
+                // Fill ball
+                [r1, r2, _] if *r1 == MAX_PINS_PER_ROLL || *r1 + *r2 == MAX_PINS_PER_ROLL => {
+                    Ok(Some(Frame::new(rolls)))
+                }
+                [r1, r2] if *r1 + *r2 < MAX_PINS_PER_ROLL => Ok(Some(Frame::new(rolls))),
+                _ => Ok(None),
+            }
         }
-        _ => Ok(Some(Frame::new(rolls)))
+        (_, [r1, r2]) if *r1 + *r2 > MAX_PINS_PER_ROLL => Err(Error::NotEnoughPinsLeft),
+        (_, [r1]) if *r1 > MAX_PINS_PER_ROLL => Err(Error::NotEnoughPinsLeft),
+        // Continue collecting
+        (_, [r1]) if *r1 < STRIKE_ROLL => Ok(None),
+        _ => Ok(Some(Frame::new(rolls))),
     }
 }
