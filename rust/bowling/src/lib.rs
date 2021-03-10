@@ -127,10 +127,17 @@ fn try_create_frame<T: AsRef<[u16]>>(
         (frame_number, last_rolls) if frame_number == FRAMES_PER_GAME => {
             match last_rolls {
                 [r1, r2, r3]
+                    if *r1 == MAX_PINS_PER_ROLL
+                        && *r2 < MAX_PINS_PER_ROLL
+                        && (*r2 + *r3) > MAX_PINS_PER_ROLL =>
+                {
+                    Err(Error::NotEnoughPinsLeft)
+                }
+                [r1, r2, r3]
                     if *r1 > MAX_PINS_PER_ROLL
                         || *r2 > MAX_PINS_PER_ROLL
                         || *r3 > MAX_PINS_PER_ROLL
-                        || (21..30).contains(&(*r1 + *r2 + *r3)) =>
+                        || (*r2 + *r3) > 20 =>
                 {
                     Err(Error::NotEnoughPinsLeft)
                 }
