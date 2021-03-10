@@ -121,12 +121,14 @@ fn try_create_frame<T: AsRef<[u16]>>(
 ) -> Result<Option<Frame>, Error> {
     let rolls = rolls.as_ref();
     println!("{:?}", rolls);
+
     match (frame_number, rolls) {
         (frame_number, _) if frame_number > FRAMES_PER_GAME => Err(Error::GameComplete),
         // Special last frame
         (frame_number, last_rolls) if frame_number == FRAMES_PER_GAME => {
             match last_rolls {
                 [r1, r2, r3]
+                    // Strike followed by knocking too many pins with fill ball
                     if *r1 == MAX_PINS_PER_ROLL
                         && *r2 < MAX_PINS_PER_ROLL
                         && (*r2 + *r3) > MAX_PINS_PER_ROLL =>
@@ -134,10 +136,10 @@ fn try_create_frame<T: AsRef<[u16]>>(
                     Err(Error::NotEnoughPinsLeft)
                 }
                 [r1, r2, r3]
+                    // Any of the rolls knock down too many pins
                     if *r1 > MAX_PINS_PER_ROLL
                         || *r2 > MAX_PINS_PER_ROLL
-                        || *r3 > MAX_PINS_PER_ROLL
-                        || (*r2 + *r3) > 20 =>
+                        || *r3 > MAX_PINS_PER_ROLL =>
                 {
                     Err(Error::NotEnoughPinsLeft)
                 }
@@ -147,6 +149,7 @@ fn try_create_frame<T: AsRef<[u16]>>(
                     Ok(Some(Frame::new(rolls)))
                 }
                 [r1, r2] if *r1 + *r2 < MAX_PINS_PER_ROLL => Ok(Some(Frame::new(rolls))),
+                // Continue collecting
                 _ => Ok(None),
             }
         }
