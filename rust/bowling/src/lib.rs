@@ -71,38 +71,17 @@ impl BowlingGame {
             FRAMES_PER_GAME => {
                 let mut score = 0;
 
-                self.frames.iter().enumerate().for_each(|(e,f)| println!("{}. {:?}", e, f));
-
-                // WTF...
+                self.frames.iter().enumerate().for_each(|(e,f)| println!("{}. {:?}", e+1, f));
+                
                 for (index, frame) in self.frames.iter().enumerate() {
                     let roll_points: u16 = frame.rolls.iter().sum();
-                    let bonus = match frame.frame_type {
-                        FrameType::Open => 0,
-                        // Spare => bonus from next roll
-                        FrameType::Spare => {
-                            match self.frames.get(index + 1) {
-                                Some(next_frame) => *next_frame.rolls.first().unwrap(),
-                                None => 0,
-                            }
-                        },
-                        // Strike => bonus from next 2 rolls
-                        FrameType::Strike => {
-                            match self.frames.get(index + 1) {
-                                Some(next_frame) => match next_frame.frame_type {
-                                    FrameType::Open | FrameType::Spare => next_frame.rolls.iter().sum::<u16>(),
-                                    // If next frame is strike then it only has 1 roll and we need to take the first roll from consecutive frame
-                                    FrameType::Strike => {
-                                        match self.frames.get(index + 2) {
-                                            Some(frame_after_next) => next_frame.rolls.iter().sum::<u16>() + *frame_after_next.rolls.first().unwrap(),
-                                            None => next_frame.rolls.iter().sum::<u16>(),
-                                        }
-                                    }
-                                },
-                                None => 0,
-                            }
-                        },
-                    };
 
+                    let bonus_roll_count = match frame.frame_type {
+                        FrameType::Open => 0,
+                        FrameType::Spare => 1,
+                        FrameType::Strike => 2,
+                    };
+                    let bonus = self.frames.iter().skip(index+1).flat_map(|f| f.rolls.iter()).take(bonus_roll_count).sum::<u16>();
                     score += roll_points + bonus;
                 }
 
