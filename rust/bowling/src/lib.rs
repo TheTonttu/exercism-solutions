@@ -53,7 +53,6 @@ impl BowlingGame {
     }
 
     pub fn roll(&mut self, pins: u16) -> Result<(), Error> {
-        // TODO: Get rid of collect
         match try_create_frame(
             self.pending_rolls
                 .iter()
@@ -78,11 +77,6 @@ impl BowlingGame {
         match self.frames.len() {
             FRAMES_PER_GAME => {
                 let mut score = 0;
-
-                self.frames
-                    .iter()
-                    .enumerate()
-                    .for_each(|(e, f)| println!("{}. {:?}", e + 1, f));
 
                 for (index, frame) in self.frames.iter().enumerate() {
                     let roll_points: u16 = frame.rolls.iter().sum();
@@ -120,7 +114,6 @@ fn try_create_frame<T: AsRef<[u16]>>(
     frame_number: usize,
 ) -> Result<Option<Frame>, Error> {
     let rolls = rolls.as_ref();
-    println!("{:?}", rolls);
 
     match (frame_number, rolls) {
         (frame_number, _) if frame_number > FRAMES_PER_GAME => Err(Error::GameComplete),
