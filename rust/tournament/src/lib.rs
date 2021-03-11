@@ -48,10 +48,8 @@ pub fn tally(match_results: &str) -> String {
 }
 
 fn parse_match_results(match_results: &str) -> Vec<MatchResult> {
-    let lines: Vec<&str> = match_results.split('\n').collect();
-
-    lines
-        .iter()
+    match_results
+        .split('\n')
         .map(|l| {
             let elements: Vec<&str> = l.split(';').collect();
             match elements.as_slice() {
