@@ -18,9 +18,9 @@ enum MatchResult<'a> {
     },
 }
 
-#[derive(Clone)]
-struct TeamStatistics {
-    team_name: String,
+#[derive(Copy, Clone)]
+struct TeamStatistics<'a> {
+    team_name: &'a str,
     matches_played: u32,
     matches_won: u32,
     matches_drawn: u32,
@@ -28,8 +28,8 @@ struct TeamStatistics {
     score: u32,
 }
 
-impl TeamStatistics {
-    fn new(team_name: String) -> Self {
+impl<'a> TeamStatistics<'a> {
+    fn new(team_name: &'a str) -> Self {
         Self {
             team_name,
             matches_played: 0,
@@ -78,7 +78,7 @@ fn parse_match_results(match_results: &str) -> Vec<MatchResult> {
 }
 
 fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> {
-    let mut team_stats: HashMap<String, TeamStatistics> = HashMap::new();
+    let mut team_stats: HashMap<&str, TeamStatistics> = HashMap::new();
 
     for r in match_results {
         match r {
@@ -87,15 +87,15 @@ fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> 
                 visiting_team,
             } => {
                 let ht = team_stats
-                    .entry(home_team.to_string())
-                    .or_insert_with(|| TeamStatistics::new(home_team.to_string()));
+                    .entry(home_team)
+                    .or_insert_with(|| TeamStatistics::new(home_team));
                 ht.matches_played += 1;
                 ht.matches_won += 1;
                 ht.score += WIN_POINTS;
 
                 let vt = team_stats
-                    .entry(visiting_team.to_string())
-                    .or_insert_with(|| TeamStatistics::new(visiting_team.to_string()));
+                    .entry(visiting_team)
+                    .or_insert_with(|| TeamStatistics::new(visiting_team));
                 vt.matches_played += 1;
                 vt.matches_lost += 1;
             }
@@ -104,15 +104,15 @@ fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> 
                 visiting_team,
             } => {
                 let ht = team_stats
-                    .entry(home_team.to_string())
-                    .or_insert_with(|| TeamStatistics::new(home_team.to_string()));
+                    .entry(home_team)
+                    .or_insert_with(|| TeamStatistics::new(home_team));
                 ht.matches_played += 1;
                 ht.matches_drawn += 1;
                 ht.score += DRAW_POINTS;
 
                 let vt = team_stats
-                    .entry(visiting_team.to_string())
-                    .or_insert_with(|| TeamStatistics::new(visiting_team.to_string()));
+                    .entry(visiting_team)
+                    .or_insert_with(|| TeamStatistics::new(visiting_team));
                 vt.matches_played += 1;
                 vt.matches_drawn += 1;
                 vt.score += DRAW_POINTS;
@@ -122,14 +122,14 @@ fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> 
                 visiting_team,
             } => {
                 let ht = team_stats
-                    .entry(home_team.to_string())
-                    .or_insert_with(|| TeamStatistics::new(home_team.to_string()));
+                    .entry(home_team)
+                    .or_insert_with(|| TeamStatistics::new(home_team));
                 ht.matches_played += 1;
                 ht.matches_lost += 1;
 
                 let vt = team_stats
-                    .entry(visiting_team.to_string())
-                    .or_insert_with(|| TeamStatistics::new(visiting_team.to_string()));
+                    .entry(visiting_team)
+                    .or_insert_with(|| TeamStatistics::new(visiting_team));
                 vt.matches_played += 1;
                 vt.matches_won += 1;
                 vt.score += WIN_POINTS;
@@ -137,7 +137,7 @@ fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> 
         }
     }
 
-    let mut stats: Vec<TeamStatistics> = team_stats.values().cloned().collect();
+    let mut stats: Vec<TeamStatistics> = team_stats.values().copied().collect();
     stats.sort_by(|ts1, ts2| {
         ts2.score
             .cmp(&ts1.score)
