@@ -138,7 +138,11 @@ fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> 
     }
 
     let mut stats: Vec<TeamStatistics> = team_stats.values().cloned().collect();
-    stats.sort_by(|ts1, ts2| ts2.score.cmp(&ts1.score));
+    stats.sort_by(|ts1, ts2| {
+        ts2.score
+            .cmp(&ts1.score)
+            .then(ts1.team_name.cmp(&ts2.team_name))
+    });
     stats
 }
 
