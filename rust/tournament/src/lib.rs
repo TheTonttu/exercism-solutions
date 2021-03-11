@@ -78,62 +78,60 @@ fn parse_match_results(match_results: &str) -> Vec<MatchResult> {
 fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> {
     let mut team_stats: HashMap<&str, TeamStatistics> = HashMap::new();
 
-    for r in match_results {
-        match r {
-            MatchResult::Win {
-                home_team,
-                visiting_team,
-            } => {
-                let ht = team_stats
-                    .entry(home_team)
-                    .or_insert_with(|| TeamStatistics::new(home_team));
-                ht.matches_played += 1;
-                ht.matches_won += 1;
-                ht.score += WIN_POINTS;
+    match_results.iter().for_each(|res| match res {
+        MatchResult::Win {
+            home_team,
+            visiting_team,
+        } => {
+            let ht = team_stats
+                .entry(home_team)
+                .or_insert_with(|| TeamStatistics::new(home_team));
+            ht.matches_played += 1;
+            ht.matches_won += 1;
+            ht.score += WIN_POINTS;
 
-                let vt = team_stats
-                    .entry(visiting_team)
-                    .or_insert_with(|| TeamStatistics::new(visiting_team));
-                vt.matches_played += 1;
-                vt.matches_lost += 1;
-            }
-            MatchResult::Draw {
-                home_team,
-                visiting_team,
-            } => {
-                let ht = team_stats
-                    .entry(home_team)
-                    .or_insert_with(|| TeamStatistics::new(home_team));
-                ht.matches_played += 1;
-                ht.matches_drawn += 1;
-                ht.score += DRAW_POINTS;
-
-                let vt = team_stats
-                    .entry(visiting_team)
-                    .or_insert_with(|| TeamStatistics::new(visiting_team));
-                vt.matches_played += 1;
-                vt.matches_drawn += 1;
-                vt.score += DRAW_POINTS;
-            }
-            MatchResult::Loss {
-                home_team,
-                visiting_team,
-            } => {
-                let ht = team_stats
-                    .entry(home_team)
-                    .or_insert_with(|| TeamStatistics::new(home_team));
-                ht.matches_played += 1;
-                ht.matches_lost += 1;
-
-                let vt = team_stats
-                    .entry(visiting_team)
-                    .or_insert_with(|| TeamStatistics::new(visiting_team));
-                vt.matches_played += 1;
-                vt.matches_won += 1;
-                vt.score += WIN_POINTS;
-            }
+            let vt = team_stats
+                .entry(visiting_team)
+                .or_insert_with(|| TeamStatistics::new(visiting_team));
+            vt.matches_played += 1;
+            vt.matches_lost += 1;
         }
-    }
+        MatchResult::Draw {
+            home_team,
+            visiting_team,
+        } => {
+            let ht = team_stats
+                .entry(home_team)
+                .or_insert_with(|| TeamStatistics::new(home_team));
+            ht.matches_played += 1;
+            ht.matches_drawn += 1;
+            ht.score += DRAW_POINTS;
+
+            let vt = team_stats
+                .entry(visiting_team)
+                .or_insert_with(|| TeamStatistics::new(visiting_team));
+            vt.matches_played += 1;
+            vt.matches_drawn += 1;
+            vt.score += DRAW_POINTS;
+        }
+        MatchResult::Loss {
+            home_team,
+            visiting_team,
+        } => {
+            let ht = team_stats
+                .entry(home_team)
+                .or_insert_with(|| TeamStatistics::new(home_team));
+            ht.matches_played += 1;
+            ht.matches_lost += 1;
+
+            let vt = team_stats
+                .entry(visiting_team)
+                .or_insert_with(|| TeamStatistics::new(visiting_team));
+            vt.matches_played += 1;
+            vt.matches_won += 1;
+            vt.score += WIN_POINTS;
+        }
+    });
 
     let mut stats: Vec<TeamStatistics> = team_stats.values().copied().collect();
     stats.sort_by(|ts1, ts2| {
