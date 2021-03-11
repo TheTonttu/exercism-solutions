@@ -68,6 +68,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/robot-simulator/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/bowling/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/bowling/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/tournament/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/tournament/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/leap/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/hello-world/target" />
@@ -100,6 +102,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/robot-simulator/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/queen-attack/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/bowling/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/tournament/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
