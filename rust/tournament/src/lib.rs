@@ -3,18 +3,18 @@ use std::collections::HashMap;
 const WIN_POINTS: u32 = 3;
 const DRAW_POINTS: u32 = 1;
 
-enum MatchResult {
+enum MatchResult<'a> {
     Win {
-        home_team: String,
-        visiting_team: String,
+        home_team: &'a str,
+        visiting_team: &'a str,
     },
     Draw {
-        home_team: String,
-        visiting_team: String,
+        home_team: &'a str,
+        visiting_team: &'a str,
     },
     Loss {
-        home_team: String,
-        visiting_team: String,
+        home_team: &'a str,
+        visiting_team: &'a str,
     },
 }
 
@@ -57,16 +57,16 @@ fn parse_match_results(match_results: &str) -> Vec<MatchResult> {
             match elements.as_slice() {
                 [home_team, visiting_team, outcome] => match *outcome {
                     "win" => Some(MatchResult::Win {
-                        home_team: home_team.to_string(),
-                        visiting_team: visiting_team.to_string(),
+                        home_team,
+                        visiting_team,
                     }),
                     "draw" => Some(MatchResult::Draw {
-                        home_team: home_team.to_string(),
-                        visiting_team: visiting_team.to_string(),
+                        home_team,
+                        visiting_team,
                     }),
                     "loss" => Some(MatchResult::Loss {
-                        home_team: home_team.to_string(),
-                        visiting_team: visiting_team.to_string(),
+                        home_team,
+                        visiting_team,
                     }),
                     _ => None,
                 },
@@ -87,15 +87,15 @@ fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> 
                 visiting_team,
             } => {
                 let ht = team_stats
-                    .entry(home_team.clone())
-                    .or_insert_with(|| TeamStatistics::new(home_team.clone()));
+                    .entry(home_team.to_string())
+                    .or_insert_with(|| TeamStatistics::new(home_team.to_string()));
                 ht.matches_played += 1;
                 ht.matches_won += 1;
                 ht.score += WIN_POINTS;
 
                 let vt = team_stats
-                    .entry(visiting_team.clone())
-                    .or_insert_with(|| TeamStatistics::new(visiting_team.clone()));
+                    .entry(visiting_team.to_string())
+                    .or_insert_with(|| TeamStatistics::new(visiting_team.to_string()));
                 vt.matches_played += 1;
                 vt.matches_lost += 1;
             }
@@ -104,15 +104,15 @@ fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> 
                 visiting_team,
             } => {
                 let ht = team_stats
-                    .entry(home_team.clone())
-                    .or_insert_with(|| TeamStatistics::new(home_team.clone()));
+                    .entry(home_team.to_string())
+                    .or_insert_with(|| TeamStatistics::new(home_team.to_string()));
                 ht.matches_played += 1;
                 ht.matches_drawn += 1;
                 ht.score += DRAW_POINTS;
 
                 let vt = team_stats
-                    .entry(visiting_team.clone())
-                    .or_insert_with(|| TeamStatistics::new(visiting_team.clone()));
+                    .entry(visiting_team.to_string())
+                    .or_insert_with(|| TeamStatistics::new(visiting_team.to_string()));
                 vt.matches_played += 1;
                 vt.matches_drawn += 1;
                 vt.score += DRAW_POINTS;
@@ -122,14 +122,14 @@ fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> 
                 visiting_team,
             } => {
                 let ht = team_stats
-                    .entry(home_team.clone())
-                    .or_insert_with(|| TeamStatistics::new(home_team.clone()));
+                    .entry(home_team.to_string())
+                    .or_insert_with(|| TeamStatistics::new(home_team.to_string()));
                 ht.matches_played += 1;
                 ht.matches_lost += 1;
 
                 let vt = team_stats
-                    .entry(visiting_team.clone())
-                    .or_insert_with(|| TeamStatistics::new(visiting_team.clone()));
+                    .entry(visiting_team.to_string())
+                    .or_insert_with(|| TeamStatistics::new(visiting_team.to_string()));
                 vt.matches_played += 1;
                 vt.matches_won += 1;
                 vt.score += WIN_POINTS;
