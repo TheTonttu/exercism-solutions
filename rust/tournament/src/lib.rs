@@ -50,8 +50,8 @@ pub fn tally(match_results: &str) -> String {
 fn parse_match_results(match_results: &str) -> Vec<MatchResult> {
     match_results
         .split('\n')
-        .map(|l| {
-            let elements: Vec<&str> = l.split(';').collect();
+        .map(|line| {
+            let elements: Vec<&str> = line.split(';').collect();
             match elements.as_slice() {
                 [home_team, visiting_team, outcome] => match *outcome {
                     "win" => Some(MatchResult::Win {
@@ -76,21 +76,21 @@ fn parse_match_results(match_results: &str) -> Vec<MatchResult> {
 }
 
 fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> {
-    let mut team_stats: HashMap<&str, TeamStatistics> = HashMap::new();
+    let mut team_map: HashMap<&str, TeamStatistics> = HashMap::new();
 
     match_results.iter().for_each(|res| match res {
         MatchResult::Win {
             home_team,
             visiting_team,
         } => {
-            let ht = team_stats
+            let ht = team_map
                 .entry(home_team)
                 .or_insert_with(|| TeamStatistics::new(home_team));
             ht.matches_played += 1;
             ht.matches_won += 1;
             ht.score += WIN_POINTS;
 
-            let vt = team_stats
+            let vt = team_map
                 .entry(visiting_team)
                 .or_insert_with(|| TeamStatistics::new(visiting_team));
             vt.matches_played += 1;
@@ -100,14 +100,14 @@ fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> 
             home_team,
             visiting_team,
         } => {
-            let ht = team_stats
+            let ht = team_map
                 .entry(home_team)
                 .or_insert_with(|| TeamStatistics::new(home_team));
             ht.matches_played += 1;
             ht.matches_drawn += 1;
             ht.score += DRAW_POINTS;
 
-            let vt = team_stats
+            let vt = team_map
                 .entry(visiting_team)
                 .or_insert_with(|| TeamStatistics::new(visiting_team));
             vt.matches_played += 1;
@@ -118,13 +118,13 @@ fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> 
             home_team,
             visiting_team,
         } => {
-            let ht = team_stats
+            let ht = team_map
                 .entry(home_team)
                 .or_insert_with(|| TeamStatistics::new(home_team));
             ht.matches_played += 1;
             ht.matches_lost += 1;
 
-            let vt = team_stats
+            let vt = team_map
                 .entry(visiting_team)
                 .or_insert_with(|| TeamStatistics::new(visiting_team));
             vt.matches_played += 1;
@@ -133,7 +133,7 @@ fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> 
         }
     });
 
-    let mut stats: Vec<TeamStatistics> = team_stats.values().copied().collect();
+    let mut stats: Vec<TeamStatistics> = team_map.values().copied().collect();
     stats.sort_by(|ts1, ts2| {
         ts2.score
             .cmp(&ts1.score)
