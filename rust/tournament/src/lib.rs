@@ -1,14 +1,44 @@
+use std::collections::HashMap;
+
+const WIN_POINTS: u32 = 3;
+const DRAW_POINTS: u32 = 1;
+
+enum MatchResult {
+    Win {
+        home_team: String,
+        visiting_team: String,
+    },
+    Draw {
+        home_team: String,
+        visiting_team: String,
+    },
+    Loss {
+        home_team: String,
+        visiting_team: String,
+    },
+}
+
+#[derive(Clone)]
 struct TeamStatistics {
+    team_name: String,
     matches_played: u32,
     matches_won: u32,
     matches_drawn: u32,
     matches_lost: u32,
+    score: u32,
 }
 
-enum MatchResult {
-    Win { home_team: String, visiting_team: String },
-    Draw { home_team: String, visiting_team: String },
-    Loss { home_team: String, visiting_team: String },
+impl TeamStatistics {
+    fn new(team_name: String) -> Self {
+        Self {
+            team_name,
+            matches_played: 0,
+            matches_won: 0,
+            matches_drawn: 0,
+            matches_lost: 0,
+            score: 0,
+        }
+    }
 }
 
 pub fn tally(match_results: &str) -> String {
@@ -18,27 +48,98 @@ pub fn tally(match_results: &str) -> String {
 }
 
 fn parse_match_results(match_results: &str) -> Vec<MatchResult> {
-    let lines : Vec<&str> = match_results.split('\n').collect();
+    let lines: Vec<&str> = match_results.split('\n').collect();
 
-    lines.iter().map(|l| {
-        let elements: Vec<&str> = l.split(';').collect();
-        match elements.as_slice() {
-            [home_team, visiting_team, outcome] => {
-                match *outcome {
-                    "win" => Some(MatchResult::Win { home_team: home_team.to_string(), visiting_team: visiting_team.to_string() }),
-                    "draw" => Some(MatchResult::Draw { home_team: home_team.to_string(), visiting_team: visiting_team.to_string() }),
-                    "loss" => Some(MatchResult::Loss { home_team: home_team.to_string(), visiting_team: visiting_team.to_string() }),
-                    _ => None
-                }
-            },
-            _ => None
-        }
-    }).filter_map(|r| r)
-    .collect()
+    lines
+        .iter()
+        .map(|l| {
+            let elements: Vec<&str> = l.split(';').collect();
+            match elements.as_slice() {
+                [home_team, visiting_team, outcome] => match *outcome {
+                    "win" => Some(MatchResult::Win {
+                        home_team: home_team.to_string(),
+                        visiting_team: visiting_team.to_string(),
+                    }),
+                    "draw" => Some(MatchResult::Draw {
+                        home_team: home_team.to_string(),
+                        visiting_team: visiting_team.to_string(),
+                    }),
+                    "loss" => Some(MatchResult::Loss {
+                        home_team: home_team.to_string(),
+                        visiting_team: visiting_team.to_string(),
+                    }),
+                    _ => None,
+                },
+                _ => None,
+            }
+        })
+        .filter_map(|r| r)
+        .collect()
 }
 
 fn calculate_team_stats(match_results: Vec<MatchResult>) -> Vec<TeamStatistics> {
-    Vec::new()
+    let mut team_stats: HashMap<String, TeamStatistics> = HashMap::new();
+
+    for r in match_results {
+        match r {
+            MatchResult::Win {
+                home_team,
+                visiting_team,
+            } => {
+                let ht = team_stats
+                    .entry(home_team.clone())
+                    .or_insert_with(|| TeamStatistics::new(home_team.clone()));
+                ht.matches_played += 1;
+                ht.matches_won += 1;
+                ht.score += WIN_POINTS;
+
+                let vt = team_stats
+                    .entry(visiting_team.clone())
+                    .or_insert_with(|| TeamStatistics::new(visiting_team.clone()));
+                vt.matches_played += 1;
+                vt.matches_lost += 1;
+            }
+            MatchResult::Draw {
+                home_team,
+                visiting_team,
+            } => {
+                let ht = team_stats
+                    .entry(home_team.clone())
+                    .or_insert_with(|| TeamStatistics::new(home_team.clone()));
+                ht.matches_played += 1;
+                ht.matches_drawn += 1;
+                ht.score += DRAW_POINTS;
+
+                let vt = team_stats
+                    .entry(visiting_team.clone())
+                    .or_insert_with(|| TeamStatistics::new(visiting_team.clone()));
+                vt.matches_played += 1;
+                vt.matches_drawn += 1;
+                vt.score += DRAW_POINTS;
+            }
+            MatchResult::Loss {
+                home_team,
+                visiting_team,
+            } => {
+                let ht = team_stats
+                    .entry(home_team.clone())
+                    .or_insert_with(|| TeamStatistics::new(home_team.clone()));
+                ht.matches_played += 1;
+                ht.matches_lost += 1;
+
+                let vt = team_stats
+                    .entry(visiting_team.clone())
+                    .or_insert_with(|| TeamStatistics::new(visiting_team.clone()));
+                vt.matches_played += 1;
+                vt.matches_won += 1;
+                vt.score += WIN_POINTS;
+            }
+        }
+    }
+
+    let mut stats: Vec<TeamStatistics> = team_stats.values().cloned().collect();
+    stats.sort_by(|ts1, ts2| ts2.score.cmp(&ts1.score));
+    stats
 }
 
 fn format_table(team_stats: Vec<TeamStatistics>) -> String {
@@ -47,12 +148,26 @@ fn format_table(team_stats: Vec<TeamStatistics>) -> String {
 
     match content.is_empty() {
         true => header,
-        false => [header, content].join("\n")
+        false => [header, content].join("\n"),
     }
 }
 
 fn format_team_stats(team_stats: Vec<TeamStatistics>) -> String {
-    String::new()
+    team_stats
+        .iter()
+        .map(|ts| {
+            format!(
+                "{:<30} | {:>2} | {:>2} | {:>2} | {:>2} | {:>2}",
+                ts.team_name,
+                ts.matches_played,
+                ts.matches_won,
+                ts.matches_drawn,
+                ts.matches_lost,
+                ts.score
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 fn format_table_header() -> String {
