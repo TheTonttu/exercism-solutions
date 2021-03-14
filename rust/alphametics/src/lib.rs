@@ -13,7 +13,7 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
 
     // Brute force, yay!
     for numbers in number_permutations {
-        let char_numbers: HashMap<char, u8> = unique_chars
+        let char_number_designations: HashMap<char, u8> = unique_chars
             .iter()
             .zip(numbers)
             .map(|(c, i)| (*c, i))
@@ -23,7 +23,7 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             .iter()
             .map(|w| {
                 w.chars()
-                    .filter_map(|c| char_numbers.get(&c))
+                    .filter_map(|c| char_number_designations.get(&c))
                     .copied()
                     .collect::<Vec<u8>>()
             })
@@ -51,7 +51,7 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
         let expected_sum: u32 = *words_as_numbers.last().unwrap();
 
         if sum == expected_sum {
-            return Some(char_numbers);
+            return Some(char_number_designations);
         }
         //println!("wrong numbers: {:?}", words_as_numbers);
         //println!("expected sum: {:?}", sum);
