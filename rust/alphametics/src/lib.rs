@@ -6,6 +6,11 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
 
     let number_permutations = (0u8..=9).permutations(unique_chars.len());
 
+    let words: Vec<&str> = input
+        .split(' ')
+        .filter(|element| element.chars().any(|c| c.is_alphabetic()))
+        .collect();
+
     // Brute force, yay!
     for numbers in number_permutations {
         let char_numbers: HashMap<char, u8> = unique_chars
@@ -14,11 +19,8 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             .map(|(c, i)| (*c, i))
             .collect();
 
-        let words = input
-            .split(' ')
-            .filter(|element| element.chars().any(|c| c.is_alphabetic()));
-
         let collected_word_numbers = words
+            .iter()
             .map(|w| {
                 w.chars()
                     .filter_map(|c| char_numbers.get(&c))
@@ -51,8 +53,8 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
         if sum == expected_sum {
             return Some(char_numbers);
         }
-        println!("wrong numbers: {:?}", words_as_numbers);
-        println!("expected sum: {:?}", sum);
+        //println!("wrong numbers: {:?}", words_as_numbers);
+        //println!("expected sum: {:?}", sum);
     }
 
     None
