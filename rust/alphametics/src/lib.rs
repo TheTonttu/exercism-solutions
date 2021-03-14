@@ -18,13 +18,26 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             .split(' ')
             .filter(|element| element.chars().any(|c| c.is_alphabetic()));
 
-        // TODO: Skip the permutation if any of the converted words have leading zeroes.
-
-        let words_as_numbers: Vec<u32> = words
-            .filter_map(|w| {
+        let collected_word_numbers = words
+            .map(|w| {
                 w.chars()
                     .filter_map(|c| char_numbers.get(&c))
+                    .copied()
+                    .collect::<Vec<u8>>()
+            })
+            .collect::<Vec<_>>();
+
+        if has_any_leading_zeroes(&collected_word_numbers) {
+            continue;
+        }
+
+        let words_as_numbers: Vec<u32> = collected_word_numbers
+            .iter()
+            .filter_map(|numbers| {
+                numbers
+                    .iter()
                     .map(|n| n.to_string())
+                    // TODO: Skip intermediate String collection
                     .collect::<String>()
                     .parse::<u32>()
                     .ok()
@@ -43,4 +56,10 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
     }
 
     None
+}
+
+fn has_any_leading_zeroes(number_slice: &[Vec<u8>]) -> bool {
+    number_slice
+        .iter()
+        .any(|wn| wn.len() >= 2 && wn.starts_with(&[0]))
 }
