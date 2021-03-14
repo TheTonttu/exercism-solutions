@@ -38,7 +38,7 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             .filter_map(|numbers| {
                 numbers
                     .iter()
-                    .map(|n| n.to_string())
+                    .filter_map(|n| std::char::from_digit(*n as u32, 10))
                     // TODO: Skip intermediate String collection
                     .collect::<String>()
                     .parse::<u32>()
