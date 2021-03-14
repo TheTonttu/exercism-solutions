@@ -24,7 +24,6 @@ fn test_leading_zero_solution_is_invalid() {
 }
 
 #[test]
-#[ignore]
 fn puzzle_with_two_digits_final_carry() {
     assert_alphametic_solution_eq(
         "A + A + A + A + A + A + A + A + A + A + A + B == BCC",
@@ -33,13 +32,11 @@ fn puzzle_with_two_digits_final_carry() {
 }
 
 #[test]
-#[ignore]
 fn test_puzzle_with_four_letters() {
     assert_alphametic_solution_eq("AS + A == MOM", &[('A', 9), ('S', 2), ('M', 1), ('O', 0)]);
 }
 
 #[test]
-#[ignore]
 fn test_puzzle_with_six_letters() {
     assert_alphametic_solution_eq(
         "NO + NO + TOO == LATE",
@@ -48,7 +45,6 @@ fn test_puzzle_with_six_letters() {
 }
 
 #[test]
-#[ignore]
 fn test_puzzle_with_seven_letters() {
     assert_alphametic_solution_eq(
         "HE + SEES + THE == LIGHT",
