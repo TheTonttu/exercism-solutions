@@ -11,27 +11,36 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
         .filter(|element| element.chars().any(|c| c.is_alphabetic()))
         .collect();
 
+    // Gather characters that cannot be zero because they are in front of a word.
+    let non_zero_chars: HashSet<char> = words
+        .iter()
+        .filter_map(|w| (w.len() >= 2).then(|| w.chars().next().unwrap()))
+        .collect();
+
     // Brute force, yay!
     for numbers in number_permutations {
         let char_digit_designations: HashMap<char, u8> = unique_chars
             .iter()
             .zip(numbers)
-            .map(|(c, i)| (*c, i))
+            .map(|(c, n)| (*c, n))
             .collect();
+
+        // Skip permutation if any non zero char is designated as zero
+        if char_digit_designations
+            .iter()
+            .any(|(c, n)| *n == 0 && non_zero_chars.contains(c))
+        {
+            continue;
+        }
 
         let word_digits = words
             .iter()
             .map(|w| {
                 w.chars()
-                    .filter_map(|c| char_digit_designations.get(&c))
-                    .copied()
+                    .filter_map(|c| char_digit_designations.get(&c).copied())
                     .collect::<Vec<u8>>()
             })
             .collect::<Vec<_>>();
-
-        if has_any_leading_zeroes(&word_digits) {
-            continue;
-        }
 
         let words_as_numbers: Vec<u32> = word_digits
             .iter()
@@ -58,10 +67,4 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
     }
 
     None
-}
-
-fn has_any_leading_zeroes(number_slice: &[Vec<u8>]) -> bool {
-    number_slice
-        .iter()
-        .any(|wn| wn.len() >= 2 && wn.starts_with(&[0]))
 }
