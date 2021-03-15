@@ -34,8 +34,8 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             .map(|(c, n)| (*c, n))
             .collect();
 
-        // If there can be only one char designated as zero
         if_chain! {
+            // If there can be only one char designated as zero
             if let Some(zero_char) = only_zero_char;
             if let Some(digit) = char_digit_designations.get(&zero_char);
             // and it has not been designated as zero
