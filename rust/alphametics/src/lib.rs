@@ -1,3 +1,4 @@
+use if_chain::if_chain;
 use itertools::Itertools;
 use std::collections::{HashMap, HashSet};
 
@@ -17,7 +18,7 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
         .filter_map(|w| (w.len() >= 2).then(|| w.chars().next().unwrap()))
         .collect();
 
-    // If there is only one character that can be zero then designate it to zero.
+    // If there is only one character that can be zero then expect it to be designate as zero.
     let only_zero_char = (unique_chars.len() == non_zero_chars.len() + 1).then(|| {
         unique_chars
             .iter()
@@ -34,8 +35,12 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             .map(|(c, n)| (*c, n))
             .collect();
 
-        if let Some(zero_char) = only_zero_char {
-            if *char_digit_designations.get(&zero_char).unwrap() != 0 {
+        // If there can be only one char designated as zero
+        if_chain! {
+            if let Some(zero_char) = only_zero_char;
+            if let Some(digit) = char_digit_designations.get(&zero_char);
+            if *digit != 0;
+            then {
                 continue;
             }
         }
@@ -48,16 +53,16 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             continue;
         }
 
-        let words_as_numbers = words
+        let words_as_numbers: Vec<u64> = words
             .iter()
             .map(|w| {
                 w.chars()
                     // char to digit
                     .filter_map(|c| char_digit_designations.get(&c))
-                    // collect digits to number
+                    // digits to number
                     .fold(0u64, |acc, d| acc * 10 + (*d as u64))
             })
-            .collect::<Vec<_>>();
+            .collect();
 
         let sum: u64 = words_as_numbers[..words_as_numbers.len() - 1].iter().sum();
 
