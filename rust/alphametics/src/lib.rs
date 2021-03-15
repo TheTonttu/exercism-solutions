@@ -48,19 +48,17 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             continue;
         }
 
-        let word_digits = words
+        let words_as_numbers = words
             .iter()
+            // words to digits
             .map(|w| {
                 w.chars()
                     .filter_map(|c| char_digit_designations.get(&c).copied())
                     .collect::<Vec<u8>>()
             })
-            .collect::<Vec<_>>();
-
-        let words_as_numbers: Vec<u64> = word_digits
-            .iter()
+            // digits to numbers
             .map(|digits| digits.iter().fold(0u64, |acc, d| acc * 10 + (*d as u64)))
-            .collect();
+            .collect::<Vec<_>>();
 
         let sum: u64 = words_as_numbers[..words_as_numbers.len() - 1].iter().sum();
 
