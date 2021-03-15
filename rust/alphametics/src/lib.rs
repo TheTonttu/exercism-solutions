@@ -18,7 +18,7 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
         .filter_map(|w| (w.len() >= 2).then(|| w.chars().next().unwrap()))
         .collect();
 
-    // If there is only one character that can be zero then expect it to be designate as zero.
+    // If there is only one character that can be zero then mark it for later use.
     let only_zero_char = (unique_chars.len() == non_zero_chars.len() + 1).then(|| {
         unique_chars
             .iter()
@@ -39,8 +39,10 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
         if_chain! {
             if let Some(zero_char) = only_zero_char;
             if let Some(digit) = char_digit_designations.get(&zero_char);
+            // and it has not been designated as zero
             if *digit != 0;
             then {
+                // then skip permutation
                 continue;
             }
         }
