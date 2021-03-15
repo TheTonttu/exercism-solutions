@@ -4,8 +4,6 @@ use std::collections::{HashMap, HashSet};
 pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
     let unique_chars: HashSet<char> = input.chars().filter(|c| c.is_alphabetic()).collect();
 
-    //println!("{:?}", unique_chars);
-
     let number_permutations = (0u8..=9).permutations(unique_chars.len());
 
     let words: Vec<&str> = input
@@ -18,8 +16,6 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
         .iter()
         .filter_map(|w| (w.len() >= 2).then(|| w.chars().next().unwrap()))
         .collect();
-
-    //println!("{:?}", non_zero_chars);
 
     // If there is only one character that can be zero then designate it to zero.
     let only_zero_char = (unique_chars.len() == non_zero_chars.len() + 1).then(|| {
@@ -61,22 +57,22 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             })
             .collect::<Vec<_>>();
 
-        let words_as_numbers: Vec<u32> = word_digits
+        let words_as_numbers: Vec<u64> = word_digits
             .iter()
-            .filter_map(|digits| {
+            .map(|digits| {
                 digits
                     .iter()
                     .filter_map(|n| std::char::from_digit(*n as u32, 10))
                     // TODO: Skip intermediate String collection
                     .collect::<String>()
-                    .parse::<u32>()
-                    .ok()
+                    .parse::<u64>()
+                    .expect("Parsing failed")
             })
             .collect();
 
-        let sum: u32 = words_as_numbers[..words_as_numbers.len() - 1].iter().sum();
+        let sum: u64 = words_as_numbers[..words_as_numbers.len() - 1].iter().sum();
 
-        let expected_sum: u32 = *words_as_numbers.last().unwrap();
+        let expected_sum: u64 = *words_as_numbers.last().unwrap();
 
         if sum == expected_sum {
             return Some(char_digit_designations);
