@@ -4,6 +4,8 @@ use std::collections::{HashMap, HashSet};
 pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
     let unique_chars: HashSet<char> = input.chars().filter(|c| c.is_alphabetic()).collect();
 
+    //println!("{:?}", unique_chars);
+
     let number_permutations = (0u8..=9).permutations(unique_chars.len());
 
     let words: Vec<&str> = input
@@ -17,6 +19,17 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
         .filter_map(|w| (w.len() >= 2).then(|| w.chars().next().unwrap()))
         .collect();
 
+    //println!("{:?}", non_zero_chars);
+
+    // If there is only one character that can be zero then designate it to zero.
+    let only_zero_char = (unique_chars.len() == non_zero_chars.len() + 1).then(|| {
+        unique_chars
+            .iter()
+            .find(|c| !non_zero_chars.contains(*c))
+            .copied()
+            .unwrap()
+    });
+
     // Brute force, yay!
     for numbers in number_permutations {
         let char_digit_designations: HashMap<char, u8> = unique_chars
@@ -24,6 +37,12 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             .zip(numbers)
             .map(|(c, n)| (*c, n))
             .collect();
+
+        if let Some(zero_char) = only_zero_char {
+            if *char_digit_designations.get(&zero_char).unwrap() != 0 {
+                continue;
+            }
+        }
 
         // Skip permutation if any non zero char is designated as zero
         if char_digit_designations
