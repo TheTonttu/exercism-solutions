@@ -59,15 +59,7 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
 
         let words_as_numbers: Vec<u64> = word_digits
             .iter()
-            .map(|digits| {
-                digits
-                    .iter()
-                    .filter_map(|n| std::char::from_digit(*n as u32, 10))
-                    // TODO: Skip intermediate String collection
-                    .collect::<String>()
-                    .parse::<u64>()
-                    .expect("Parsing failed")
-            })
+            .map(|digits| digits.iter().fold(0u64, |acc, d| acc * 10 + (*d as u64)))
             .collect();
 
         let sum: u64 = words_as_numbers[..words_as_numbers.len() - 1].iter().sum();
@@ -77,8 +69,6 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
         if sum == expected_sum {
             return Some(char_digit_designations);
         }
-        //println!("wrong numbers: {:?}", words_as_numbers);
-        //println!("expected sum: {:?}", sum);
     }
 
     None
