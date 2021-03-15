@@ -5,8 +5,6 @@ use std::collections::{HashMap, HashSet};
 pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
     let unique_chars: HashSet<char> = input.chars().filter(|c| c.is_alphabetic()).collect();
 
-    let number_permutations = (0u8..=9).permutations(unique_chars.len());
-
     let words: Vec<&str> = input
         .split(' ')
         .filter(|element| element.chars().any(|c| c.is_alphabetic()))
@@ -27,6 +25,7 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             .unwrap()
     });
 
+    let number_permutations = (0u8..=9).permutations(unique_chars.len());
     // Brute force, yay!
     for numbers in number_permutations {
         let char_digit_designations: HashMap<char, u8> = unique_chars
