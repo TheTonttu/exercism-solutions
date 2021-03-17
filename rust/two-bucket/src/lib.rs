@@ -1,7 +1,27 @@
-#[derive(PartialEq, Eq, Debug)]
+#[derive(Clone, PartialEq, Eq, Debug)]
 pub enum Bucket {
     One,
     Two,
+}
+
+enum Move {
+    FillBucket(usize),
+    EmptyBucket(usize),
+    PourFrom(usize),
+}
+
+struct State {
+    bucket_contents: [u8; 2],
+    bucket_capacities: [u8; 2],
+}
+
+impl State {
+    fn new(bucket_contents: [u8; 2], bucket_capacities: [u8; 2]) -> Self {
+        State {
+            bucket_contents,
+            bucket_capacities,
+        }
+    }
 }
 
 /// A struct to hold your results in.
@@ -23,11 +43,36 @@ pub fn solve(
     goal: u8,
     start_bucket: &Bucket,
 ) -> Option<BucketStats> {
-    unimplemented!(
-        "Given one bucket of capacity {}, another of capacity {}, starting with {:?}, find pours to reach {}, or None if impossible",
-        capacity_1,
-        capacity_2,
-        start_bucket,
-        goal,
-    );
+    // Start fill
+    let start_contents = match start_bucket {
+        Bucket::One => [capacity_1, 0],
+        Bucket::Two => [0, capacity_2],
+    };
+    // TODO: Should we count the first fill?
+    let mut moves: u8 = 1;
+
+    let state = State::new(start_contents, [capacity_1, capacity_2]);
+
+    while moves < u8::MAX {
+        // TODO: State change, etc.
+
+        if goal_achieved(&state, goal) {
+            let goal_bucket = Bucket::One;
+            let other_bucket = 0;
+
+            return Some(BucketStats {
+                moves,
+                goal_bucket,
+                other_bucket,
+            });
+        }
+
+        moves += 1;
+    }
+
+    None
+}
+
+fn goal_achieved(state: &State, goal: u8) -> bool {
+    state.bucket_contents.iter().any(|c| *c == goal)
 }
