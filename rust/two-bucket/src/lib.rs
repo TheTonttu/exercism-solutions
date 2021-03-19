@@ -11,7 +11,7 @@ enum Move {
     PourFrom(usize),
 }
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 struct BucketContainer {
     content: u8,
     capacity: u8,
@@ -24,37 +24,65 @@ impl BucketContainer {
             capacity
         }
     }
+
+    fn fill(&mut self) {
+        self.content = self.capacity;
+    }
+
+    fn empty(&mut self) {
+        self.content = 0;
+    }
+
+    fn is_full(&self) -> bool {
+        self.content == self.capacity
+    }
+
+    fn is_empty(&self) -> bool {
+        self.content == 0
+    }
+
+    fn pour_into(&mut self, other: &mut BucketContainer) {
+
+        let target_space = other.capacity - other.content;
+        let source_left = (self.content as i8 - target_space as i8).max(0) as u8;
+        let target_add = self.content - source_left;
+
+        self.content = source_left;
+        other.content += target_add;
+    }
 }
 
 #[derive(Debug)]
 struct State {
-    //buckets: Vec<BucketContainer>,
-    bucket_contents: Vec<u8>,
-    bucket_capacities: Vec<u8>,
+    buckets: Vec<BucketContainer>,
 }
 
 impl State {
     fn new(bucket_contents: &[u8], bucket_capacities: &[u8]) -> Self {
         State {
-            //buckets: bucket_contents.iter().zip(bucket_capacities.iter()).map(|(content, capacity)| BucketContainer::new(*content, *capacity)).collect(),
-            bucket_contents: bucket_contents.iter().copied().collect(),
-            bucket_capacities: bucket_capacities.iter().copied().collect(),
+            buckets: bucket_contents.iter().zip(bucket_capacities.iter()).map(|(content, capacity)| BucketContainer::new(*content, *capacity)).collect(),
+        }
+    }
+
+    fn from_buckets(buckets: &[BucketContainer]) -> Self {
+        State {
+            buckets: buckets.iter().copied().collect(),
         }
     }
 
     fn after_move(&self, selected_move: &Move) -> State {
         match selected_move {
             Move::FillBucket(bucket_index) => {
-                let mut new_contents = self.bucket_contents.clone();
-                new_contents[*bucket_index] = self.bucket_capacities[*bucket_index];
+                let mut new_buckets = self.buckets.clone();
+                new_buckets[*bucket_index].fill();
 
-                State::new(&*new_contents, &*self.bucket_capacities)
+                State::from_buckets(&new_buckets)
             }
             Move::EmptyBucket(bucket_index) => {
-                let mut new_contents = self.bucket_contents.clone();
-                new_contents[*bucket_index] = 0;
+                let mut new_buckets = self.buckets.clone();
+                new_buckets[*bucket_index].empty();
 
-                State::new(&*new_contents, &*self.bucket_capacities)
+                State::from_buckets(&new_buckets)
             }
             Move::PourFrom(bucket_index) => {
                 let source_index = match bucket_index {
@@ -69,18 +97,17 @@ impl State {
                     _ => unimplemented!("unsupported index: {}", bucket_index),
                 };
 
-                let target_space =
-                    self.bucket_capacities[target_index] - self.bucket_contents[target_index];
-                let source_left =
-                    (self.bucket_contents[source_index] as i8 - target_space as i8).max(0) as u8;
-                let source_remove = self.bucket_contents[source_index] - source_left;
-                let target_content = self.bucket_contents[target_index] + source_remove;
+                let mut new_buckets = self.buckets.clone();
 
-                let mut new_contents = self.bucket_contents.clone();
-                new_contents[source_index] = source_left;
-                new_contents[target_index] = target_content;
+                // Cannot take 2 mutable references to vector so let's just clone for now.
+                let mut source_bucket = new_buckets[source_index];
+                let mut target_bucket = new_buckets[target_index];
+                source_bucket.pour_into(&mut target_bucket);
 
-                State::new(&*new_contents, &*self.bucket_capacities)
+                new_buckets[source_index] = source_bucket;
+                new_buckets[target_index] = target_bucket;
+
+                State::from_buckets(&new_buckets)
             }
         }
     }
@@ -137,13 +164,12 @@ pub fn solve(
                     let new_state = state.after_move(&a_move);
 
                     if let Some((goal_bucket, goal_bucket_index)) = goal_bucket(&new_state, goal) {
-                        let other_bucket =
-                            new_state.bucket_contents[get_other_bucket_index(&goal_bucket_index)];
+                        let other_bucket_container = &new_state.buckets[get_other_bucket_index(&goal_bucket_index)];
 
                         return Some(BucketStats {
                             moves,
                             goal_bucket,
-                            other_bucket,
+                            other_bucket: other_bucket_container.content,
                         });
                     }
 
@@ -161,11 +187,10 @@ pub fn solve(
 
 fn goal_bucket(state: &State, goal: u8) -> Option<(Bucket, usize)> {
     state
-        .bucket_contents
+        .buckets
         .iter()
-        .copied()
         .enumerate()
-        .find(|(_i, c)| *c == goal)
+        .find(|(_i, c)| c.content == goal)
         .map(|(i, _c)| match i {
             0 => (Bucket::One, i),
             1 => (Bucket::Two, i),
@@ -184,25 +209,23 @@ fn get_other_bucket_index(the_bucket_index: &usize) -> usize {
 fn all_legal_moves(state: &State, start_bucket_index: &usize) -> Vec<Move> {
     let mut moves = Vec::new();
 
-    for (bucket_index, _) in state.bucket_contents.iter().enumerate() {
+    for (bucket_index, bucket) in state.buckets.iter().enumerate() {
         let other_index = get_other_bucket_index(&bucket_index);
+        let other_bucket = state.buckets[other_index];
 
         let is_start_bucket = bucket_index == *start_bucket_index;
-        let is_larger_bucket =
-            state.bucket_capacities[bucket_index] > state.bucket_capacities[other_index];
+        let is_larger_bucket = bucket.capacity > other_bucket.capacity;
         let is_larger_start_bucket = is_start_bucket && is_larger_bucket;
 
         for a_move in all_bucket_moves(&bucket_index) {
             let potential_state = state.after_move(&a_move);
 
-            let is_empty = potential_state.bucket_contents[bucket_index] == 0;
-            let is_full = potential_state.bucket_contents[bucket_index]
-                == potential_state.bucket_capacities[bucket_index];
-            let other_is_empty = potential_state.bucket_contents[other_index] == 0;
-            let other_is_full = potential_state.bucket_contents[other_index]
-                == potential_state.bucket_capacities[other_index];
+            let is_empty = potential_state.buckets[bucket_index].is_empty();
+            let is_full = potential_state.buckets[bucket_index].is_full();
+            let other_is_empty = potential_state.buckets[other_index].is_empty();
+            let other_is_full = potential_state.buckets[other_index].is_full();
 
-            if state.bucket_contents != potential_state.bucket_contents
+            if state.buckets != potential_state.buckets
                 //  when starting with the larger bucket full, you are NOT allowed at any point to have the smaller bucket full and the larger bucket empty
                 && !((is_larger_start_bucket && is_empty && other_is_full)
                     || (!is_larger_start_bucket && is_full && other_is_empty))
