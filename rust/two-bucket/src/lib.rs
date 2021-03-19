@@ -110,8 +110,7 @@ pub fn solve(
     let mut moves: u8 = 1;
 
     let start_state = State::new(start_contents, [capacity_1, capacity_2]);
-
-    // TODO: No need to store the whole history, just one iteration.
+    
     let mut history: Vec<Vec<State>> = Vec::new();
     history.push(vec![start_state]);
 
@@ -142,6 +141,7 @@ pub fn solve(
                 }
             }
             println!("{:?}", curr_permutations);
+            history.clear();
             history.push(curr_permutations);
         }
     }
