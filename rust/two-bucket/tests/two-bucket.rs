@@ -25,7 +25,6 @@ fn test_case_2() {
 }
 
 #[test]
-#[ignore]
 fn test_case_3() {
     assert_eq!(
         solve(7, 11, 2, &Bucket::One),
@@ -38,7 +37,6 @@ fn test_case_3() {
 }
 
 #[test]
-#[ignore]
 fn test_case_4() {
     assert_eq!(
         solve(7, 11, 2, &Bucket::Two),
@@ -51,7 +49,6 @@ fn test_case_4() {
 }
 
 #[test]
-#[ignore]
 fn goal_equal_to_start_bucket() {
     assert_eq!(
         solve(1, 3, 3, &Bucket::Two),
@@ -64,7 +61,6 @@ fn goal_equal_to_start_bucket() {
 }
 
 #[test]
-#[ignore]
 fn goal_equal_to_other_bucket() {
     assert_eq!(
         solve(2, 3, 3, &Bucket::One),

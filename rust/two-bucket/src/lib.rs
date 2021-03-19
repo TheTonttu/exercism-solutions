@@ -19,10 +19,7 @@ struct BucketContainer {
 
 impl BucketContainer {
     fn new(content: u8, capacity: u8) -> Self {
-        BucketContainer {
-            content,
-            capacity
-        }
+        BucketContainer { content, capacity }
     }
 
     fn fill(&mut self) {
@@ -42,7 +39,6 @@ impl BucketContainer {
     }
 
     fn pour_into(&mut self, other: &mut BucketContainer) {
-
         let target_space = other.capacity - other.content;
         let source_left = (self.content as i8 - target_space as i8).max(0) as u8;
         let target_add = self.content - source_left;
@@ -60,7 +56,11 @@ struct State {
 impl State {
     fn new(bucket_contents: &[u8], bucket_capacities: &[u8]) -> Self {
         State {
-            buckets: bucket_contents.iter().zip(bucket_capacities.iter()).map(|(content, capacity)| BucketContainer::new(*content, *capacity)).collect(),
+            buckets: bucket_contents
+                .iter()
+                .zip(bucket_capacities.iter())
+                .map(|(content, capacity)| BucketContainer::new(*content, *capacity))
+                .collect(),
         }
     }
 
@@ -132,53 +132,75 @@ pub fn solve(
     goal: u8,
     start_bucket: &Bucket,
 ) -> Option<BucketStats> {
-    // Start fill
-    let start_contents = match start_bucket {
-        Bucket::One => [capacity_1, 0],
-        Bucket::Two => [0, capacity_2],
-    };
-
     let start_bucket_index = match start_bucket {
         Bucket::One => 0,
         Bucket::Two => 1,
     };
 
-    // First fill counts as a move.
-    let mut moves: u8 = 1;
-
-    let start_state = State::new(start_contents.iter().as_ref(), [capacity_1, capacity_2].iter().as_ref());
+    let mut moves: u8 = 0;
 
     let mut history: Vec<Vec<State>> = Vec::new();
-    history.push(vec![start_state]);
 
     while moves < u8::MAX {
         println!("{:?}", moves);
 
         // Brute force by going through every move permutation until we hit the goal.
-        if let Some(last_permutations) = history.last() {
-            let mut curr_permutations = Vec::new();
-            moves += 1;
-            for state in last_permutations {
-                //println!("{:?}", state);
-                for a_move in all_legal_moves(state, &start_bucket_index) {
-                    let new_state = state.after_move(&a_move);
+        match history.last() {
+            Some(last_permutations) => {
+                let mut curr_permutations = Vec::new();
+                moves += 1;
+                for state in last_permutations {
+                    //println!("{:?}", state);
+                    for a_move in all_legal_moves(state, &start_bucket_index) {
+                        let new_state = state.after_move(&a_move);
 
-                    if let Some((goal_bucket, goal_bucket_index)) = goal_bucket(&new_state, goal) {
-                        let other_bucket_container = &new_state.buckets[get_other_bucket_index(&goal_bucket_index)];
+                        if let Some((goal_bucket, goal_bucket_index)) =
+                            goal_bucket(&new_state, goal)
+                        {
+                            let other_bucket_container =
+                                &new_state.buckets[get_other_bucket_index(&goal_bucket_index)];
 
-                        return Some(BucketStats {
-                            moves,
-                            goal_bucket,
-                            other_bucket: other_bucket_container.content,
-                        });
+                            return Some(BucketStats {
+                                moves,
+                                goal_bucket,
+                                other_bucket: other_bucket_container.content,
+                            });
+                        }
+
+                        curr_permutations.push(new_state);
                     }
-
-                    curr_permutations.push(new_state);
                 }
+                println!("{:?}", curr_permutations);
+                history.clear();
+                history.push(curr_permutations);
             }
-            println!("{:?}", curr_permutations);
-            history.clear();
-            history.push(curr_permutations);
+            None => {
+                moves += 1;
+
+                // Start fill
+                let start_contents = match start_bucket {
+                    Bucket::One => [capacity_1, 0],
+                    Bucket::Two => [0, capacity_2],
+                };
+
+                let start_state = State::new(
+                    start_contents.iter().as_ref(),
+                    [capacity_1, capacity_2].iter().as_ref(),
+                );
+
+                if let Some((goal_bucket, goal_bucket_index)) = goal_bucket(&start_state, goal) {
+                    let other_bucket_container =
+                        &start_state.buckets[get_other_bucket_index(&goal_bucket_index)];
+
+                    return Some(BucketStats {
+                        moves,
+                        goal_bucket,
+                        other_bucket: other_bucket_container.content,
+                    });
+                }
+
+                history.push(vec![start_state]);
+            }
         }
     }
 
