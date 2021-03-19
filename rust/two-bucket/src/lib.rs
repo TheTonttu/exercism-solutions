@@ -6,8 +6,8 @@ pub enum Bucket {
 
 #[derive(Debug)]
 enum Move {
-    FillBucket(usize),
     EmptyBucket(usize),
+    FillBucket(usize),
     PourFrom(usize),
 }
 
@@ -101,6 +101,11 @@ pub fn solve(
         Bucket::Two => [0, capacity_2],
     };
 
+    let start_bucket_index = match start_bucket {
+        Bucket::One => 0,
+        Bucket::Two => 1,
+    };
+
     // First fill counts as a move.
     let mut moves: u8 = 1;
 
@@ -116,17 +121,15 @@ pub fn solve(
         // Brute force by going through every move permutation until we hit the goal.
         if let Some(last_permutations) = history.last() {
             let mut curr_permutations = Vec::new();
+            moves += 1;
             for state in last_permutations {
-                for a_move in all_legal_moves() {
-                    println!("Before: {:?}", state);
-                    println!("Move: {:?}", a_move);
+                //println!("{:?}", state);
+                for a_move in all_legal_moves(state, &start_bucket_index) {
                     let new_state = state.after_move(&a_move);
-                    println!("After: {:?}", state);
 
                     if let Some((goal_bucket, goal_bucket_index)) = goal_bucket(&new_state, goal) {
                         let other_bucket =
                             new_state.bucket_contents[get_other_bucket_index(&goal_bucket_index)];
-                        moves += 1;
 
                         return Some(BucketStats {
                             moves,
@@ -138,10 +141,9 @@ pub fn solve(
                     curr_permutations.push(new_state);
                 }
             }
+            println!("{:?}", curr_permutations);
             history.push(curr_permutations);
         }
-
-        moves += 1;
     }
 
     None
@@ -169,14 +171,44 @@ fn get_other_bucket_index(the_bucket_index: &usize) -> usize {
     }
 }
 
-fn all_legal_moves() -> Vec<Move> {
-    // TODO: Pass state and check relevant moves.
+fn all_legal_moves(state: &State, start_bucket_index: &usize) -> Vec<Move> {
+    let mut moves = Vec::new();
+
+    for (bucket_index, _) in state.bucket_contents.iter().enumerate() {
+        let other_index = get_other_bucket_index(&bucket_index);
+
+        let is_start_bucket = bucket_index == *start_bucket_index;
+        let is_larger_bucket =
+            state.bucket_capacities[bucket_index] > state.bucket_capacities[other_index];
+        let is_larger_start_bucket = is_start_bucket && is_larger_bucket;
+
+        for a_move in all_bucket_moves(&bucket_index) {
+            let potential_state = state.after_move(&a_move);
+
+            let is_empty = potential_state.bucket_contents[bucket_index] == 0;
+            let is_full = potential_state.bucket_contents[bucket_index]
+                == potential_state.bucket_capacities[bucket_index];
+            let other_is_empty = potential_state.bucket_contents[other_index] == 0;
+            let other_is_full = potential_state.bucket_contents[other_index]
+                == potential_state.bucket_capacities[other_index];
+
+            if state.bucket_contents != potential_state.bucket_contents
+                //  when starting with the larger bucket full, you are NOT allowed at any point to have the smaller bucket full and the larger bucket empty
+                && !((is_larger_start_bucket && is_empty && other_is_full)
+                    || (!is_larger_start_bucket && is_full && other_is_empty))
+            {
+                moves.push(a_move)
+            }
+        }
+    }
+
+    moves
+}
+
+fn all_bucket_moves(bucket_index: &usize) -> Vec<Move> {
     vec![
-        Move::FillBucket(0),
-        Move::FillBucket(1),
-        Move::EmptyBucket(0),
-        Move::EmptyBucket(1),
-        Move::PourFrom(0),
-        Move::PourFrom(1),
+        Move::EmptyBucket(*bucket_index),
+        Move::FillBucket(*bucket_index),
+        Move::PourFrom(*bucket_index),
     ]
 }
