@@ -12,36 +12,49 @@ enum Move {
 }
 
 #[derive(Debug)]
+struct BucketContainer {
+    content: u8,
+    capacity: u8,
+}
+
+impl BucketContainer {
+    fn new(content: u8, capacity: u8) -> Self {
+        BucketContainer {
+            content,
+            capacity
+        }
+    }
+}
+
+#[derive(Debug)]
 struct State {
-    bucket_contents: [u8; 2],
-    bucket_capacities: [u8; 2],
+    //buckets: Vec<BucketContainer>,
+    bucket_contents: Vec<u8>,
+    bucket_capacities: Vec<u8>,
 }
 
 impl State {
-    fn new(bucket_contents: [u8; 2], bucket_capacities: [u8; 2]) -> Self {
+    fn new(bucket_contents: &[u8], bucket_capacities: &[u8]) -> Self {
         State {
-            bucket_contents,
-            bucket_capacities,
+            //buckets: bucket_contents.iter().zip(bucket_capacities.iter()).map(|(content, capacity)| BucketContainer::new(*content, *capacity)).collect(),
+            bucket_contents: bucket_contents.iter().copied().collect(),
+            bucket_capacities: bucket_capacities.iter().copied().collect(),
         }
     }
 
     fn after_move(&self, selected_move: &Move) -> State {
         match selected_move {
             Move::FillBucket(bucket_index) => {
-                let mut new_contents = self.bucket_contents;
+                let mut new_contents = self.bucket_contents.clone();
                 new_contents[*bucket_index] = self.bucket_capacities[*bucket_index];
-                State {
-                    bucket_contents: new_contents,
-                    bucket_capacities: self.bucket_capacities,
-                }
+
+                State::new(&*new_contents, &*self.bucket_capacities)
             }
             Move::EmptyBucket(bucket_index) => {
-                let mut new_contents = self.bucket_contents;
+                let mut new_contents = self.bucket_contents.clone();
                 new_contents[*bucket_index] = 0;
-                State {
-                    bucket_contents: new_contents,
-                    bucket_capacities: self.bucket_capacities,
-                }
+
+                State::new(&*new_contents, &*self.bucket_capacities)
             }
             Move::PourFrom(bucket_index) => {
                 let source_index = match bucket_index {
@@ -63,14 +76,11 @@ impl State {
                 let source_remove = self.bucket_contents[source_index] - source_left;
                 let target_content = self.bucket_contents[target_index] + source_remove;
 
-                let mut new_contents = self.bucket_contents;
+                let mut new_contents = self.bucket_contents.clone();
                 new_contents[source_index] = source_left;
                 new_contents[target_index] = target_content;
 
-                State {
-                    bucket_contents: new_contents,
-                    bucket_capacities: self.bucket_capacities,
-                }
+                State::new(&*new_contents, &*self.bucket_capacities)
             }
         }
     }
@@ -109,8 +119,8 @@ pub fn solve(
     // First fill counts as a move.
     let mut moves: u8 = 1;
 
-    let start_state = State::new(start_contents, [capacity_1, capacity_2]);
-    
+    let start_state = State::new(start_contents.iter().as_ref(), [capacity_1, capacity_2].iter().as_ref());
+
     let mut history: Vec<Vec<State>> = Vec::new();
     history.push(vec![start_state]);
 
