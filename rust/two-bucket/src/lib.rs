@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 const MAX_PERMUTATION_ROUNDS:u8 = 42;
 
 #[derive(Clone, PartialEq, Eq, Debug)]
@@ -13,7 +15,7 @@ enum Move {
     PourFrom(usize),
 }
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
 struct BucketContainer {
     content: u8,
     capacity: u8,
@@ -50,7 +52,7 @@ impl BucketContainer {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 struct State {
     buckets: Vec<BucketContainer>,
 }
@@ -141,6 +143,7 @@ pub fn solve(
 
     let mut moves: u8 = 0;
 
+    let mut unique_permutations = HashSet::new();
     let mut history: Vec<Vec<State>> = Vec::new();
 
     while moves < MAX_PERMUTATION_ROUNDS {
@@ -153,7 +156,7 @@ pub fn solve(
                 moves += 1;
                 for state in last_permutations {
                     //println!("{:?}", state);
-                    for new_permutation in generate_next_permutations(state, &start_bucket_index) {
+                    for new_permutation in generate_next_permutations(state, &start_bucket_index, &mut unique_permutations) {
 
                         if let Some((goal_bucket, goal_bucket_index)) =
                             goal_bucket(&new_permutation, goal)
@@ -229,7 +232,7 @@ fn get_other_bucket_index(the_bucket_index: &usize) -> usize {
     }
 }
 
-fn generate_next_permutations(state: &State, start_bucket_index: &usize) -> Vec<State> {
+fn generate_next_permutations(state: &State, start_bucket_index: &usize, unique_permutations: &mut HashSet<State>) -> Vec<State> {
     let mut next_states = Vec::new();
 
     for (bucket_index, bucket) in state.buckets.iter().enumerate() {
@@ -252,6 +255,8 @@ fn generate_next_permutations(state: &State, start_bucket_index: &usize) -> Vec<
                 //  when starting with the larger bucket full, you are NOT allowed at any point to have the smaller bucket full and the larger bucket empty
                 && !((is_larger_start_bucket && is_empty && other_is_full)
                     || (!is_larger_start_bucket && is_full && other_is_empty))
+                // if we have not already encountered this state then go through it, otherwise skip it as the outcome would be same as before
+                && unique_permutations.insert(potential_state.clone())
             {
                 next_states.push(potential_state)
             }
