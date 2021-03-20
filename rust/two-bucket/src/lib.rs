@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-const MAX_PERMUTATION_ROUNDS:u8 = 42;
+const MAX_PERMUTATION_ROUNDS: u8 = 42;
 
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub enum Bucket {
@@ -21,100 +21,9 @@ struct BucketContainer {
     capacity: u8,
 }
 
-impl BucketContainer {
-    fn new(content: u8, capacity: u8) -> Self {
-        BucketContainer { content, capacity }
-    }
-
-    fn fill(&mut self) {
-        self.content = self.capacity;
-    }
-
-    fn empty(&mut self) {
-        self.content = 0;
-    }
-
-    fn is_full(&self) -> bool {
-        self.content == self.capacity
-    }
-
-    fn is_empty(&self) -> bool {
-        self.content == 0
-    }
-
-    fn pour_into(&mut self, other: &mut BucketContainer) {
-        let target_space = other.capacity - other.content;
-        let source_left = (self.content as i8 - target_space as i8).max(0) as u8;
-        let target_add = self.content - source_left;
-
-        self.content = source_left;
-        other.content += target_add;
-    }
-}
-
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 struct State {
     buckets: Vec<BucketContainer>,
-}
-
-impl State {
-    fn new(bucket_contents: &[u8], bucket_capacities: &[u8]) -> Self {
-        State {
-            buckets: bucket_contents
-                .iter()
-                .zip(bucket_capacities.iter())
-                .map(|(content, capacity)| BucketContainer::new(*content, *capacity))
-                .collect(),
-        }
-    }
-
-    fn from_buckets(buckets: &[BucketContainer]) -> Self {
-        State {
-            buckets: buckets.iter().copied().collect(),
-        }
-    }
-
-    fn after_move(&self, selected_move: &Move) -> State {
-        match selected_move {
-            Move::FillBucket(bucket_index) => {
-                let mut new_buckets = self.buckets.clone();
-                new_buckets[*bucket_index].fill();
-
-                State::from_buckets(&new_buckets)
-            }
-            Move::EmptyBucket(bucket_index) => {
-                let mut new_buckets = self.buckets.clone();
-                new_buckets[*bucket_index].empty();
-
-                State::from_buckets(&new_buckets)
-            }
-            Move::PourFrom(bucket_index) => {
-                let source_index = match bucket_index {
-                    0 => 0,
-                    1 => 1,
-                    _ => unimplemented!("unsupported index: {}", bucket_index),
-                };
-
-                let target_index = match bucket_index {
-                    0 => 1,
-                    1 => 0,
-                    _ => unimplemented!("unsupported index: {}", bucket_index),
-                };
-
-                let mut new_buckets = self.buckets.clone();
-
-                // Cannot take 2 mutable references to vector so let's just clone for now.
-                let mut source_bucket = new_buckets[source_index];
-                let mut target_bucket = new_buckets[target_index];
-                source_bucket.pour_into(&mut target_bucket);
-
-                new_buckets[source_index] = source_bucket;
-                new_buckets[target_index] = target_bucket;
-
-                State::from_buckets(&new_buckets)
-            }
-        }
-    }
 }
 
 /// A struct to hold your results in.
@@ -156,13 +65,16 @@ pub fn solve(
                 moves += 1;
                 for state in last_permutations {
                     //println!("{:?}", state);
-                    for new_permutation in generate_next_permutations(state, &start_bucket_index, &mut unique_permutations) {
-
+                    for new_permutation in generate_next_permutations(
+                        state,
+                        &start_bucket_index,
+                        &mut unique_permutations,
+                    ) {
                         if let Some((goal_bucket, goal_bucket_index)) =
                             goal_bucket(&new_permutation, goal)
                         {
-                            let other_bucket_container =
-                                &new_permutation.buckets[get_other_bucket_index(&goal_bucket_index)];
+                            let other_bucket_container = &new_permutation.buckets
+                                [get_other_bucket_index(&goal_bucket_index)];
 
                             return Some(BucketStats {
                                 moves,
@@ -232,7 +144,11 @@ fn get_other_bucket_index(the_bucket_index: &usize) -> usize {
     }
 }
 
-fn generate_next_permutations(state: &State, start_bucket_index: &usize, unique_permutations: &mut HashSet<State>) -> Vec<State> {
+fn generate_next_permutations(
+    state: &State,
+    start_bucket_index: &usize,
+    unique_permutations: &mut HashSet<State>,
+) -> Vec<State> {
     let mut next_states = Vec::new();
 
     for (bucket_index, bucket) in state.buckets.iter().enumerate() {
@@ -272,4 +188,95 @@ fn all_bucket_moves(bucket_index: &usize) -> Vec<Move> {
         Move::FillBucket(*bucket_index),
         Move::PourFrom(*bucket_index),
     ]
+}
+
+impl BucketContainer {
+    fn new(content: u8, capacity: u8) -> Self {
+        BucketContainer { content, capacity }
+    }
+
+    fn fill(&mut self) {
+        self.content = self.capacity;
+    }
+
+    fn empty(&mut self) {
+        self.content = 0;
+    }
+
+    fn is_full(&self) -> bool {
+        self.content == self.capacity
+    }
+
+    fn is_empty(&self) -> bool {
+        self.content == 0
+    }
+
+    fn pour_into(&mut self, other: &mut BucketContainer) {
+        let target_space = other.capacity - other.content;
+        let source_left = (self.content as i8 - target_space as i8).max(0) as u8;
+        let target_add = self.content - source_left;
+
+        self.content = source_left;
+        other.content += target_add;
+    }
+}
+
+impl State {
+    fn new(bucket_contents: &[u8], bucket_capacities: &[u8]) -> Self {
+        State {
+            buckets: bucket_contents
+                .iter()
+                .zip(bucket_capacities.iter())
+                .map(|(content, capacity)| BucketContainer::new(*content, *capacity))
+                .collect(),
+        }
+    }
+
+    fn from_buckets(buckets: &[BucketContainer]) -> Self {
+        State {
+            buckets: buckets.iter().copied().collect(),
+        }
+    }
+
+    fn after_move(&self, selected_move: &Move) -> State {
+        match selected_move {
+            Move::FillBucket(bucket_index) => {
+                let mut new_buckets = self.buckets.clone();
+                new_buckets[*bucket_index].fill();
+
+                State::from_buckets(&new_buckets)
+            }
+            Move::EmptyBucket(bucket_index) => {
+                let mut new_buckets = self.buckets.clone();
+                new_buckets[*bucket_index].empty();
+
+                State::from_buckets(&new_buckets)
+            }
+            Move::PourFrom(bucket_index) => {
+                let source_index = match bucket_index {
+                    0 => 0,
+                    1 => 1,
+                    _ => unimplemented!("unsupported index: {}", bucket_index),
+                };
+
+                let target_index = match bucket_index {
+                    0 => 1,
+                    1 => 0,
+                    _ => unimplemented!("unsupported index: {}", bucket_index),
+                };
+
+                let mut new_buckets = self.buckets.clone();
+
+                // Cannot take 2 mutable references to vector so let's just clone for now.
+                let mut source_bucket = new_buckets[source_index];
+                let mut target_bucket = new_buckets[target_index];
+                source_bucket.pour_into(&mut target_bucket);
+
+                new_buckets[source_index] = source_bucket;
+                new_buckets[target_index] = target_bucket;
+
+                State::from_buckets(&new_buckets)
+            }
+        }
+    }
 }
