@@ -151,14 +151,13 @@ pub fn solve(
                 moves += 1;
                 for state in last_permutations {
                     //println!("{:?}", state);
-                    for a_move in all_legal_moves(state, &start_bucket_index) {
-                        let new_state = state.after_move(&a_move);
+                    for new_permutation in generate_next_permutations(state, &start_bucket_index) {
 
                         if let Some((goal_bucket, goal_bucket_index)) =
-                            goal_bucket(&new_state, goal)
+                            goal_bucket(&new_permutation, goal)
                         {
                             let other_bucket_container =
-                                &new_state.buckets[get_other_bucket_index(&goal_bucket_index)];
+                                &new_permutation.buckets[get_other_bucket_index(&goal_bucket_index)];
 
                             return Some(BucketStats {
                                 moves,
@@ -167,7 +166,7 @@ pub fn solve(
                             });
                         }
 
-                        curr_permutations.push(new_state);
+                        curr_permutations.push(new_permutation);
                     }
                 }
                 println!("{:?}", curr_permutations);
@@ -228,8 +227,8 @@ fn get_other_bucket_index(the_bucket_index: &usize) -> usize {
     }
 }
 
-fn all_legal_moves(state: &State, start_bucket_index: &usize) -> Vec<Move> {
-    let mut moves = Vec::new();
+fn generate_next_permutations(state: &State, start_bucket_index: &usize) -> Vec<State> {
+    let mut next_states = Vec::new();
 
     for (bucket_index, bucket) in state.buckets.iter().enumerate() {
         let other_index = get_other_bucket_index(&bucket_index);
@@ -252,12 +251,12 @@ fn all_legal_moves(state: &State, start_bucket_index: &usize) -> Vec<Move> {
                 && !((is_larger_start_bucket && is_empty && other_is_full)
                     || (!is_larger_start_bucket && is_full && other_is_empty))
             {
-                moves.push(a_move)
+                next_states.push(potential_state)
             }
         }
     }
 
-    moves
+    next_states
 }
 
 fn all_bucket_moves(bucket_index: &usize) -> Vec<Move> {
