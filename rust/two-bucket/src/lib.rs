@@ -1,3 +1,5 @@
+const MAX_PERMUTATION_ROUNDS:u8 = 42;
+
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub enum Bucket {
     One,
@@ -141,7 +143,7 @@ pub fn solve(
 
     let mut history: Vec<Vec<State>> = Vec::new();
 
-    while moves < u8::MAX {
+    while moves < MAX_PERMUTATION_ROUNDS {
         println!("{:?}", moves);
 
         // Brute force by going through every move permutation until we hit the goal.
