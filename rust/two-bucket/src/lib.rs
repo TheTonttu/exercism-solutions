@@ -245,11 +245,7 @@ impl State {
                 State::from_buckets(&new_buckets)
             }
             Move::PourFrom(bucket_index) => {
-                let source_index = match bucket_index {
-                    0 => 0,
-                    1 => 1,
-                    _ => unimplemented!("unsupported index: {}", bucket_index),
-                };
+                let source_index = *bucket_index;
 
                 let target_index = match bucket_index {
                     0 => 1,
