@@ -34,14 +34,14 @@ enum Move {
 // Struct implementations can be found from the end of the file.
 
 #[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
-struct BucketContainer {
+struct BucketState {
     content: u8,
     capacity: u8,
 }
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
-struct State {
-    buckets: Vec<BucketContainer>,
+struct ChallengeState {
+    buckets: Vec<BucketState>,
 }
 
 /// A struct to hold your results in.
@@ -71,7 +71,7 @@ pub fn solve(
     // Opposite of start state is never allowed so mark it as a permutation we have already gone through so we never use it.
     unique_permutations.insert(opposite_start_state);
 
-    let mut history: Vec<Vec<State>> = Vec::new();
+    let mut history: Vec<Vec<ChallengeState>> = Vec::new();
 
     while moves < MAX_PERMUTATION_ROUNDS {
         // Brute force by going through every move permutation that we haven't already gone through until we hit the goal.
@@ -84,13 +84,13 @@ pub fn solve(
                         generate_next_permutations(state, &mut unique_permutations)
                     {
                         if let Some(goal_bucket) = goal_bucket(&new_permutation, goal) {
-                            let other_bucket_container =
+                            let other_bucket_state =
                                 &new_permutation.buckets[goal_bucket.other().index()];
 
                             return Some(BucketStats {
                                 moves,
                                 goal_bucket,
-                                other_bucket: other_bucket_container.content,
+                                other_bucket: other_bucket_state.content,
                             });
                         }
 
@@ -107,12 +107,12 @@ pub fn solve(
                 let start_state = create_start_state(start_bucket, capacity_1, capacity_2);
 
                 if let Some(goal_bucket) = goal_bucket(&start_state, goal) {
-                    let other_bucket_container = &start_state.buckets[goal_bucket.other().index()];
+                    let other_bucket_state = &start_state.buckets[goal_bucket.other().index()];
 
                     return Some(BucketStats {
                         moves,
                         goal_bucket,
-                        other_bucket: other_bucket_container.content,
+                        other_bucket: other_bucket_state.content,
                     });
                 }
 
@@ -124,20 +124,20 @@ pub fn solve(
     None
 }
 
-fn create_start_state(start_bucket: &Bucket, capacity_1: u8, capacity_2: u8) -> State {
+fn create_start_state(start_bucket: &Bucket, capacity_1: u8, capacity_2: u8) -> ChallengeState {
     // Start fill
     let start_contents = match start_bucket {
         Bucket::One => [capacity_1, 0],
         Bucket::Two => [0, capacity_2],
     };
 
-    State::new(
+    ChallengeState::new(
         start_contents.iter().as_ref(),
         [capacity_1, capacity_2].iter().as_ref(),
     )
 }
 
-fn goal_bucket(state: &State, goal: u8) -> Option<Bucket> {
+fn goal_bucket(state: &ChallengeState, goal: u8) -> Option<Bucket> {
     state
         .buckets
         .iter()
@@ -151,9 +151,9 @@ fn goal_bucket(state: &State, goal: u8) -> Option<Bucket> {
 }
 
 fn generate_next_permutations(
-    state: &State,
-    unique_permutations: &mut HashSet<State>,
-) -> Vec<State> {
+    state: &ChallengeState,
+    unique_permutations: &mut HashSet<ChallengeState>,
+) -> Vec<ChallengeState> {
     let mut next_states = Vec::new();
 
     for (bucket_index, _bucket) in state.buckets.iter().enumerate() {
@@ -186,9 +186,9 @@ fn all_bucket_moves(bucket_index: &usize) -> Vec<Move> {
     ]
 }
 
-impl BucketContainer {
+impl BucketState {
     fn new(content: u8, capacity: u8) -> Self {
-        BucketContainer { content, capacity }
+        BucketState { content, capacity }
     }
 
     fn fill(&mut self) {
@@ -199,7 +199,7 @@ impl BucketContainer {
         self.content = 0;
     }
 
-    fn pour_into(&mut self, other: &mut BucketContainer) {
+    fn pour_into(&mut self, other: &mut BucketState) {
         let target_space = other.capacity - other.content;
         let source_left = (self.content as i8 - target_space as i8).max(0) as u8;
         let target_add = self.content - source_left;
@@ -209,36 +209,36 @@ impl BucketContainer {
     }
 }
 
-impl State {
+impl ChallengeState {
     fn new(bucket_contents: &[u8], bucket_capacities: &[u8]) -> Self {
-        State {
+        ChallengeState {
             buckets: bucket_contents
                 .iter()
                 .zip(bucket_capacities.iter())
-                .map(|(content, capacity)| BucketContainer::new(*content, *capacity))
+                .map(|(content, capacity)| BucketState::new(*content, *capacity))
                 .collect(),
         }
     }
 
-    fn from_buckets(buckets: &[BucketContainer]) -> Self {
-        State {
+    fn from_buckets(buckets: &[BucketState]) -> Self {
+        ChallengeState {
             buckets: buckets.iter().copied().collect(),
         }
     }
 
-    fn after_move(&self, selected_move: &Move) -> State {
+    fn after_move(&self, selected_move: &Move) -> ChallengeState {
         match selected_move {
             Move::Fill(bucket) => {
                 let mut new_buckets = self.buckets.clone();
                 new_buckets[bucket.index()].fill();
 
-                State::from_buckets(&new_buckets)
+                ChallengeState::from_buckets(&new_buckets)
             }
             Move::Empty(bucket) => {
                 let mut new_buckets = self.buckets.clone();
                 new_buckets[bucket.index()].empty();
 
-                State::from_buckets(&new_buckets)
+                ChallengeState::from_buckets(&new_buckets)
             }
             Move::PourFrom(bucket) => {
                 let source_index = bucket.index();
@@ -254,7 +254,7 @@ impl State {
                 new_buckets[source_index] = source_bucket;
                 new_buckets[target_index] = target_bucket;
 
-                State::from_buckets(&new_buckets)
+                ChallengeState::from_buckets(&new_buckets)
             }
         }
     }
