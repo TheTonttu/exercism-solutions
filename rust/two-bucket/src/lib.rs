@@ -97,6 +97,7 @@ pub fn solve(
                         curr_permutations.push(new_permutation);
                     }
                 }
+                // Only permutations from the previous iteration are needed.
                 history.clear();
                 history.push(curr_permutations);
             }
@@ -160,7 +161,7 @@ fn generate_next_permutations(
             let potential_state = state.after_move(&a_move);
 
             if state.buckets != potential_state.buckets
-                // if we have not already encountered this state then go through it, otherwise skip it as the outcome would be same as before
+                // If we have not already encountered this state then go through it, otherwise skip it as the outcome for following iterations would be same as before.
                 && unique_permutations.insert(potential_state.clone())
             {
                 next_states.push(potential_state)
