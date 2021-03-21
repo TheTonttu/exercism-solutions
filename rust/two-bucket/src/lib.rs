@@ -31,6 +31,8 @@ enum Move {
     PourFrom(Bucket),
 }
 
+// Struct implementations can be found from the end of the file.
+
 #[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
 struct BucketContainer {
     content: u8,
@@ -66,7 +68,7 @@ pub fn solve(
     let mut unique_permutations = HashSet::new();
 
     let opposite_start_state = create_start_state(&start_bucket.other(), capacity_1, capacity_2);
-    // Opposite of start state is never allowed so mark it as a permutation we have already gone through so we never use it
+    // Opposite of start state is never allowed so mark it as a permutation we have already gone through so we never use it.
     unique_permutations.insert(opposite_start_state);
 
     let mut history: Vec<Vec<State>> = Vec::new();
@@ -85,11 +87,9 @@ pub fn solve(
                     for new_permutation in
                         generate_next_permutations(state, &mut unique_permutations)
                     {
-                        if let Some((goal_bucket, goal_bucket_index)) =
-                            goal_bucket(&new_permutation, goal)
-                        {
-                            let other_bucket_container = &new_permutation.buckets
-                                [get_other_bucket_index(&goal_bucket_index)];
+                        if let Some(goal_bucket) = goal_bucket(&new_permutation, goal) {
+                            let other_bucket_container =
+                                &new_permutation.buckets[goal_bucket.other().index()];
 
                             return Some(BucketStats {
                                 moves,
@@ -112,9 +112,8 @@ pub fn solve(
 
                 println!("start state: {:?}", start_state);
 
-                if let Some((goal_bucket, goal_bucket_index)) = goal_bucket(&start_state, goal) {
-                    let other_bucket_container =
-                        &start_state.buckets[get_other_bucket_index(&goal_bucket_index)];
+                if let Some(goal_bucket) = goal_bucket(&start_state, goal) {
+                    let other_bucket_container = &start_state.buckets[goal_bucket.other().index()];
 
                     return Some(BucketStats {
                         moves,
@@ -144,25 +143,17 @@ fn create_start_state(start_bucket: &Bucket, capacity_1: u8, capacity_2: u8) -> 
     )
 }
 
-fn goal_bucket(state: &State, goal: u8) -> Option<(Bucket, usize)> {
+fn goal_bucket(state: &State, goal: u8) -> Option<Bucket> {
     state
         .buckets
         .iter()
         .enumerate()
         .find(|(_i, c)| c.content == goal)
         .map(|(i, _c)| match i {
-            0 => (Bucket::One, i),
-            1 => (Bucket::Two, i),
+            0 => Bucket::One,
+            1 => Bucket::Two,
             _ => unimplemented!("unsupported index: {}", i),
         })
-}
-
-fn get_other_bucket_index(the_bucket_index: &usize) -> usize {
-    match the_bucket_index {
-        0 => 1,
-        1 => 0,
-        _ => unimplemented!("unsupported index: {}", the_bucket_index),
-    }
 }
 
 fn generate_next_permutations(
