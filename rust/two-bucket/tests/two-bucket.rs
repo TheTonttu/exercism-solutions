@@ -78,7 +78,6 @@ fn not_possible_to_reach_the_goal() {
 }
 
 #[test]
-#[ignore]
 fn with_same_buckets_but_different_goal_then_it_is_possible() {
     assert_eq!(
         solve(6, 15, 9, &Bucket::One),

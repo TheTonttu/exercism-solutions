@@ -64,7 +64,8 @@ pub fn solve(
                 let mut curr_permutations = Vec::new();
                 moves += 1;
                 for state in last_permutations {
-                    //println!("{:?}", state);
+                    println!("prev state: {:?}", state);
+
                     for new_permutation in generate_next_permutations(
                         state,
                         &start_bucket_index,
@@ -103,6 +104,7 @@ pub fn solve(
                     start_contents.iter().as_ref(),
                     [capacity_1, capacity_2].iter().as_ref(),
                 );
+                println!("start state: {:?}", start_state);
 
                 if let Some((goal_bucket, goal_bucket_index)) = goal_bucket(&start_state, goal) {
                     let other_bucket_container =
@@ -153,7 +155,7 @@ fn generate_next_permutations(
 
     for (bucket_index, bucket) in state.buckets.iter().enumerate() {
         let other_index = get_other_bucket_index(&bucket_index);
-        let other_bucket = state.buckets[other_index];
+        let other_bucket = &state.buckets[other_index];
 
         let is_start_bucket = bucket_index == *start_bucket_index;
         let is_larger_bucket = bucket.capacity > other_bucket.capacity;
@@ -162,18 +164,18 @@ fn generate_next_permutations(
         for a_move in all_bucket_moves(&bucket_index) {
             let potential_state = state.after_move(&a_move);
 
-            let is_empty = potential_state.buckets[bucket_index].is_empty();
-            let is_full = potential_state.buckets[bucket_index].is_full();
-            let other_is_empty = potential_state.buckets[other_index].is_empty();
-            let other_is_full = potential_state.buckets[other_index].is_full();
+            let the_bucket = &potential_state.buckets[bucket_index];
+            let other_bucket = &potential_state.buckets[other_index];
 
             if state.buckets != potential_state.buckets
                 //  when starting with the larger bucket full, you are NOT allowed at any point to have the smaller bucket full and the larger bucket empty
-                && !((is_larger_start_bucket && is_empty && other_is_full)
-                    || (!is_larger_start_bucket && is_full && other_is_empty))
+                && !((is_larger_start_bucket && the_bucket.is_empty() && other_bucket.is_full())
+                    || (!is_larger_start_bucket && the_bucket.is_full() && other_bucket.is_empty()))
                 // if we have not already encountered this state then go through it, otherwise skip it as the outcome would be same as before
                 && unique_permutations.insert(potential_state.clone())
             {
+                println!("next move: {:?}", a_move);
+                println!("next state: {:?}", potential_state);
                 next_states.push(potential_state)
             }
         }
