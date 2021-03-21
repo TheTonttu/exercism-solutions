@@ -153,13 +153,9 @@ fn generate_next_permutations(
 ) -> Vec<State> {
     let mut next_states = Vec::new();
 
-    for (bucket_index, bucket) in state.buckets.iter().enumerate() {
+    for (bucket_index, _bucket) in state.buckets.iter().enumerate() {
         let other_index = get_other_bucket_index(&bucket_index);
-        let other_bucket = &state.buckets[other_index];
-
         let is_start_bucket = bucket_index == *start_bucket_index;
-        let is_larger_bucket = bucket.capacity > other_bucket.capacity;
-        let is_larger_start_bucket = is_start_bucket && is_larger_bucket;
 
         for a_move in all_bucket_moves(&bucket_index) {
             let potential_state = state.after_move(&a_move);
@@ -168,9 +164,9 @@ fn generate_next_permutations(
             let other_bucket = &potential_state.buckets[other_index];
 
             if state.buckets != potential_state.buckets
-                //  when starting with the larger bucket full, you are NOT allowed at any point to have the smaller bucket full and the larger bucket empty
-                && !((is_larger_start_bucket && the_bucket.is_empty() && other_bucket.is_full())
-                    || (!is_larger_start_bucket && the_bucket.is_full() && other_bucket.is_empty()))
+                //  opposite of starting state is not allowed, e.g. start bucket is empty and other bucket is full
+                && !((is_start_bucket && the_bucket.is_empty() && other_bucket.is_full())
+                    || (!is_start_bucket && the_bucket.is_full() && other_bucket.is_empty()))
                 // if we have not already encountered this state then go through it, otherwise skip it as the outcome would be same as before
                 && unique_permutations.insert(potential_state.clone())
             {
