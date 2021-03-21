@@ -8,6 +8,15 @@ pub enum Bucket {
     Two,
 }
 
+impl Bucket {
+    fn other(&self) -> Bucket {
+        match self {
+            Bucket::One => Bucket::Two,
+            Bucket::Two => Bucket::One,
+        }
+    }
+}
+
 #[derive(Debug)]
 enum Move {
     EmptyBucket(usize),
@@ -45,20 +54,20 @@ pub fn solve(
     goal: u8,
     start_bucket: &Bucket,
 ) -> Option<BucketStats> {
-    let start_bucket_index = match start_bucket {
-        Bucket::One => 0,
-        Bucket::Two => 1,
-    };
-
     let mut moves: u8 = 0;
 
     let mut unique_permutations = HashSet::new();
+
+    let opposite_start_state = create_start_state(&start_bucket.other(), capacity_1, capacity_2);
+    // Opposite of start state is never allowed so mark it as a permutation we have already gone through so we never use it
+    unique_permutations.insert(opposite_start_state);
+
     let mut history: Vec<Vec<State>> = Vec::new();
 
     while moves < MAX_PERMUTATION_ROUNDS {
         println!("{:?}", moves);
 
-        // Brute force by going through every move permutation until we hit the goal.
+        // Brute force by going through every move permutation that we haven't already gone through until we hit the goal.
         match history.last() {
             Some(last_permutations) => {
                 let mut curr_permutations = Vec::new();
@@ -66,11 +75,9 @@ pub fn solve(
                 for state in last_permutations {
                     println!("prev state: {:?}", state);
 
-                    for new_permutation in generate_next_permutations(
-                        state,
-                        &start_bucket_index,
-                        &mut unique_permutations,
-                    ) {
+                    for new_permutation in
+                        generate_next_permutations(state, &mut unique_permutations)
+                    {
                         if let Some((goal_bucket, goal_bucket_index)) =
                             goal_bucket(&new_permutation, goal)
                         {
@@ -94,16 +101,8 @@ pub fn solve(
             None => {
                 moves += 1;
 
-                // Start fill
-                let start_contents = match start_bucket {
-                    Bucket::One => [capacity_1, 0],
-                    Bucket::Two => [0, capacity_2],
-                };
+                let start_state = create_start_state(start_bucket, capacity_1, capacity_2);
 
-                let start_state = State::new(
-                    start_contents.iter().as_ref(),
-                    [capacity_1, capacity_2].iter().as_ref(),
-                );
                 println!("start state: {:?}", start_state);
 
                 if let Some((goal_bucket, goal_bucket_index)) = goal_bucket(&start_state, goal) {
@@ -123,6 +122,19 @@ pub fn solve(
     }
 
     None
+}
+
+fn create_start_state(start_bucket: &Bucket, capacity_1: u8, capacity_2: u8) -> State {
+    // Start fill
+    let start_contents = match start_bucket {
+        Bucket::One => [capacity_1, 0],
+        Bucket::Two => [0, capacity_2],
+    };
+
+    State::new(
+        start_contents.iter().as_ref(),
+        [capacity_1, capacity_2].iter().as_ref(),
+    )
 }
 
 fn goal_bucket(state: &State, goal: u8) -> Option<(Bucket, usize)> {
@@ -148,25 +160,15 @@ fn get_other_bucket_index(the_bucket_index: &usize) -> usize {
 
 fn generate_next_permutations(
     state: &State,
-    start_bucket_index: &usize,
     unique_permutations: &mut HashSet<State>,
 ) -> Vec<State> {
     let mut next_states = Vec::new();
 
     for (bucket_index, _bucket) in state.buckets.iter().enumerate() {
-        let other_index = get_other_bucket_index(&bucket_index);
-        let is_start_bucket = bucket_index == *start_bucket_index;
-
         for a_move in all_bucket_moves(&bucket_index) {
             let potential_state = state.after_move(&a_move);
 
-            let the_bucket = &potential_state.buckets[bucket_index];
-            let other_bucket = &potential_state.buckets[other_index];
-
             if state.buckets != potential_state.buckets
-                //  opposite of starting state is not allowed, e.g. start bucket is empty and other bucket is full
-                && !((is_start_bucket && the_bucket.is_empty() && other_bucket.is_full())
-                    || (!is_start_bucket && the_bucket.is_full() && other_bucket.is_empty()))
                 // if we have not already encountered this state then go through it, otherwise skip it as the outcome would be same as before
                 && unique_permutations.insert(potential_state.clone())
             {
@@ -199,14 +201,6 @@ impl BucketContainer {
 
     fn empty(&mut self) {
         self.content = 0;
-    }
-
-    fn is_full(&self) -> bool {
-        self.content == self.capacity
-    }
-
-    fn is_empty(&self) -> bool {
-        self.content == 0
     }
 
     fn pour_into(&mut self, other: &mut BucketContainer) {
