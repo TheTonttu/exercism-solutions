@@ -74,16 +74,12 @@ pub fn solve(
     let mut history: Vec<Vec<State>> = Vec::new();
 
     while moves < MAX_PERMUTATION_ROUNDS {
-        println!("{:?}", moves);
-
         // Brute force by going through every move permutation that we haven't already gone through until we hit the goal.
         match history.last() {
             Some(last_permutations) => {
                 let mut curr_permutations = Vec::new();
                 moves += 1;
                 for state in last_permutations {
-                    println!("prev state: {:?}", state);
-
                     for new_permutation in
                         generate_next_permutations(state, &mut unique_permutations)
                     {
@@ -101,7 +97,6 @@ pub fn solve(
                         curr_permutations.push(new_permutation);
                     }
                 }
-                println!("{:?}", curr_permutations);
                 history.clear();
                 history.push(curr_permutations);
             }
@@ -109,8 +104,6 @@ pub fn solve(
                 moves += 1;
 
                 let start_state = create_start_state(start_bucket, capacity_1, capacity_2);
-
-                println!("start state: {:?}", start_state);
 
                 if let Some(goal_bucket) = goal_bucket(&start_state, goal) {
                     let other_bucket_container = &start_state.buckets[goal_bucket.other().index()];
@@ -170,8 +163,6 @@ fn generate_next_permutations(
                 // if we have not already encountered this state then go through it, otherwise skip it as the outcome would be same as before
                 && unique_permutations.insert(potential_state.clone())
             {
-                println!("next move: {:?}", a_move);
-                println!("next state: {:?}", potential_state);
                 next_states.push(potential_state)
             }
         }
