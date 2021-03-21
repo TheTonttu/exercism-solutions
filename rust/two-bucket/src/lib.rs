@@ -2,7 +2,7 @@ use std::collections::HashSet;
 
 const MAX_PERMUTATION_ROUNDS: u8 = 42;
 
-#[derive(Clone, PartialEq, Eq, Debug)]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum Bucket {
     One,
     Two,
@@ -15,13 +15,20 @@ impl Bucket {
             Bucket::Two => Bucket::One,
         }
     }
+
+    fn index(&self) -> usize {
+        match self {
+            Bucket::One => 0,
+            Bucket::Two => 1,
+        }
+    }
 }
 
-#[derive(Debug)]
+#[derive(Copy, Clone, Debug)]
 enum Move {
-    EmptyBucket(usize),
-    FillBucket(usize),
-    PourFrom(usize),
+    Empty(Bucket),
+    Fill(Bucket),
+    PourFrom(Bucket),
 }
 
 #[derive(Copy, Clone, Debug, Eq, Hash, PartialEq)]
@@ -183,10 +190,16 @@ fn generate_next_permutations(
 }
 
 fn all_bucket_moves(bucket_index: &usize) -> Vec<Move> {
+    let bucket = match bucket_index {
+        0 => Bucket::One,
+        1 => Bucket::Two,
+        _ => unimplemented!("unsupported bucket index {}", bucket_index),
+    };
+
     vec![
-        Move::EmptyBucket(*bucket_index),
-        Move::FillBucket(*bucket_index),
-        Move::PourFrom(*bucket_index),
+        Move::Empty(bucket),
+        Move::Fill(bucket),
+        Move::PourFrom(bucket),
     ]
 }
 
@@ -232,26 +245,21 @@ impl State {
 
     fn after_move(&self, selected_move: &Move) -> State {
         match selected_move {
-            Move::FillBucket(bucket_index) => {
+            Move::Fill(bucket) => {
                 let mut new_buckets = self.buckets.clone();
-                new_buckets[*bucket_index].fill();
+                new_buckets[bucket.index()].fill();
 
                 State::from_buckets(&new_buckets)
             }
-            Move::EmptyBucket(bucket_index) => {
+            Move::Empty(bucket) => {
                 let mut new_buckets = self.buckets.clone();
-                new_buckets[*bucket_index].empty();
+                new_buckets[bucket.index()].empty();
 
                 State::from_buckets(&new_buckets)
             }
-            Move::PourFrom(bucket_index) => {
-                let source_index = *bucket_index;
-
-                let target_index = match bucket_index {
-                    0 => 1,
-                    1 => 0,
-                    _ => unimplemented!("unsupported index: {}", bucket_index),
-                };
+            Move::PourFrom(bucket) => {
+                let source_index = bucket.index();
+                let target_index = bucket.other().index();
 
                 let mut new_buckets = self.buckets.clone();
 
