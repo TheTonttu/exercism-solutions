@@ -23,17 +23,15 @@ pub fn spiral_matrix(size: u32) -> Vec<Vec<u32>> {
             matrix[y][x] = next;
         }
 
-        let mut maybe_new_coordinates: Option<(usize, usize)> = None;
-
-        while maybe_new_coordinates.is_none()
-            // On last step numbers are already assigned so turning is unnecessary.
+        let mut new_coordinates_found = false;
+        while !new_coordinates_found
+            // On last step numbers are already assigned so calculating new coordinates is unnecessary.
             && step != max_steps
         {
-            maybe_new_coordinates =
-                calculate_new_valid_coordinates(&matrix, coordinates, velocity, &boundaries);
-            match maybe_new_coordinates {
+            match calculate_new_valid_coordinates(&matrix, coordinates, velocity, &boundaries) {
                 Some(new_coordinates) => {
                     coordinates = new_coordinates;
+                    new_coordinates_found = true;
                 }
                 None => {
                     velocity = change_direction_clockwise(velocity);
