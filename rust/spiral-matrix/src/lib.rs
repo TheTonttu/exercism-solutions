@@ -15,36 +15,37 @@ pub fn spiral_matrix(size: u32) -> Vec<Vec<u32>> {
         step += 1;
 
         let (x, y) = coordinates;
-        let row = &mut matrix[y as usize];
         if let Some(next) = number_source.next() {
-            row[x as usize] = next;
+            matrix[y as usize][x as usize] = next;
         }
 
         let mut new_coordinates;
+        let boundaries = 0..size;
+
         loop {
-            new_coordinates = next_coordinates(coordinates, velocity);
+            new_coordinates = calculate_new_coordinates(coordinates, velocity);
             let (nx, ny) = new_coordinates;
 
-            let boundaries = 0..size;
             if boundaries.contains(&(nx as usize))
                 && boundaries.contains(&(ny as usize))
                 && matrix[ny as usize][nx as usize] == 0
+                // On last step numbers are already assigned so turning is unnecessary.
                 || step == max_steps
             {
                 break;
             }
-            velocity = turn(velocity);
+            velocity = change_direction_clockwise(velocity);
         }
         coordinates = new_coordinates;
     }
     matrix
 }
 
-fn next_coordinates((x, y): (i32, i32), (vx, vy): (i32, i32)) -> (i32, i32) {
+fn calculate_new_coordinates((x, y): (i32, i32), (vx, vy): (i32, i32)) -> (i32, i32) {
     (x + vx, y + vy)
 }
 
-fn turn(velocity: (i32, i32)) -> (i32, i32) {
+fn change_direction_clockwise(velocity: (i32, i32)) -> (i32, i32) {
     match velocity {
         // right -> down
         (vx, _) if vx > 0 => (0, 1),
