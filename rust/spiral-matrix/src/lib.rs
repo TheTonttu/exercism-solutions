@@ -3,20 +3,20 @@ pub fn spiral_matrix(size: u32) -> Vec<Vec<u32>> {
 
     let mut matrix = vec![vec![0u32; size]; size];
 
-    let move_count = size * size;
-    let mut nums = 1..=move_count as u32;
+    let max_steps = size * size;
+    let mut number_source = 1..=max_steps as u32;
 
     let mut velocity = (1, 0);
 
     let mut coordinates = (0i32, 0i32);
 
-    let mut i = 0;
-    while i < move_count {
-        i += 1;
+    let mut step = 0;
+    while step < max_steps {
+        step += 1;
 
         let (x, y) = coordinates;
         let row = &mut matrix[y as usize];
-        if let Some(next) = nums.next() {
+        if let Some(next) = number_source.next() {
             row[x as usize] = next;
         }
 
@@ -29,7 +29,7 @@ pub fn spiral_matrix(size: u32) -> Vec<Vec<u32>> {
             if boundaries.contains(&(nx as usize))
                 && boundaries.contains(&(ny as usize))
                 && matrix[ny as usize][nx as usize] == 0
-                || i == move_count
+                || step == max_steps
             {
                 break;
             }
