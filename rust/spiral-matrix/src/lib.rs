@@ -9,7 +9,7 @@ pub fn spiral_matrix(size: u32) -> Vec<Vec<u32>> {
 
     let mut number_source = 1..=max_steps as u32;
 
-    let mut coordinates = (0i32, 0i32);
+    let mut coordinates = (0, 0);
     let mut velocity = (1, 0);
 
     let mut step = 0;
@@ -20,10 +20,10 @@ pub fn spiral_matrix(size: u32) -> Vec<Vec<u32>> {
 
         let (x, y) = coordinates;
         if let Some(next) = number_source.next() {
-            matrix[y as usize][x as usize] = next;
+            matrix[y][x] = next;
         }
 
-        let mut maybe_new_coordinates: Option<(i32, i32)> = None;
+        let mut maybe_new_coordinates: Option<(usize, usize)> = None;
 
         while maybe_new_coordinates.is_none()
             // On last step numbers are already assigned so turning is unnecessary.
@@ -46,18 +46,18 @@ pub fn spiral_matrix(size: u32) -> Vec<Vec<u32>> {
 
 fn calculate_new_valid_coordinates(
     matrix: &[Vec<u32>],
-    (x, y): (i32, i32),
+    (x, y): (usize, usize),
     (vx, vy): (i32, i32),
     boundaries: &Range<usize>,
-) -> Option<(i32, i32)> {
-    let new_coordinates = (x + vx, y + vy);
-    let (nx, ny) = new_coordinates;
+) -> Option<(usize, usize)> {
+    let coordinates_candidate = (x as i32 + vx, y as i32 + vy);
+    let (nx, ny) = coordinates_candidate;
 
     if boundaries.contains(&(nx as usize))
         && boundaries.contains(&(ny as usize))
         && matrix[ny as usize][nx as usize] == 0
     {
-        Some(new_coordinates)
+        Some((nx as usize, ny as usize))
     } else {
         None
     }
