@@ -1,5 +1,3 @@
-use std::ops::Range;
-
 pub fn spiral_matrix(size: u32) -> Vec<Vec<u32>> {
     let size = size as usize;
 
@@ -13,7 +11,6 @@ pub fn spiral_matrix(size: u32) -> Vec<Vec<u32>> {
     let mut velocity = (1, 0);
 
     let mut step = 0;
-    let boundaries = 0..size;
 
     while step < max_steps {
         step += 1;
@@ -28,7 +25,7 @@ pub fn spiral_matrix(size: u32) -> Vec<Vec<u32>> {
             // On last step numbers are already assigned so calculating new coordinates is unnecessary.
             && step != max_steps
         {
-            match calculate_new_valid_coordinates(&matrix, coordinates, velocity, &boundaries) {
+            match calculate_new_valid_coordinates(&matrix, coordinates, velocity) {
                 Some(new_coordinates) => {
                     coordinates = new_coordinates;
                     new_coordinates_found = true;
@@ -46,19 +43,24 @@ fn calculate_new_valid_coordinates(
     matrix: &[Vec<u32>],
     (x, y): (usize, usize),
     (vx, vy): (i32, i32),
-    boundaries: &Range<usize>,
 ) -> Option<(usize, usize)> {
     let coordinates_candidate = (x as i32 + vx, y as i32 + vy);
     let (nx, ny) = coordinates_candidate;
 
-    if boundaries.contains(&(nx as usize))
-        && boundaries.contains(&(ny as usize))
-        && matrix[ny as usize][nx as usize] == 0
-    {
-        Some((nx as usize, ny as usize))
-    } else {
-        None
+    match get_position_value(matrix, nx, ny) {
+        Some(0) => Some((nx as usize, ny as usize)),
+        _ => None,
     }
+}
+
+fn get_position_value(matrix: &[Vec<u32>], x: i32, y: i32) -> Option<u32> {
+    if x.is_negative() || y.is_negative() {
+        return None;
+    }
+
+    matrix
+        .get(y as usize)
+        .and_then(|row| row.get(x as usize).copied())
 }
 
 fn change_direction_clockwise(velocity: (i32, i32)) -> (i32, i32) {
