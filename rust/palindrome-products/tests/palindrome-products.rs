@@ -28,7 +28,6 @@ fn test_finds_the_smallest_palindrome_from_single_digit_factors() {
 }
 
 #[test]
-#[ignore]
 /// finds the largest palindrome from single digit factors
 fn test_finds_the_largest_palindrome_from_single_digit_factors() {
     let mut expect = Palindrome::new(1, 9);

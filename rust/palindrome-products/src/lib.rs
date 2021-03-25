@@ -15,7 +15,7 @@ impl Palindrome {
     }
 
     pub fn insert(&mut self, a: u64, b: u64) {
-        unimplemented!("insert new factors ({}, {}) into this palindrome", a, b)
+        self.value = a * b;
     }
 }
 
