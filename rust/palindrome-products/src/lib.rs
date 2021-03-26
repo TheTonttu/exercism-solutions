@@ -44,9 +44,13 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
 }
 
 fn is_palindrome_number(number: u64) -> bool {
-    // TODO: Remove string conversion
-    let str = number.to_string();
-    let rev_str = str.chars().rev().collect::<String>();
+    let mut reminder = number;
+    let mut reversed = 0;
 
-    str == rev_str
+    while reminder != 0 {
+        reversed = reversed * 10 + reminder % 10;
+        reminder /= 10;
+    }
+
+    number == reversed
 }
