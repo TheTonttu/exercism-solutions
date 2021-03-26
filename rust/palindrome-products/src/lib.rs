@@ -20,19 +20,17 @@ impl Palindrome {
 }
 
 pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome)> {
-    let factors: Vec<u64> = (min..=max).chain(min..=max).collect();
-    let palindrome_product_factor_pairs = factors
-        .iter()
+    let palindromes = (min..=max)
+        .chain(min..=max)
+        // collect unique factor permutations
         .permutations(2)
         .unique()
+        // filter palindromic products
         .filter_map(|x| match x.as_slice() {
-            [a, b] => is_palindrome_number((**a) * (**b)).then(|| (**a, **b)),
+            [a, b] => is_palindrome_number((*a) * (*b)).then(|| (*a, *b)),
             _ => None,
         })
-        .collect::<Vec<(u64, u64)>>();
-    let palindromes = palindrome_product_factor_pairs
-        .iter()
-        .copied()
+        // collect palindromes
         .map(|(a, b)| Palindrome::new(a, b))
         .collect::<Vec<_>>();
 
