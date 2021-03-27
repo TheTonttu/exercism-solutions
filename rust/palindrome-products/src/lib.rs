@@ -1,5 +1,47 @@
 use itertools::Itertools;
 
+pub struct FactorGenerator {
+    step: i128, start: i128, end: i128, curr: Option<(u64, u64)>
+}
+
+impl FactorGenerator {
+    pub fn new(start: u64, end: u64) -> Self {
+
+        let step = if start > end {
+            -1
+        } else {
+            1
+        };
+
+        Self {
+            step,
+            start: start as i128,
+            end: end as i128,
+            curr: None
+        }
+    }
+
+    pub fn next(&mut self) -> Option<(u64, u64)> {
+        match self.curr {
+            Some((a, b)) if a as i128 == self.end && b as i128 == self.end => {
+                None
+            },
+            Some((a, b)) if b as i128 == self.end => {
+                self.curr = Some(((a as i128 + self.step) as u64, self.start as u64));
+                self.curr
+            },
+            Some((a, b)) => {
+                self.curr = Some((a, (b as i128 + self.step) as u64));
+                self.curr
+            }
+            None => {
+                self.curr = Some((self.start as u64, self.start as u64));
+                self.curr
+            }
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash)]
 pub struct Palindrome {
     value: u64,
