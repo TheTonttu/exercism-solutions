@@ -1,35 +1,31 @@
 use itertools::Itertools;
 
 pub struct FactorGenerator {
-    step: i128, start: i128, end: i128, curr: Option<(u64, u64)>
+    step: i128,
+    start: i128,
+    end: i128,
+    curr: Option<(u64, u64)>,
 }
 
 impl FactorGenerator {
     pub fn new(start: u64, end: u64) -> Self {
-
-        let step = if start > end {
-            -1
-        } else {
-            1
-        };
+        let step = if start > end { -1 } else { 1 };
 
         Self {
             step,
             start: start as i128,
             end: end as i128,
-            curr: None
+            curr: None,
         }
     }
 
     pub fn next(&mut self) -> Option<(u64, u64)> {
         match self.curr {
-            Some((a, b)) if a as i128 == self.end && b as i128 == self.end => {
-                None
-            },
+            Some((a, b)) if a as i128 == self.end && b as i128 == self.end => None,
             Some((a, b)) if b as i128 == self.end => {
                 self.curr = Some(((a as i128 + self.step) as u64, self.start as u64));
                 self.curr
-            },
+            }
             Some((a, b)) => {
                 self.curr = Some((a, (b as i128 + self.step) as u64));
                 self.curr
@@ -62,13 +58,18 @@ impl Palindrome {
 }
 
 pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome)> {
-    let palindromes = (min..=max)
-        .chain(min..=max)
-        // collect factor permutations
-        .permutations(2)
+    if min > max {
+        return None;
+    }
+
+    let mut gen = FactorGenerator::new(min, max);
+
+    let palindromes = (0..u32::MAX)
+        .map(|_| gen.next())
+        .take_while(|factors| factors.is_some())
         // filter palindromic products
-        .filter_map(|x| match x.as_slice() {
-            [a, b] => is_palindrome_number((*a) * (*b)).then(|| (*a, *b)),
+        .filter_map(|x| match x {
+            Some((a, b)) => is_palindrome_number(a * b).then(|| (a, b)),
             _ => None,
         })
         // map to palindromes

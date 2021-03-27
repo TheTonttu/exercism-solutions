@@ -60,7 +60,7 @@ fn test_find_the_largest_palindrome_from_triple_digit_factors() {
 }
 
 #[test]
-#[ignore]
+//#[ignore]
 // TODO: Optimize
 /// find smallest palindrome from four digit factors
 fn test_find_smallest_palindrome_from_four_digit_factors() {
@@ -68,7 +68,7 @@ fn test_find_smallest_palindrome_from_four_digit_factors() {
 }
 
 #[test]
-#[ignore]
+//#[ignore]
 // TODO: Optimize
 /// find the largest palindrome from four digit factors
 fn test_find_the_largest_palindrome_from_four_digit_factors() {

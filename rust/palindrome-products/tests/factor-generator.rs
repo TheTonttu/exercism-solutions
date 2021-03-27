@@ -1,5 +1,4 @@
-
-use palindrome_products::{FactorGenerator};
+use palindrome_products::FactorGenerator;
 
 #[test]
 fn test_gen_starts_from_begin() {
@@ -41,11 +40,13 @@ fn test_gen_factors_grow_even_more() {
 #[test]
 fn test_gen_factors_last() {
     let mut gen = FactorGenerator::new(1, 2);
-    let (i, last) = (1..100).map(|i| (i, gen.next()))
+    let (i, last) = (1..100)
+        .map(|i| (i, gen.next()))
         .take_while(|(_, factors)| factors.is_some())
-        .last().unwrap();
+        .last()
+        .unwrap();
     assert_eq!(i, 4);
-    assert_eq!(last, Some((2,2)));
+    assert_eq!(last, Some((2, 2)));
 }
 
 #[test]
@@ -54,7 +55,7 @@ fn test_gen_factors_end() {
     gen.next();
     gen.next();
     gen.next();
-    assert_eq!(gen.next(), Some((2,2)));
+    assert_eq!(gen.next(), Some((2, 2)));
     gen.next();
     assert_eq!(gen.next(), None);
 }
@@ -102,7 +103,7 @@ fn test_gen_rev_factors_end() {
     gen.next();
     gen.next();
     gen.next();
-    assert_eq!(gen.next(), Some((1,1)));
+    assert_eq!(gen.next(), Some((1, 1)));
     gen.next();
     assert_eq!(gen.next(), None);
 }
@@ -110,9 +111,11 @@ fn test_gen_rev_factors_end() {
 #[test]
 fn test_gen_rev_factors_last() {
     let mut gen = FactorGenerator::new(2, 1);
-    let (i, last) = (1..100).map(|i| (i, gen.next()))
-                            .take_while(|(_, factors)| factors.is_some())
-                            .last().unwrap();
+    let (i, last) = (1..100)
+        .map(|i| (i, gen.next()))
+        .take_while(|(_, factors)| factors.is_some())
+        .last()
+        .unwrap();
     assert_eq!(i, 4);
-    assert_eq!(last, Some((1,1)));
+    assert_eq!(last, Some((1, 1)));
 }
