@@ -1,11 +1,11 @@
-pub struct FactorGenerator {
+pub struct FactorPairGenerator {
     step: i128,
     start: i128,
     end: i128,
-    curr: Option<(u64, u64)>,
+    current: Option<(u64, u64)>,
 }
 
-impl FactorGenerator {
+impl FactorPairGenerator {
     pub fn new(start: u64, end: u64) -> Self {
         let step = if start > end { -1 } else { 1 };
 
@@ -13,34 +13,35 @@ impl FactorGenerator {
             step,
             start: start as i128,
             end: end as i128,
-            curr: None,
+            current: None,
         }
     }
 }
 
-impl Iterator for FactorGenerator {
+impl Iterator for FactorPairGenerator {
     type Item = (u64, u64);
 
     fn next(&mut self) -> Option<Self::Item> {
-        match self.curr {
+        match self.current {
             Some((a, b)) if a as i128 == self.end && b as i128 == self.end => None,
             Some((a, b)) if b as i128 == self.end => {
-                self.curr = Some(((a as i128 + self.step) as u64, self.start as u64));
-                self.curr
+                self.current = Some(((a as i128 + self.step) as u64, self.start as u64));
+                self.current
             }
             Some((a, b)) => {
-                self.curr = Some((a, (b as i128 + self.step) as u64));
-                self.curr
+                self.current = Some((a, (b as i128 + self.step) as u64));
+                self.current
             }
+            // Init
             None => {
-                self.curr = Some((self.start as u64, self.start as u64));
-                self.curr
+                self.current = Some((self.start as u64, self.start as u64));
+                self.current
             }
         }
     }
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Palindrome {
     value: u64,
 }
@@ -64,16 +65,16 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
         return None;
     }
 
-    let mut min_gen = FactorGenerator::new(min, max);
+    let mut min_gen = FactorPairGenerator::new(min, max);
 
-    let min_pal = min_gen
-        .find_map(|(a, b)| is_palindrome_number(a * b).then(|| Palindrome::new(a, b)));
+    let min_pal =
+        min_gen.find_map(|(a, b)| is_palindrome_number(a * b).then(|| Palindrome::new(a, b)));
 
-    let max_gen = FactorGenerator::new(max, min);
+    let max_gen = FactorPairGenerator::new(max, min);
 
     let max_pal = max_gen
         .filter_map(|(a, b)| is_palindrome_number(a * b).then(|| Palindrome::new(a, b)))
-        // HACK: max -> min palindromic products are not produced in largest first order so we collect couple values first and then take the largest from them.
+        // HACK: max -> min palindromic products are not generated in largest first order so collect couple values first and then take the largest from them.
         // Collecting 3 is enough to pass the unit tests but might need to increase the number for other scenarios.
         .take(3)
         .max();
