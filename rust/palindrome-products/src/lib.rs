@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash)]
 pub struct Palindrome {
     value: u64,
 }
@@ -22,16 +22,17 @@ impl Palindrome {
 pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome)> {
     let palindromes = (min..=max)
         .chain(min..=max)
-        // collect unique factor permutations
+        // collect factor permutations
         .permutations(2)
-        .unique()
         // filter palindromic products
         .filter_map(|x| match x.as_slice() {
             [a, b] => is_palindrome_number((*a) * (*b)).then(|| (*a, *b)),
             _ => None,
         })
-        // collect palindromes
+        // map to palindromes
         .map(|(a, b)| Palindrome::new(a, b))
+        // remove duplicates
+        .unique()
         .collect::<Vec<_>>();
 
     let min = palindromes.iter().min();
