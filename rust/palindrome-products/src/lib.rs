@@ -16,8 +16,12 @@ impl FactorGenerator {
             curr: None,
         }
     }
+}
 
-    pub fn next(&mut self) -> Option<(u64, u64)> {
+impl Iterator for FactorGenerator {
+    type Item = (u64, u64);
+
+    fn next(&mut self) -> Option<Self::Item> {
         match self.curr {
             Some((a, b)) if a as i128 == self.end && b as i128 == self.end => None,
             Some((a, b)) if b as i128 == self.end => {
@@ -62,23 +66,13 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
 
     let mut min_gen = FactorGenerator::new(min, max);
 
-    let min_pal = (0..u32::MAX)
-        .map(|_| min_gen.next())
-        .take_while(|factors| factors.is_some())
-        .find_map(|factors| match factors {
-            Some((a, b)) => is_palindrome_number(a * b).then(|| Palindrome::new(a, b)),
-            _ => None,
-        });
+    let min_pal = min_gen
+        .find_map(|(a, b)| is_palindrome_number(a * b).then(|| Palindrome::new(a, b)));
 
-    let mut max_gen = FactorGenerator::new(max, min);
+    let max_gen = FactorGenerator::new(max, min);
 
-    let max_pal = (0..u32::MAX)
-        .map(|_| max_gen.next())
-        .take_while(|factors| factors.is_some())
-        .filter_map(|factors| match factors {
-            Some((a, b)) => is_palindrome_number(a * b).then(|| Palindrome::new(a, b)),
-            _ => None,
-        })
+    let max_pal = max_gen
+        .filter_map(|(a, b)| is_palindrome_number(a * b).then(|| Palindrome::new(a, b)))
         // HACK: max -> min palindromic products are not produced in largest first order so we collect couple values first and then take the largest from them.
         // Collecting 3 is enough to pass the unit tests but might need to increase the number for other scenarios.
         .take(3)
