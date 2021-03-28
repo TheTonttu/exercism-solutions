@@ -8,22 +8,23 @@ pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
             continue;
         }
 
-        let mut row_max = input[row_index][0];
-        let mut max_col_indexes = vec![0];
-        for col_index in 1..input[row_index].len() {
-            let curr_value = input[row_index][col_index];
-            match row_max.cmp(&curr_value) {
-                Ordering::Less => {
-                    max_col_indexes.clear();
-                    row_max = curr_value;
-                    max_col_indexes.push(col_index);
+        let (row_max, max_col_indexes) = input[row_index].iter().enumerate().skip(1).fold(
+            (input[row_index][0], vec![0]),
+            |(mut row_max, mut indexes), (col_index, curr_value)| {
+                match row_max.cmp(&curr_value) {
+                    Ordering::Less => {
+                        indexes.clear();
+                        row_max = *curr_value;
+                        indexes.push(col_index);
+                    }
+                    Ordering::Equal => {
+                        indexes.push(col_index);
+                    }
+                    Ordering::Greater => {}
                 }
-                Ordering::Equal => {
-                    max_col_indexes.push(col_index);
-                }
-                Ordering::Greater => {}
-            }
-        }
+                (row_max, indexes)
+            },
+        );
 
         for col_index in &max_col_indexes {
             if is_biggest_column_value(&row_max, input, col_index) {
