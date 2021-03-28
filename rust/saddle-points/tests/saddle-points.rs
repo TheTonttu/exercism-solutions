@@ -14,7 +14,6 @@ fn identify_single_saddle_point() {
 }
 
 #[test]
-#[ignore]
 fn identify_empty_matrix() {
     let input = vec![vec![], vec![], vec![]];
     let expected: Vec<(usize, usize)> = Vec::new();
@@ -22,7 +21,6 @@ fn identify_empty_matrix() {
 }
 
 #[test]
-#[ignore]
 fn identify_lack_of_saddle_point() {
     let input = vec![vec![1, 2, 3], vec![3, 1, 2], vec![2, 3, 1]];
     let expected: Vec<(usize, usize)> = Vec::new();
@@ -30,7 +28,6 @@ fn identify_lack_of_saddle_point() {
 }
 
 #[test]
-#[ignore]
 fn multiple_saddle_points_in_col() {
     let input = vec![vec![4, 5, 4], vec![3, 5, 5], vec![1, 5, 4]];
     assert_eq!(
