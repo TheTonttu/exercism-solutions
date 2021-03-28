@@ -53,35 +53,30 @@ fn identify_bottom_right_saddle_point() {
 
 // track specific as of v1.3
 #[test]
-#[ignore]
 fn non_square_matrix_high() {
     let input = vec![vec![1, 5], vec![3, 6], vec![2, 7], vec![3, 8]];
     assert_eq!(vec![(0, 1)], find_saddle_points(&input));
 }
 
 #[test]
-#[ignore]
 fn non_square_matrix_wide() {
     let input = vec![vec![3, 1, 3], vec![3, 2, 4]];
     assert_eq!(vec![(0, 0), (0, 2)], find_sorted_saddle_points(&input));
 }
 
 #[test]
-#[ignore]
 fn single_column_matrix() {
     let input = vec![vec![2], vec![1], vec![4], vec![1]];
     assert_eq!(vec![(1, 0), (3, 0)], find_sorted_saddle_points(&input));
 }
 
 #[test]
-#[ignore]
 fn single_row_matrix() {
     let input = vec![vec![2, 5, 3, 5]];
     assert_eq!(vec![(0, 1), (0, 3)], find_sorted_saddle_points(&input));
 }
 
 #[test]
-#[ignore]
 fn identify_all_saddle_points() {
     let input = vec![vec![5, 5, 5], vec![5, 5, 5], vec![5, 5, 5]];
     assert_eq!(
