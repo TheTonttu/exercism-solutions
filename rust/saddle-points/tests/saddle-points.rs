@@ -37,7 +37,6 @@ fn multiple_saddle_points_in_col() {
 }
 
 #[test]
-#[ignore]
 fn multiple_saddle_points_in_row() {
     let input = vec![vec![6, 7, 8], vec![5, 5, 5], vec![7, 5, 6]];
     assert_eq!(
