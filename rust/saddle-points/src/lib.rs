@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
     let mut saddle_points = Vec::new();
 
@@ -10,12 +12,16 @@ pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
         let mut max_col_indexes = vec![0];
         for col_index in 1..input[row_index].len() {
             let curr_value = input[row_index][col_index];
-            if row_max < curr_value {
-                max_col_indexes.clear();
-                row_max = curr_value;
-                max_col_indexes.push(col_index);
-            } else if row_max == curr_value {
-                max_col_indexes.push(col_index);
+            match row_max.cmp(&curr_value) {
+                Ordering::Less => {
+                    max_col_indexes.clear();
+                    row_max = curr_value;
+                    max_col_indexes.push(col_index);
+                }
+                Ordering::Equal => {
+                    max_col_indexes.push(col_index);
+                }
+                Ordering::Greater => {}
             }
         }
 
