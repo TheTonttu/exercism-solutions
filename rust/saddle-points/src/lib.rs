@@ -19,17 +19,16 @@ pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
             }
         }
 
-        'index_check: for max_col_index in &max_col_indexes {
-            for check_row_index in 0..input.len() {
-                let curr_value = input[check_row_index][*max_col_index];
-                if row_max > curr_value {
-                    continue 'index_check;
-                }
+        for max_col_index in &max_col_indexes {
+            if is_biggest_column_value(input, &row_max, max_col_index) {
+                saddle_points.push((row_index, *max_col_index));
             }
-
-            saddle_points.push((row_index, *max_col_index));
         }
     }
 
     saddle_points
+}
+
+fn is_biggest_column_value(matrix: &[Vec<u64>], big_value: &u64, column_index: &usize) -> bool {
+    !matrix.iter().any(|row| *big_value > row[*column_index])
 }
