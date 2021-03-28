@@ -25,9 +25,9 @@ pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
             }
         }
 
-        for max_col_index in &max_col_indexes {
-            if is_biggest_column_value(&row_max, input, max_col_index) {
-                saddle_points.push((row_index, *max_col_index));
+        for col_index in &max_col_indexes {
+            if is_biggest_column_value(&row_max, input, col_index) {
+                saddle_points.push((row_index, *col_index));
             }
         }
     }
