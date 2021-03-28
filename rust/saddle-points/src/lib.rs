@@ -22,11 +22,9 @@ pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
             },
         );
 
-        for col_index in &max_col_indexes {
-            if is_min_column_value(&row_max, input, col_index) {
-                saddle_points.push((row_index, *col_index));
-            }
-        }
+        saddle_points.extend(max_col_indexes.iter().filter_map(|col_index| {
+            is_min_column_value(&row_max, input, col_index).then(|| (row_index, *col_index))
+        }))
     }
 
     saddle_points
