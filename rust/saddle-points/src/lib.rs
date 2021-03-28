@@ -27,7 +27,7 @@ pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
         );
 
         for col_index in &max_col_indexes {
-            if is_biggest_column_value(&row_max, input, col_index) {
+            if is_min_column_value(&row_max, input, col_index) {
                 saddle_points.push((row_index, *col_index));
             }
         }
@@ -36,6 +36,6 @@ pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
     saddle_points
 }
 
-fn is_biggest_column_value(big_value: &u64, matrix: &[Vec<u64>], column_index: &usize) -> bool {
-    !matrix.iter().any(|row| *big_value > row[*column_index])
+fn is_min_column_value(value: &u64, matrix: &[Vec<u64>], column_index: &usize) -> bool {
+    !matrix.iter().any(|row| *value > row[*column_index])
 }
