@@ -46,7 +46,6 @@ fn multiple_saddle_points_in_row() {
 }
 
 #[test]
-#[ignore]
 fn identify_bottom_right_saddle_point() {
     let input = vec![vec![8, 7, 9], vec![6, 7, 6], vec![3, 2, 5]];
     assert_eq!(vec![(2, 2)], find_saddle_points(&input));

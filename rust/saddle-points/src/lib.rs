@@ -19,19 +19,17 @@ pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
             }
         }
 
-        for max_col_index in max_col_indexes {
+        'index_check: for max_col_index in &max_col_indexes {
             let mut check_row_index = 0;
             for derp_row_index in 0..input.len() {
                 check_row_index = derp_row_index;
-                let curr_value = input[derp_row_index][max_col_index];
+                let curr_value = input[derp_row_index][*max_col_index];
                 if row_max > curr_value {
-                    break;
+                    continue 'index_check;
                 }
             }
 
-            if check_row_index == (input.len() - 1) {
-                saddle_points.push((row_index, max_col_index));
-            }
+            saddle_points.push((row_index, *max_col_index));
         }
     }
 
