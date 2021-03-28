@@ -20,10 +20,8 @@ pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
         }
 
         'index_check: for max_col_index in &max_col_indexes {
-            let mut check_row_index = 0;
-            for derp_row_index in 0..input.len() {
-                check_row_index = derp_row_index;
-                let curr_value = input[derp_row_index][*max_col_index];
+            for check_row_index in 0..input.len() {
+                let curr_value = input[check_row_index][*max_col_index];
                 if row_max > curr_value {
                     continue 'index_check;
                 }
