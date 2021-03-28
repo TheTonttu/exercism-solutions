@@ -6,19 +6,19 @@ pub fn find_saddle_points(input: &[Vec<u64>]) -> Vec<(usize, usize)> {
     for (row_index, row) in input.iter().enumerate().filter(|(_, row)| !row.is_empty()) {
         let (row_max, max_col_indexes) = row.iter().enumerate().skip(1).fold(
             (row[0], vec![0]),
-            |(mut row_max, mut indexes), (col_index, curr_value)| {
-                match row_max.cmp(&curr_value) {
+            |(mut max_value, mut max_value_indexes), (col_index, col_value)| {
+                match max_value.cmp(&col_value) {
                     Ordering::Less => {
-                        indexes.clear();
-                        row_max = *curr_value;
-                        indexes.push(col_index);
+                        max_value_indexes.clear();
+                        max_value = *col_value;
+                        max_value_indexes.push(col_index);
                     }
                     Ordering::Equal => {
-                        indexes.push(col_index);
+                        max_value_indexes.push(col_index);
                     }
                     Ordering::Greater => {}
                 }
-                (row_max, indexes)
+                (max_value, max_value_indexes)
             },
         );
 
