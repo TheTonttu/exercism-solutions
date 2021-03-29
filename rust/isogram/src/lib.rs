@@ -5,8 +5,7 @@ pub fn check(candidate: &str) -> bool {
 
     candidate
         .chars()
-        .filter(|c| c.is_alphanumeric())
-        .map(|c| c.to_lowercase())
+        .filter_map(|c| c.is_alphanumeric().then(|| c.to_lowercase()))
         .map(|lc| lc.fold(0, |unicode_sum, char| (unicode_sum + char as u32)))
         .all(|uc_sum| check_set.insert(uc_sum))
 
