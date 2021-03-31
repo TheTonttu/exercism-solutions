@@ -34,7 +34,6 @@ fn test_twenty() {
 }
 
 #[test]
-#[ignore]
 fn test_twenty_two() {
     assert_eq!(say::encode(22), String::from("twenty-two"));
 }
