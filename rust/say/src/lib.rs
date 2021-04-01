@@ -93,13 +93,13 @@ fn match_tens<'a>(number: &u64) -> &'a str {
 }
 
 fn split_number_to_thousands(number: &u64) -> Vec<u64> {
-    let mut reminder = *number;
+    let mut remainder = *number;
     let mut split = Vec::new();
 
-    while reminder > 0 || split.is_empty() {
-        let part = reminder % 1000;
+    while remainder > 0 || split.is_empty() {
+        let part = remainder % 1000;
         split.insert(0, part);
-        reminder /= 1000;
+        remainder /= 1000;
     }
 
     split
@@ -110,16 +110,16 @@ const SPLIT_POINTS: [u64; 2] = [100, 20];
 pub fn split_thousand_to_smaller(number: &u64) -> Vec<u64> {
     let mut split = Vec::new();
 
-    let mut reminder = *number;
+    let mut remainder = *number;
     for point in SPLIT_POINTS.iter() {
         let mut part = 0;
-        while reminder >= *point {
+        while remainder >= *point {
             part += point;
-            reminder -= point;
+            remainder -= point;
         }
         split.push(part);
     }
-    split.push(reminder);
+    split.push(remainder);
 
     split
 }
