@@ -5,77 +5,40 @@ pub fn encode(n: u64) -> String {
 }
 
 fn number_to_text(number: u64) -> String {
-
     let split = split_thousand_to_smaller(number);
 
-    let hundreds_text = match split.get(0).copied() {
-        Some(hundreds) if hundreds > 0 => {
-            match_ones(hundreds / 100)
+    match split.as_slice() {
+        [0, tens, ones] if *tens > 0 && *ones > 0 => {
+            [match_tens(tens), "-", match_ones(ones)].concat()
         }
-        Some(_) => "",
-        None => "",
-    };
-
-    let tens_text = match split.get(1).copied() {
-        Some(tens) if tens > 0 => {
-            match_tens(tens)
+        [0, tens, 0] if *tens > 0 => match_tens(tens).to_string(),
+        [0, 0, ones] => match ones {
+            0..=9 => match_ones(ones),
+            10 => match_tens(ones),
+            11..=u64::MAX => match_teens(ones),
         }
-        Some(_) => "",
-        None => "",
-    };
-
-    // Ones can also contain 10-19 range
-    let ones_text = match split.get(2).copied() {
-        Some(teens) if teens > 10 => {
-            match_teens(teens)
-        }
-        Some(ten) if ten == 10 => match_tens(ten),
-        Some(ones) => match_ones(ones),
-        None => "",
-    };
-
-
-    let mut text = String::new();
-
-    if !hundreds_text.is_empty() {
-        text.push_str(hundreds_text);
-        text.push_str("hundred") // TODO: Plural
+        .to_string(),
+        _ => "zero".to_string(),
     }
-
-    if !tens_text.is_empty() {
-        if !text.is_empty() {
-            text.push(' ');
-        }
-        text.push_str(tens_text);
-    }
-
-    if !ones_text.is_empty() {
-        if !tens_text.is_empty() {
-            text.push('-')
-        }
-        text.push_str(ones_text);
-    }
-
-    text
 }
 
-fn match_ones<'a>(number: u64) -> &'a str {
+fn match_ones<'a>(number: &u64) -> &'a str {
     match number {
-            0 => "zero",
-            1 => "one",
-            2 => "two",
-            3 => "three",
-            4 => "four",
-            5 => "five",
-            6 => "six",
-            7 => "seven",
-            8 => "eight",
-            9 => "nine",
-            _ => panic!("{} should not match with 0-9 range", number),
-        }
+        0 => "zero",
+        1 => "one",
+        2 => "two",
+        3 => "three",
+        4 => "four",
+        5 => "five",
+        6 => "six",
+        7 => "seven",
+        8 => "eight",
+        9 => "nine",
+        _ => panic!("{} should not match with 0-9 range", number),
+    }
 }
 
-fn match_teens<'a>(number: u64) -> &'a str {
+fn match_teens<'a>(number: &u64) -> &'a str {
     match number {
         11 => "eleven",
         12 => "twelve",
@@ -90,7 +53,7 @@ fn match_teens<'a>(number: u64) -> &'a str {
     }
 }
 
-fn match_tens<'a>(number: u64) -> &'a str {
+fn match_tens<'a>(number: &u64) -> &'a str {
     match number {
         10 => "ten",
         20 => "twenty",

@@ -1,4 +1,3 @@
-
 #[test]
 fn test_split_zero() {
     assert_eq!(say::split_thousand_to_smaller(0), vec![0, 0, 0]);
