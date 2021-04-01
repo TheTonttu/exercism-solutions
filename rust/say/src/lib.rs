@@ -4,7 +4,7 @@ pub fn encode(n: u64) -> String {
     number_to_text(n)
 }
 
-fn number_to_text<'a>(number: u64) -> String {
+fn number_to_text(number: u64) -> String {
     let mut text = String::new();
 
     let mut reminder = number;
