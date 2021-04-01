@@ -1,13 +1,37 @@
 pub fn encode(n: u64) -> String {
-    //println!("{:?}", split_number_to_thousands(n));
+    //println!("{:?}", split_number_to_thousands(&n));
 
-    number_to_text(n)
+    split_number_to_thousands(&n)
+        .iter()
+        .map(|group| number_to_text(group))
+        .collect()
 }
 
-fn number_to_text(number: u64) -> String {
+fn number_to_text(number: &u64) -> String {
     let split = split_thousand_to_smaller(number);
 
     match split.as_slice() {
+        [hundreds, tens, ones] if *hundreds > 0 && *tens > 0 && *ones > 0 => [
+            match_ones(&(*hundreds / 100)),
+            " ",
+            "hundred",
+            " ",
+            match_tens(tens),
+            "-",
+            match_ones(ones),
+        ]
+        .concat(),
+        [hundreds, tens, 0] if *hundreds > 0 && *tens > 0 => [
+            match_ones(&(*hundreds / 100)),
+            " ",
+            "hundred",
+            " ",
+            match_tens(tens),
+        ]
+        .concat(),
+        [hundreds, 0, 0] if *hundreds > 0 => {
+            [match_ones(&(*hundreds / 100)), " ", "hundred"].concat()
+        }
         [0, tens, ones] if *tens > 0 && *ones > 0 => {
             [match_tens(tens), "-", match_ones(ones)].concat()
         }
@@ -68,11 +92,11 @@ fn match_tens<'a>(number: &u64) -> &'a str {
     }
 }
 
-fn split_number_to_thousands(number: u64) -> Vec<u64> {
-    let mut reminder = number;
+fn split_number_to_thousands(number: &u64) -> Vec<u64> {
+    let mut reminder = *number;
     let mut split = Vec::new();
 
-    while reminder > 0 {
+    while reminder > 0 || split.is_empty() {
         let part = reminder % 1000;
         split.insert(0, part);
         reminder /= 1000;
@@ -83,10 +107,10 @@ fn split_number_to_thousands(number: u64) -> Vec<u64> {
 
 const SPLIT_POINTS: [u64; 2] = [100, 20];
 
-pub fn split_thousand_to_smaller(number: u64) -> Vec<u64> {
+pub fn split_thousand_to_smaller(number: &u64) -> Vec<u64> {
     let mut split = Vec::new();
 
-    let mut reminder = number;
+    let mut reminder = *number;
     for point in SPLIT_POINTS.iter() {
         let mut part = 0;
         while reminder >= *point {
