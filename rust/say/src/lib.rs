@@ -1,10 +1,57 @@
+
+// American names
+const SCALE_WORDS: [&str; 6] = [
+    "",
+    "thousand",
+    "million",
+    "billion",
+    "trillion",
+    "quadrillion",
+];
+
 pub fn encode(n: u64) -> String {
     //println!("{:?}", split_number_to_thousands(&n));
 
-    split_number_to_thousands(&n)
+    let thousand_splits = split_number_to_thousands(&n);
+
+    // assign scale index
+    let scale_indexed: Vec<(usize, u64)> = thousand_splits
         .iter()
-        .map(|group| number_to_text(group))
-        .collect()
+        .rev()
+        .enumerate()
+        .map(|(index, value)| (index, *value))
+        .rev()
+        .collect();
+
+    println!("{:?}", scale_indexed);
+
+    let number_texts: Vec<String> = scale_indexed
+        .iter()
+        .filter_map(|(index, value)| {
+            println!("{:?}", (index, value));
+
+            // Remove thousand groups with only zero that have values in front.
+            match (value, scale_indexed.get(index + 1)) {
+                (0, Some(_)) => None,
+                (_, None) => Some((index, value)),
+                _ => Some((index, value)),
+            }
+        })
+        .map(|(scale_index, value)| {
+            if SCALE_WORDS[*scale_index].is_empty() {
+                number_to_text(value)
+            } else {
+                [
+                    number_to_text(value),
+                    " ".to_string(),
+                    SCALE_WORDS[*scale_index].to_string(),
+                ]
+                .concat()
+            }
+        })
+        .collect();
+
+    number_texts.join(" ")
 }
 
 fn number_to_text(number: &u64) -> String {
