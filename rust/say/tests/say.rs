@@ -90,7 +90,6 @@ fn test_one_million_two() {
 }
 
 #[test]
-#[ignore]
 fn test_1002345() {
     assert_eq!(
         say::encode(1_002_345),
@@ -99,13 +98,11 @@ fn test_1002345() {
 }
 
 #[test]
-#[ignore]
 fn test_one_billion() {
     assert_eq!(say::encode(1_000_000_000), String::from("one billion"));
 }
 
 #[test]
-#[ignore]
 fn test_987654321123() {
     assert_eq!(
         say::encode(987_654_321_123),

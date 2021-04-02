@@ -19,6 +19,11 @@ fn test_split_twenty() {
 }
 
 #[test]
+fn test_split_fifty() {
+    assert_eq!(say::split_thousand_to_smaller(&50), vec![0, 50, 0]);
+}
+
+#[test]
 fn test_split_hundred() {
     assert_eq!(say::split_thousand_to_smaller(&100), vec![100, 0, 0]);
 }

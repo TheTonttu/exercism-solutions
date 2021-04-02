@@ -1,12 +1,13 @@
 
 // American names
-const SCALE_WORDS: [&str; 6] = [
+const SCALE_WORDS: [&str; 7] = [
     "",
     "thousand",
     "million",
     "billion",
     "trillion",
     "quadrillion",
+    "quintillion",
 ];
 
 pub fn encode(n: u64) -> String {
@@ -152,7 +153,7 @@ fn split_number_to_thousands(number: &u64) -> Vec<u64> {
     split
 }
 
-const SPLIT_POINTS: [u64; 2] = [100, 20];
+const SPLIT_POINTS: [u64; 2] = [100, 10];
 
 pub fn split_thousand_to_smaller(number: &u64) -> Vec<u64> {
     let mut split = Vec::new();
@@ -167,6 +168,12 @@ pub fn split_thousand_to_smaller(number: &u64) -> Vec<u64> {
         split.push(part);
     }
     split.push(remainder);
+
+    // HACK: 0..=19 range is handled as ones instead of tens
+    if split[1] == 10 {
+        split[2] += split[1];
+        split[1] = 0;
+    }
 
     split
 }
