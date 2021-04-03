@@ -120,12 +120,12 @@ fn match_hundreds(digit: &u64) -> String {
 }
 
 fn match_tens_and_ones(tens: &u64, ones: &u64) -> String {
-    const DIGIT_TEN: u64 = 1;
+    const TENS_DIGIT_TEN: u64 = 1;
 
     match (tens, ones) {
         (0, ones) => match_ones(ones).to_string(),
         (tens, 0) => match_tens(tens).to_string(),
-        (tens, ones) if *tens == DIGIT_TEN => match_teens(&(tens * 10 + ones)).to_string(),
+        (tens, ones) if *tens == TENS_DIGIT_TEN => match_teens(&(tens * 10 + ones)).to_string(),
         _ => [match_tens(tens), "-", match_ones(ones)].concat(),
     }
 }
