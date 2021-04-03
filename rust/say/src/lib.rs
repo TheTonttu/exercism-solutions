@@ -120,35 +120,41 @@ fn match_hundreds(digit: &u64) -> String {
 }
 
 fn match_tens_and_ones(tens: &u64, ones: &u64) -> String {
+    const DIGIT_TEN: u64 = 1;
+
     match (tens, ones) {
         (0, ones) => match_ones(ones).to_string(),
         (tens, 0) => match_tens(tens).to_string(),
-        (tens, ones) if *tens == 1 => match_teens(&(tens * 10 + ones)).to_string(),
+        (tens, ones) if *tens == DIGIT_TEN => match_teens(&(tens * 10 + ones)).to_string(),
         _ => [match_tens(tens), "-", match_ones(ones)].concat(),
     }
 }
 
 pub fn split_number_to_thousands(number: &u64) -> Vec<u64> {
+    const GROUPING: u64 = 1000;
+
     let mut remainder = *number;
     let mut split = Vec::new();
 
     while remainder > 0 || split.is_empty() {
-        let part = remainder % 1000;
+        let part = remainder % GROUPING;
         split.insert(0, part);
-        remainder /= 1000;
+        remainder /= GROUPING;
     }
 
     split
 }
 
 pub fn number_to_digits(number: &u64) -> Vec<u64> {
+    const DIGIT_BASE: u64 = 10;
+
     let mut digits = Vec::new();
 
     let mut remainder = *number;
     while remainder > 9 {
-        let digit = remainder % 10;
+        let digit = remainder % DIGIT_BASE;
         digits.insert(0, digit);
-        remainder /= 10;
+        remainder /= DIGIT_BASE;
     }
     let last_digit = remainder;
     digits.insert(0, last_digit);
