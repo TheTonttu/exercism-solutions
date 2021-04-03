@@ -55,31 +55,27 @@ pub fn encode(n: u64) -> String {
 }
 
 fn number_to_text(number: &u64) -> String {
-    let split = split_thousand_to_smaller(number);
+    let digits = number_to_digits(number);
 
-    match split.as_slice() {
-        [hundreds, tens, ones] if *hundreds > 0 && *tens > 0 && *ones > 0 => [
+    match digits.as_slice() {
+        [hundreds, 0, 0] => match_hundreds(hundreds),
+        [hundreds, 0, ones] => [&match_hundreds(hundreds), " ", match_ones(ones)].concat(),
+        [hundreds, tens, 0] => [&match_hundreds(hundreds), " ", match_tens(tens)].concat(),
+        [hundreds, tens, ones] => [
             &match_hundreds(hundreds),
             " ",
             &match_tens_and_ones(tens, ones),
         ]
         .concat(),
-        [hundreds, 0, ones] if *hundreds > 0 && *ones > 0 => {
-            [&match_hundreds(hundreds), " ", match_ones(ones)].concat()
-        }
-        [hundreds, tens, 0] if *hundreds > 0 && *tens > 0 => {
-            [&match_hundreds(hundreds), " ", match_tens(tens)].concat()
-        }
-        [hundreds, 0, 0] if *hundreds > 0 => match_hundreds(hundreds),
-        [0, tens, ones] if *tens > 0 && *ones > 0 => match_tens_and_ones(tens, ones),
-        [0, tens, 0] if *tens > 0 => match_tens(tens).to_string(),
-        [0, 0, ones] => match_ones(ones).to_string(),
-        _ => "zero".to_string(),
+        [tens, 0] => match_tens(tens).to_string(),
+        [tens, ones] => match_tens_and_ones(tens, ones),
+        [ones] => match_ones(ones).to_string(),
+        _ => "".to_string(),
     }
 }
 
-fn match_ones<'a>(number: &u64) -> &'a str {
-    match number {
+fn match_ones<'a>(digit: &u64) -> &'a str {
+    match digit {
         0 => "zero",
         1 => "one",
         2 => "two",
@@ -90,12 +86,12 @@ fn match_ones<'a>(number: &u64) -> &'a str {
         7 => "seven",
         8 => "eight",
         9 => "nine",
-        _ => panic!("{} should not match with 0-9 range", number),
+        _ => panic!("{} should not match with 0-9 range", digit),
     }
 }
 
-fn match_teens<'a>(number: &u64) -> &'a str {
-    match number {
+fn match_teens<'a>(digit: &u64) -> &'a str {
+    match digit {
         11 => "eleven",
         12 => "twelve",
         13 => "thirteen",
@@ -105,39 +101,34 @@ fn match_teens<'a>(number: &u64) -> &'a str {
         17 => "seventeen",
         18 => "eighteen",
         19 => "nineteen",
-        _ => panic!("{} should not match with 11-19 range", number),
+        _ => panic!("{} should not match with 11-19 range", digit),
     }
 }
 
-fn match_tens<'a>(number: &u64) -> &'a str {
-    match number {
-        10 => "ten",
-        20 => "twenty",
-        30 => "thirty",
-        40 => "forty",
-        50 => "fifty",
-        60 => "sixty",
-        70 => "seventy",
-        80 => "eighty",
-        90 => "ninety",
-        _ => panic!("{} not matched in tens", number),
-    }
-}
-
-fn match_hundreds<'a>(number: &u64) -> String {
-    let digit = number / 100;
-
+fn match_tens<'a>(digit: &u64) -> &'a str {
     match digit {
-        0 => "".to_string(),
-        _ => [match_ones(&digit), " hundred"].concat(),
+        1 => "ten",
+        2 => "twenty",
+        3 => "thirty",
+        4 => "forty",
+        5 => "fifty",
+        6 => "sixty",
+        7 => "seventy",
+        8 => "eighty",
+        9 => "ninety",
+        _ => panic!("{} not matched in tens", digit),
     }
+}
+
+fn match_hundreds(digit: &u64) -> String {
+    [match_ones(&digit), " hundred"].concat()
 }
 
 fn match_tens_and_ones(tens: &u64, ones: &u64) -> String {
     match (tens, ones) {
         (0, ones) => match_ones(ones).to_string(),
         (tens, 0) => match_tens(tens).to_string(),
-        (tens, ones) if *tens == 10 => match_teens(&(tens + ones)).to_string(),
+        (tens, ones) if *tens == 1 => match_teens(&(tens * 10 + ones)).to_string(),
         _ => [match_tens(tens), "-", match_ones(ones)].concat(),
     }
 }
@@ -155,21 +146,17 @@ pub fn split_number_to_thousands(number: &u64) -> Vec<u64> {
     split
 }
 
-const SPLIT_POINTS: [u64; 2] = [100, 10];
-
-pub fn split_thousand_to_smaller(number: &u64) -> Vec<u64> {
-    let mut split = Vec::new();
+pub fn number_to_digits(number: &u64) -> Vec<u64> {
+    let mut digits = Vec::new();
 
     let mut remainder = *number;
-    for point in SPLIT_POINTS.iter() {
-        let mut part = 0;
-        while remainder >= *point {
-            part += point;
-            remainder -= point;
-        }
-        split.push(part);
+    while remainder > 9 {
+        let digit = remainder % 10;
+        digits.insert(0, digit);
+        remainder /= 10;
     }
-    split.push(remainder);
+    let last_digit = remainder;
+    digits.insert(0, last_digit);
 
-    split
+    digits
 }
