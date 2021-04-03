@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 // American names
 const SCALE_WORDS: [&str; 7] = [
     "",
@@ -25,7 +27,7 @@ pub fn encode(n: u64) -> String {
 
     println!("{:?}", scale_indexed);
 
-    let number_texts: Vec<String> = scale_indexed
+    scale_indexed
         .iter()
         .filter_map(|(index, value)| {
             println!("{:?}", (index, value));
@@ -40,13 +42,11 @@ pub fn encode(n: u64) -> String {
         .map(|(scale_index, value)| {
             [&number_to_text(value), " ", SCALE_WORDS[*scale_index]]
                 .concat()
-                // Gets rid of ending whitespace if scale word is empty
+                // Get rid of ending whitespace if scale word is empty
                 .trim_end()
                 .to_string()
         })
-        .collect();
-
-    number_texts.join(" ")
+        .join(" ")
 }
 
 fn number_to_text(number: &u64) -> String {
