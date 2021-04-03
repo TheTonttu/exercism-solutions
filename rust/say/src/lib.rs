@@ -136,11 +136,13 @@ pub fn split_number_to_thousands(number: &u64) -> Vec<u64> {
     let mut remainder = *number;
     let mut split = Vec::new();
 
-    while remainder > 0 || split.is_empty() {
+    while remainder >= GROUPING {
         let part = remainder % GROUPING;
         split.insert(0, part);
         remainder /= GROUPING;
     }
+    let last_group = remainder;
+    split.insert(0, last_group);
 
     split
 }
