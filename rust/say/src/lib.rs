@@ -1,4 +1,3 @@
-
 // American names
 const SCALE_WORDS: [&str; 7] = [
     "",
@@ -66,6 +65,14 @@ fn number_to_text(number: &u64) -> String {
             " ",
             match_tens(tens),
             "-",
+            match_ones(ones),
+        ]
+        .concat(),
+        [hundreds, 0, ones] if *hundreds > 0 && *ones > 0 => [
+            match_ones(&(*hundreds / 100)),
+            " ",
+            "hundred",
+            " ",
             match_ones(ones),
         ]
         .concat(),
@@ -140,7 +147,7 @@ fn match_tens<'a>(number: &u64) -> &'a str {
     }
 }
 
-fn split_number_to_thousands(number: &u64) -> Vec<u64> {
+pub fn split_number_to_thousands(number: &u64) -> Vec<u64> {
     let mut remainder = *number;
     let mut split = Vec::new();
 
