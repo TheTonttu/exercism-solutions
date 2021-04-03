@@ -16,12 +16,14 @@ pub fn encode(n: u64) -> String {
 
     let thousand_splits = split_number_to_thousands(&n);
 
-    // assign scale index
+    // assign scale word index to thousand splits
     let scale_indexed: Vec<(usize, u64)> = thousand_splits
         .iter()
+        // Reverse so enumerate index can be assigned starting from least significant split group
         .rev()
         .enumerate()
         .map(|(index, value)| (index, *value))
+        // Restore original order
         .rev()
         .collect();
 
@@ -81,7 +83,7 @@ fn match_ones<'a>(digit: &u64) -> &'a str {
         7 => "seven",
         8 => "eight",
         9 => "nine",
-        _ => panic!("{} should not match with 0-9 range", digit),
+        _ => panic!("{} not match with 0-9 range", digit),
     }
 }
 
@@ -96,7 +98,7 @@ fn match_teens<'a>(digit: &u64) -> &'a str {
         17 => "seventeen",
         18 => "eighteen",
         19 => "nineteen",
-        _ => panic!("{} should not match with 11-19 range", digit),
+        _ => panic!("{} not match with 11-19 range", digit),
     }
 }
 
@@ -111,7 +113,7 @@ fn match_tens<'a>(digit: &u64) -> &'a str {
         7 => "seventy",
         8 => "eighty",
         9 => "ninety",
-        _ => panic!("{} not matched in tens", digit),
+        _ => panic!("{} not match with tens", digit),
     }
 }
 
