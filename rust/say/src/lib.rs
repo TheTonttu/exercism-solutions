@@ -59,32 +59,18 @@ fn number_to_text(number: &u64) -> String {
 
     match split.as_slice() {
         [hundreds, tens, ones] if *hundreds > 0 && *tens > 0 && *ones > 0 => [
-            match_ones(&(*hundreds / 100)),
-            " ",
-            "hundred",
+            &match_hundreds(hundreds),
             " ",
             &match_tens_and_ones(tens, ones),
         ]
         .concat(),
-        [hundreds, 0, ones] if *hundreds > 0 && *ones > 0 => [
-            match_ones(&(*hundreds / 100)),
-            " ",
-            "hundred",
-            " ",
-            match_ones(ones),
-        ]
-        .concat(),
-        [hundreds, tens, 0] if *hundreds > 0 && *tens > 0 => [
-            match_ones(&(*hundreds / 100)),
-            " ",
-            "hundred",
-            " ",
-            match_tens(tens),
-        ]
-        .concat(),
-        [hundreds, 0, 0] if *hundreds > 0 => {
-            [match_ones(&(*hundreds / 100)), " ", "hundred"].concat()
+        [hundreds, 0, ones] if *hundreds > 0 && *ones > 0 => {
+            [&match_hundreds(hundreds), " ", match_ones(ones)].concat()
         }
+        [hundreds, tens, 0] if *hundreds > 0 && *tens > 0 => {
+            [&match_hundreds(hundreds), " ", match_tens(tens)].concat()
+        }
+        [hundreds, 0, 0] if *hundreds > 0 => match_hundreds(hundreds),
         [0, tens, ones] if *tens > 0 && *ones > 0 => match_tens_and_ones(tens, ones),
         [0, tens, 0] if *tens > 0 => match_tens(tens).to_string(),
         [0, 0, ones] => match_ones(ones).to_string(),
@@ -135,6 +121,15 @@ fn match_tens<'a>(number: &u64) -> &'a str {
         80 => "eighty",
         90 => "ninety",
         _ => panic!("{} not matched in tens", number),
+    }
+}
+
+fn match_hundreds<'a>(number: &u64) -> String {
+    let digit = number / 100;
+
+    match digit {
+        0 => "".to_string(),
+        _ => [match_ones(&digit), " hundred"].concat(),
     }
 }
 
