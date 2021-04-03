@@ -34,6 +34,11 @@ fn test_split_hundred_and_eleven() {
 }
 
 #[test]
+fn test_split_six_hundred_and_fifteen() {
+    assert_eq!(say::split_thousand_to_smaller(&615), vec![600, 0, 15]);
+}
+
+#[test]
 fn test_split_eight_hundred_and_seven() {
     assert_eq!(say::split_thousand_to_smaller(&807), vec![800, 0, 7]);
 }

@@ -73,7 +73,7 @@ fn number_to_text(number: &u64) -> String {
             " ",
             "hundred",
             " ",
-            match_ones(ones),
+            match_ones_and_teens_range(ones),
         ]
         .concat(),
         [hundreds, tens, 0] if *hundreds > 0 && *tens > 0 => [
@@ -91,12 +91,7 @@ fn number_to_text(number: &u64) -> String {
             [match_tens(tens), "-", match_ones(ones)].concat()
         }
         [0, tens, 0] if *tens > 0 => match_tens(tens).to_string(),
-        [0, 0, ones] => match ones {
-            0..=9 => match_ones(ones),
-            10 => match_tens(ones),
-            11..=u64::MAX => match_teens(ones),
-        }
-        .to_string(),
+        [0, 0, ones] => match_ones_and_teens_range(ones).to_string(),
         _ => "zero".to_string(),
     }
 }
@@ -144,6 +139,15 @@ fn match_tens<'a>(number: &u64) -> &'a str {
         80 => "eighty",
         90 => "ninety",
         _ => panic!("{} not matched in tens", number),
+    }
+}
+
+fn match_ones_and_teens_range<'a>(number: &u64) -> &'a str {
+    match number {
+        0..=9 => match_ones(number),
+        10 => match_tens(number),
+        11..=19 => match_teens(number),
+        _ => panic!("{} not matched in 0..=19 range", number),
     }
 }
 

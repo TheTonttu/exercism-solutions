@@ -60,7 +60,6 @@ fn test_one_thousand() {
 }
 
 #[test]
-#[ignore]
 fn test_one_thousand_two_hundred_thirty_four() {
     assert_eq!(
         say::encode(1234),
@@ -70,7 +69,6 @@ fn test_one_thousand_two_hundred_thirty_four() {
 
 // note, using American style with no and
 #[test]
-#[ignore]
 fn test_eight_hundred_and_ten_thousand() {
     assert_eq!(
         say::encode(810_000),
@@ -132,7 +130,6 @@ fn test_max_i64() {
 }
 
 #[test]
-#[ignore]
 fn test_max_u64() {
     assert_eq!(
         say::encode(18_446_744_073_709_551_615),
