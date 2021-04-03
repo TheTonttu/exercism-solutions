@@ -63,9 +63,7 @@ fn number_to_text(number: &u64) -> String {
             " ",
             "hundred",
             " ",
-            match_tens(tens),
-            "-",
-            match_ones(ones),
+            &match_tens_and_ones(tens, ones),
         ]
         .concat(),
         [hundreds, 0, ones] if *hundreds > 0 && *ones > 0 => [
@@ -73,7 +71,7 @@ fn number_to_text(number: &u64) -> String {
             " ",
             "hundred",
             " ",
-            match_ones_and_teens_range(ones),
+            match_ones(ones),
         ]
         .concat(),
         [hundreds, tens, 0] if *hundreds > 0 && *tens > 0 => [
@@ -87,11 +85,9 @@ fn number_to_text(number: &u64) -> String {
         [hundreds, 0, 0] if *hundreds > 0 => {
             [match_ones(&(*hundreds / 100)), " ", "hundred"].concat()
         }
-        [0, tens, ones] if *tens > 0 && *ones > 0 => {
-            [match_tens(tens), "-", match_ones(ones)].concat()
-        }
+        [0, tens, ones] if *tens > 0 && *ones > 0 => match_tens_and_ones(tens, ones),
         [0, tens, 0] if *tens > 0 => match_tens(tens).to_string(),
-        [0, 0, ones] => match_ones_and_teens_range(ones).to_string(),
+        [0, 0, ones] => match_ones(ones).to_string(),
         _ => "zero".to_string(),
     }
 }
@@ -142,12 +138,12 @@ fn match_tens<'a>(number: &u64) -> &'a str {
     }
 }
 
-fn match_ones_and_teens_range<'a>(number: &u64) -> &'a str {
-    match number {
-        0..=9 => match_ones(number),
-        10 => match_tens(number),
-        11..=19 => match_teens(number),
-        _ => panic!("{} not matched in 0..=19 range", number),
+fn match_tens_and_ones(tens: &u64, ones: &u64) -> String {
+    match (tens, ones) {
+        (0, ones) => match_ones(ones).to_string(),
+        (tens, 0) => match_tens(tens).to_string(),
+        (tens, ones) if *tens == 10 => match_teens(&(tens + ones)).to_string(),
+        _ => [match_tens(tens), "-", match_ones(ones)].concat(),
     }
 }
 
@@ -179,12 +175,6 @@ pub fn split_thousand_to_smaller(number: &u64) -> Vec<u64> {
         split.push(part);
     }
     split.push(remainder);
-
-    // HACK: 0..=19 range is handled as ones instead of tens
-    if split[1] == 10 {
-        split[2] += split[1];
-        split[1] = 0;
-    }
 
     split
 }

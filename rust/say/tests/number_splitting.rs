@@ -10,7 +10,7 @@ fn test_split_one() {
 
 #[test]
 fn test_split_ten() {
-    assert_eq!(say::split_thousand_to_smaller(&10), vec![0, 0, 10]);
+    assert_eq!(say::split_thousand_to_smaller(&10), vec![0, 10, 0]);
 }
 
 #[test]
@@ -30,12 +30,12 @@ fn test_split_hundred() {
 
 #[test]
 fn test_split_hundred_and_eleven() {
-    assert_eq!(say::split_thousand_to_smaller(&111), vec![100, 0, 11]);
+    assert_eq!(say::split_thousand_to_smaller(&111), vec![100, 10, 1]);
 }
 
 #[test]
 fn test_split_six_hundred_and_fifteen() {
-    assert_eq!(say::split_thousand_to_smaller(&615), vec![600, 0, 15]);
+    assert_eq!(say::split_thousand_to_smaller(&615), vec![600, 10, 5]);
 }
 
 #[test]
