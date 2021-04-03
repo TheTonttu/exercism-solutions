@@ -38,16 +38,11 @@ pub fn encode(n: u64) -> String {
             }
         })
         .map(|(scale_index, value)| {
-            if SCALE_WORDS[*scale_index].is_empty() {
-                number_to_text(value)
-            } else {
-                [
-                    number_to_text(value),
-                    " ".to_string(),
-                    SCALE_WORDS[*scale_index].to_string(),
-                ]
+            [&number_to_text(value), " ", SCALE_WORDS[*scale_index]]
                 .concat()
-            }
+                // Gets rid of ending whitespace if scale word is empty
+                .trim_end()
+                .to_string()
         })
         .collect();
 
