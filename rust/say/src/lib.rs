@@ -30,7 +30,6 @@ pub fn encode(n: u64) -> String {
             // Remove thousand groups which containing zero and have a group in front.
             match (value, scale_indexed.get(index + 1)) {
                 (0, Some(_)) => None,
-                (_, None) => Some((index, value)),
                 _ => Some((index, value)),
             }
         })
