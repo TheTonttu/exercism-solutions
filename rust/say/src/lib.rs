@@ -1,6 +1,5 @@
 use itertools::Itertools;
 
-// American names
 const SCALE_WORDS: [&str; 7] = [
     "",
     "thousand",
@@ -12,12 +11,10 @@ const SCALE_WORDS: [&str; 7] = [
 ];
 
 pub fn encode(n: u64) -> String {
-    //println!("{:?}", split_number_to_thousands(&n));
-
     let thousand_splits = split_number_to_thousands(&n);
 
-    // assign scale word index to thousand splits
-    let scale_indexed: Vec<(usize, u64)> = thousand_splits
+    // Assign scale word index to thousand splits
+    let scale_indexed: Vec<(usize, u16)> = thousand_splits
         .iter()
         // Reverse so enumerate index can be assigned starting from least significant split group
         .rev()
@@ -27,14 +24,10 @@ pub fn encode(n: u64) -> String {
         .rev()
         .collect();
 
-    println!("{:?}", scale_indexed);
-
     scale_indexed
         .iter()
         .filter_map(|(index, value)| {
-            println!("{:?}", (index, value));
-
-            // Remove thousand groups with only zero that have values in front.
+            // Remove thousand groups which containing zero and have a group in front.
             match (value, scale_indexed.get(index + 1)) {
                 (0, Some(_)) => None,
                 (_, None) => Some((index, value)),
@@ -51,7 +44,7 @@ pub fn encode(n: u64) -> String {
         .join(" ")
 }
 
-fn number_to_text(number: &u64) -> String {
+fn number_to_text(number: &u16) -> String {
     let digits = number_to_digits(number);
 
     match digits.as_slice() {
@@ -71,7 +64,7 @@ fn number_to_text(number: &u64) -> String {
     }
 }
 
-fn match_ones<'a>(digit: &u64) -> &'a str {
+fn match_ones<'a>(digit: &u16) -> &'a str {
     match digit {
         0 => "zero",
         1 => "one",
@@ -87,7 +80,7 @@ fn match_ones<'a>(digit: &u64) -> &'a str {
     }
 }
 
-fn match_teens<'a>(digit: &u64) -> &'a str {
+fn match_teens<'a>(digit: &u16) -> &'a str {
     match digit {
         11 => "eleven",
         12 => "twelve",
@@ -102,7 +95,7 @@ fn match_teens<'a>(digit: &u64) -> &'a str {
     }
 }
 
-fn match_tens<'a>(digit: &u64) -> &'a str {
+fn match_tens<'a>(digit: &u16) -> &'a str {
     match digit {
         1 => "ten",
         2 => "twenty",
@@ -117,12 +110,12 @@ fn match_tens<'a>(digit: &u64) -> &'a str {
     }
 }
 
-fn match_hundreds(digit: &u64) -> String {
-    [match_ones(&digit), " hundred"].concat()
+fn match_hundreds(digit: &u16) -> String {
+    [match_ones(digit), " hundred"].concat()
 }
 
-fn match_tens_and_ones(tens: &u64, ones: &u64) -> String {
-    const TENS_DIGIT_TEN: u64 = 1;
+fn match_tens_and_ones(tens: &u16, ones: &u16) -> String {
+    const TENS_DIGIT_TEN: u16 = 1;
 
     match (tens, ones) {
         (0, ones) => match_ones(ones).to_string(),
@@ -132,7 +125,7 @@ fn match_tens_and_ones(tens: &u64, ones: &u64) -> String {
     }
 }
 
-pub fn split_number_to_thousands(number: &u64) -> Vec<u64> {
+pub fn split_number_to_thousands(number: &u64) -> Vec<u16> {
     const GROUPING: u64 = 1000;
 
     let mut remainder = *number;
@@ -140,17 +133,17 @@ pub fn split_number_to_thousands(number: &u64) -> Vec<u64> {
 
     while remainder >= GROUPING {
         let part = remainder % GROUPING;
-        split.insert(0, part);
+        split.insert(0, part as u16);
         remainder /= GROUPING;
     }
     let last_group = remainder;
-    split.insert(0, last_group);
+    split.insert(0, last_group as u16);
 
     split
 }
 
-pub fn number_to_digits(number: &u64) -> Vec<u64> {
-    const DIGIT_BASE: u64 = 10;
+pub fn number_to_digits(number: &u16) -> Vec<u16> {
+    const DIGIT_BASE: u16 = 10;
 
     let mut digits = Vec::new();
 
