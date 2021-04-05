@@ -1,27 +1,18 @@
 pub fn encode(source: &str) -> String {
     let mut counts = Vec::new();
 
-    let mut curr_char = None;
-    let mut count = 0;
     for char in source.chars() {
-        match curr_char {
-            Some(c) if char == c => {
-                count += 1;
+        match counts.last_mut() {
+            Some((c, count)) if char == *c => {
+                *count += 1;
             }
-            Some(c) => {
-                counts.push((c, count));
-                curr_char = Some(char);
-                count = 1;
+            Some(_) => {
+                counts.push((char, 1));
             }
             None => {
-                curr_char = Some(char);
-                count = 1;
+                counts.push((char, 1));
             }
         }
-    }
-
-    if let Some(c) = curr_char {
-        counts.push((c, count));
     }
 
     counts
