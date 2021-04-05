@@ -1,27 +1,29 @@
 pub fn encode(source: &str) -> String {
-    let mut encoding = Vec::new();
+    const START_COUNT: i32 = 1;
+
+    let mut encoded = Vec::new();
 
     for char in source.chars() {
-        match encoding.last_mut() {
+        match encoded.last_mut() {
             Some((c, count)) if char == *c => {
                 *count += 1;
             }
             Some(_) => {
-                encoding.push((char, 1));
+                encoded.push((char, START_COUNT));
             }
             None => {
-                encoding.push((char, 1));
+                encoded.push((char, START_COUNT));
             }
         }
     }
 
-    encoding
+    encoded
         .iter()
         .map(|(char, count)| {
             if *count < 2 {
                 char.to_string()
             } else {
-                format!("{}{}", count, char)
+                [count.to_string(), char.to_string()].concat()
             }
         })
         .collect()
@@ -30,7 +32,7 @@ pub fn encode(source: &str) -> String {
 pub fn decode(source: &str) -> String {
     const BASE: u32 = 10;
 
-    let mut decoding = Vec::new();
+    let mut decoded = Vec::new();
 
     let mut curr_count = None;
     for char in source.chars() {
@@ -41,14 +43,14 @@ pub fn decode(source: &str) -> String {
             }
         } else {
             match curr_count {
-                Some(n) => decoding.push((char, n)),
-                None => decoding.push((char, 1)),
+                Some(count) => decoded.push((char, count)),
+                None => decoded.push((char, 1)),
             }
             curr_count = None;
         }
     }
 
-    decoding
+    decoded
         .iter()
         .map(|(char, count)| char.to_string().repeat(*count as usize))
         .collect()
