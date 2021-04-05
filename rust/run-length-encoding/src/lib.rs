@@ -1,21 +1,21 @@
 pub fn encode(source: &str) -> String {
-    let mut counts = Vec::new();
+    let mut encoding = Vec::new();
 
     for char in source.chars() {
-        match counts.last_mut() {
+        match encoding.last_mut() {
             Some((c, count)) if char == *c => {
                 *count += 1;
             }
             Some(_) => {
-                counts.push((char, 1));
+                encoding.push((char, 1));
             }
             None => {
-                counts.push((char, 1));
+                encoding.push((char, 1));
             }
         }
     }
 
-    counts
+    encoding
         .iter()
         .map(|(char, count)| {
             if *count < 2 {
