@@ -8,10 +8,7 @@ pub fn encode(source: &str) -> String {
             Some((c, count)) if char == *c => {
                 *count += 1;
             }
-            Some(_) => {
-                encoded.push((char, START_COUNT));
-            }
-            None => {
+            _ => {
                 encoded.push((char, START_COUNT));
             }
         }
