@@ -43,8 +43,7 @@ pub fn decode(source: &str) -> String {
 
     let mut curr_count = None;
     for char in source.chars() {
-        if char.is_digit(BASE) {
-            let digit = char.to_digit(BASE).unwrap();
+        if let Some(digit) = char.to_digit(BASE) {
             match curr_count {
                 Some(count) => curr_count = Some(count * BASE + digit),
                 None => curr_count = Some(digit),
