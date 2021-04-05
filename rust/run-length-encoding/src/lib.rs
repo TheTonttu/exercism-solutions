@@ -4,17 +4,19 @@ pub fn encode(source: &str) -> String {
     let mut curr_char = None;
     let mut count = 0;
     for char in source.chars() {
-        if let Some(c) = curr_char {
-            if char == c {
+        match curr_char {
+            Some(c) if char == c => {
                 count += 1;
-            } else {
+            }
+            Some(c) => {
                 counts.push((c, count));
                 curr_char = Some(char);
                 count = 1;
             }
-        } else {
-            curr_char = Some(char);
-            count = 1;
+            None => {
+                curr_char = Some(char);
+                count = 1;
+            }
         }
     }
 
@@ -35,27 +37,24 @@ pub fn encode(source: &str) -> String {
 }
 
 pub fn decode(source: &str) -> String {
+    const BASE: u32 = 10;
+
     let mut decoding = Vec::new();
 
-    let mut count = None;
+    let mut curr_count = None;
     for char in source.chars() {
-        match char {
-            '0'..='9' => {
-                let digit = char.to_digit(10).unwrap() as i32;
-                if let Some(n) = count {
-                    count = Some(n * 10 + digit);
-                } else {
-                    count = Some(digit);
-                }
+        if char.is_digit(BASE) {
+            let digit = char.to_digit(BASE).unwrap();
+            match curr_count {
+                Some(count) => curr_count = Some(count * BASE + digit),
+                None => curr_count = Some(digit),
             }
-            _ => {
-                if let Some(n) = count {
-                    decoding.push((char, n));
-                } else {
-                    decoding.push((char, 1));
-                }
-                count = None;
+        } else {
+            match curr_count {
+                Some(n) => decoding.push((char, n)),
+                None => decoding.push((char, 1)),
             }
+            curr_count = None;
         }
     }
 
