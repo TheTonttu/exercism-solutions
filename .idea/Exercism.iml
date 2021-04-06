@@ -86,6 +86,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/say/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/run-length-encoding/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/run-length-encoding/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/isbn-verifier/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/isbn-verifier/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/leap/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/hello-world/target" />
@@ -127,6 +129,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/isogram/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/say/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/run-length-encoding/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/isbn-verifier/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
