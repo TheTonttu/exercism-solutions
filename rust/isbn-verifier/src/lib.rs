@@ -26,16 +26,11 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
 
     println!("{:?}", values);
 
-    if let Some(check_val) = stripped.chars().nth(CHECK_DIGIT_INDEX) {
-        let check_digit = match check_val {
-            '0'..='9' => check_val.to_digit(10).unwrap(),
-            'X' => 10,
-            _ => {
-                return false;
-            }
-        };
-        println!("check digit: {}", check_digit);
-
+    if let Some(check_digit) = stripped
+        .chars()
+        .nth(CHECK_DIGIT_INDEX)
+        .and_then(parse_check_digit)
+    {
         values.push(check_digit);
 
         let mut multiplier = 10;
@@ -48,5 +43,13 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
         sum % 11 == 0
     } else {
         false
+    }
+}
+
+fn parse_check_digit(char: char) -> Option<u32> {
+    match char {
+        '0'..='9' => char.to_digit(10),
+        'X' => Some(10),
+        _ => None,
     }
 }
