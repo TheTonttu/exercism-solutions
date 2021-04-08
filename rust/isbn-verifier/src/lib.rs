@@ -18,7 +18,7 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
         return false;
     }
     if let Some(x_index) = stripped.find('X') {
-        if x_index != 9 {
+        if x_index != CHECK_DIGIT_INDEX {
             return false;
         }
     }
@@ -28,7 +28,7 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
         .nth(CHECK_DIGIT_INDEX)
         .and_then(parse_check_digit)
     {
-        let values: Vec<u32> = stripped[..9]
+        let values: Vec<u32> = stripped[..CHECK_DIGIT_INDEX]
             .chars()
             .filter_map(|c| c.to_digit(NUMBER_BASE))
             .chain(iter::once(check_digit))
