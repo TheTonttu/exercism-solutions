@@ -8,11 +8,7 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
 
     let isbn_numbers: Vec<u32> = isbn.chars().filter_map(parse_isbn_number).collect();
 
-    if isbn_numbers.len() != VALID_ISBN10_NUMBER_COUNT {
-        return false;
-    }
-
-    if !is_valid_x_position(&isbn_numbers) {
+    if isbn_numbers.len() != VALID_ISBN10_NUMBER_COUNT || !is_valid_x_position(&isbn_numbers) {
         return false;
     }
 
