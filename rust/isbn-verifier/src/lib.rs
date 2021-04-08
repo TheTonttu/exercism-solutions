@@ -6,6 +6,7 @@ const NUMBER_BASE: u32 = 10;
 pub fn is_valid_isbn(isbn: &str) -> bool {
     const ISBN10_VALID_LENGTH: usize = 10;
     const CHECK_DIGIT_INDEX: usize = 9;
+    const CHECK_MODULUS: u32 = 11;
 
     let stripped: String = isbn
         .chars()
@@ -43,7 +44,7 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
             multiplier -= 1;
         }
 
-        sum % 11 == 0
+        sum % CHECK_MODULUS == 0
     } else {
         false
     }
