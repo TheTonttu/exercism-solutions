@@ -20,11 +20,12 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
         }
     }
 
+    let multipliers = (1..=(isbn_numbers.len() as u32)).rev();
+
     let sum: u32 = isbn_numbers
         .iter()
-        // Include multipliers
-        .zip((1..=(isbn_numbers.len() as u32)).rev())
-        .map(|(value, multiplier)| value * multiplier)
+        .zip(multipliers)
+        .map(|(n, mul)| n * mul)
         .sum();
 
     sum % CHECK_MODULUS == 0
