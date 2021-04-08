@@ -1,6 +1,8 @@
+const NUMBER_BASE: u32 = 10;
+
 /// Determines whether the supplied string is a valid ISBN number
 pub fn is_valid_isbn(isbn: &str) -> bool {
-    const ISBN_VALID_LENGTH: usize = 10;
+    const ISBN10_VALID_LENGTH: usize = 10;
     const CHECK_DIGIT_INDEX: usize = 9;
 
     let stripped: String = isbn
@@ -10,7 +12,7 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
 
     println!("{:?}", stripped);
 
-    if stripped.len() != ISBN_VALID_LENGTH {
+    if stripped.len() != ISBN10_VALID_LENGTH {
         return false;
     }
     if let Some(x_index) = stripped.find('X') {
@@ -21,7 +23,7 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
 
     let mut values: Vec<u32> = stripped[..9]
         .chars()
-        .filter_map(|c| c.to_digit(10))
+        .filter_map(|c| c.to_digit(NUMBER_BASE))
         .collect();
 
     println!("{:?}", values);
@@ -48,7 +50,7 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
 
 fn parse_check_digit(char: char) -> Option<u32> {
     match char {
-        '0'..='9' => char.to_digit(10),
+        '0'..='9' => char.to_digit(NUMBER_BASE),
         'X' => Some(10),
         _ => None,
     }
