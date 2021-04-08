@@ -1,53 +1,41 @@
-use std::iter;
-
-const NUMBER_BASE: u32 = 10;
+const X_NUMBER: u32 = 10;
 
 /// Determines whether the supplied string is a valid ISBN number
 pub fn is_valid_isbn(isbn: &str) -> bool {
-    const ISBN10_VALID_LENGTH: usize = 10;
+    const VALID_ISBN10_NUMBER_COUNT: usize = 10;
     const CHECK_DIGIT_INDEX: usize = 9;
     const CHECK_MODULUS: u32 = 11;
 
-    let stripped: String = isbn
-        .chars()
-        .filter(|c| ('0'..='9').contains(c) || *c == 'X')
-        .collect();
+    let isbn_numbers: Vec<u32> = isbn.chars().filter_map(parse_isbn_number).collect();
 
-    println!("{:?}", stripped);
+    println!("{:?}", isbn_numbers);
 
-    if stripped.len() != ISBN10_VALID_LENGTH {
+    if isbn_numbers.len() != VALID_ISBN10_NUMBER_COUNT {
         return false;
     }
-    if let Some(x_index) = stripped.find('X') {
+
+    if let Some(x_index) = isbn_numbers.iter().position(|v| *v == X_NUMBER) {
         if x_index != CHECK_DIGIT_INDEX {
             return false;
         }
     }
 
-    if let Some(check_digit) = stripped
-        .chars()
-        .nth(CHECK_DIGIT_INDEX)
-        .and_then(parse_check_digit)
-    {
-        let sum: u32 = stripped[..CHECK_DIGIT_INDEX]
-            .chars()
-            .filter_map(|c| c.to_digit(NUMBER_BASE))
-            .chain(iter::once(check_digit))
-            // Include multipliers
-            .zip((1..=(stripped.len() as u32)).rev())
-            .map(|(value, multiplier)| value * multiplier)
-            .sum();
+    let sum: u32 = isbn_numbers
+        .iter()
+        // Include multipliers
+        .zip((1..=(isbn_numbers.len() as u32)).rev())
+        .map(|(value, multiplier)| value * multiplier)
+        .sum();
 
-        sum % CHECK_MODULUS == 0
-    } else {
-        false
-    }
+    sum % CHECK_MODULUS == 0
 }
 
-fn parse_check_digit(char: char) -> Option<u32> {
+fn parse_isbn_number(char: char) -> Option<u32> {
+    const NUMBER_BASE: u32 = 10;
+
     match char {
         '0'..='9' => char.to_digit(NUMBER_BASE),
-        'X' => Some(10),
+        'X' => Some(X_NUMBER),
         _ => None,
     }
 }
