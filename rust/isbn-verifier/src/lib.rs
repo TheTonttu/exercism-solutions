@@ -1,3 +1,5 @@
+use std::iter;
+
 const NUMBER_BASE: u32 = 10;
 
 /// Determines whether the supplied string is a valid ISBN number
@@ -21,19 +23,18 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
         }
     }
 
-    let mut values: Vec<u32> = stripped[..9]
-        .chars()
-        .filter_map(|c| c.to_digit(NUMBER_BASE))
-        .collect();
-
-    println!("{:?}", values);
-
     if let Some(check_digit) = stripped
         .chars()
         .nth(CHECK_DIGIT_INDEX)
         .and_then(parse_check_digit)
     {
-        values.push(check_digit);
+        let values: Vec<u32> = stripped[..9]
+            .chars()
+            .filter_map(|c| c.to_digit(NUMBER_BASE))
+            .chain(iter::once(check_digit))
+            .collect();
+
+        println!("{:?}", values);
 
         let mut multiplier = 10;
         let mut sum = 0;
