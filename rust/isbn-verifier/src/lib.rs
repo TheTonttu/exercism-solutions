@@ -29,19 +29,13 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
         .nth(CHECK_DIGIT_INDEX)
         .and_then(parse_check_digit)
     {
-        let values: Vec<u32> = stripped[..CHECK_DIGIT_INDEX]
+        let sum: u32 = stripped[..CHECK_DIGIT_INDEX]
             .chars()
             .filter_map(|c| c.to_digit(NUMBER_BASE))
             .chain(iter::once(check_digit))
-            .collect();
-
-        println!("{:?}", values);
-
-        let sum: u32 = values
-            .iter()
-            // Multipliers
-            .zip((1..=(values.len() as u32)).rev())
-            .map(|(value, multiplier)| (*value) * multiplier)
+            // Include multipliers
+            .zip((1..=(stripped.len() as u32)).rev())
+            .map(|(value, multiplier)| value * multiplier)
             .sum();
 
         sum % CHECK_MODULUS == 0
