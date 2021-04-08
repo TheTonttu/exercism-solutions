@@ -37,12 +37,12 @@ pub fn is_valid_isbn(isbn: &str) -> bool {
 
         println!("{:?}", values);
 
-        let mut multiplier = 10;
-        let mut sum = 0;
-        for value in values {
-            sum += value * multiplier;
-            multiplier -= 1;
-        }
+        let sum: u32 = values
+            .iter()
+            // Multipliers
+            .zip((1..=(values.len() as u32)).rev())
+            .map(|(value, multiplier)| (*value) * multiplier)
+            .sum();
 
         sum % CHECK_MODULUS == 0
     } else {
