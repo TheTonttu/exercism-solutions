@@ -8,12 +8,11 @@ pub enum Classification {
 }
 
 pub fn classify(num: u64) -> Option<Classification> {
-    if num < 1 {
+    if num == 0 {
         return None;
     }
 
     let aliquot_sum = calculate_aliquot_sum(num);
-    println!("{:?}", aliquot_sum);
 
     let classification = match aliquot_sum.cmp(&num) {
         Ordering::Less => Classification::Deficient,
