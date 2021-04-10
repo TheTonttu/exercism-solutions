@@ -92,6 +92,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/perfect-numbers/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/hamming/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/hamming/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/scrabble-score/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/scrabble-score/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/leap/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/hello-world/target" />
@@ -136,6 +138,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/isbn-verifier/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/perfect-numbers/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/hamming/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/scrabble-score/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
