@@ -44,10 +44,14 @@ pub fn score(word: &str) -> u64 {
 }
 
 fn build_point_map() -> HashMap<char, u64> {
-    CHAR_POINTS.iter()
+    CHAR_POINTS
+        .iter()
         .copied()
         .chain(
-            CHAR_POINTS.iter().copied()
-                .map(|(c, n)| (c.to_ascii_lowercase(), n))
-        ).collect()
+            CHAR_POINTS
+                .iter()
+                .copied()
+                .map(|(c, n)| (c.to_ascii_lowercase(), n)),
+        )
+        .collect()
 }
