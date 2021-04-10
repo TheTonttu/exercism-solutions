@@ -37,14 +37,10 @@ pub fn score(word: &str) -> u64 {
 }
 
 fn build_point_map() -> HashMap<char, u64> {
-    let mut point_map = HashMap::new();
-    point_map.extend(CHAR_POINTS.iter().copied());
-    point_map.extend(
-        CHAR_POINTS
-            .iter()
-            .copied()
-            .map(|(c, n)| (c.to_ascii_lowercase(), n)),
-    );
-
-    point_map
+    CHAR_POINTS.iter()
+        .copied()
+        .chain(
+            CHAR_POINTS.iter().copied()
+                .map(|(c, n)| (c.to_ascii_lowercase(), n))
+        ).collect()
 }
