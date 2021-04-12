@@ -96,6 +96,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/scrabble-score/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/pangram/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/pangram/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/all-your-base/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/all-your-base/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/leap/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/hello-world/target" />
@@ -142,6 +144,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/hamming/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/scrabble-score/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/pangram/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/all-your-base/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
