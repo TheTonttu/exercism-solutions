@@ -67,15 +67,15 @@ pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>,
 
 fn convert_decimal_to_n_base(decimal_number: u32, to_base: u32) -> Vec<u32> {
     let mut remainder = decimal_number;
-    let mut output_digits = Vec::new();
+    let mut converted_digits = Vec::new();
     while remainder > 0 {
         let digit = remainder % to_base;
-        output_digits.insert(0, digit);
+        converted_digits.insert(0, digit);
         remainder /= to_base;
     }
 
-    if output_digits.is_empty() {
-        output_digits.push(0);
+    if converted_digits.is_empty() {
+        converted_digits.push(0);
     }
-    output_digits
+    converted_digits
 }
