@@ -47,8 +47,8 @@ pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>,
         return Err(Error::InvalidOutputBase);
     }
 
-    if let Some(invalid_digit) = number.iter().find(|n| **n >= from_base) {
-        return Err(Error::InvalidDigit(*invalid_digit));
+    if let Some(invalid_digit) = number.iter().copied().find(|n| *n >= from_base) {
+        return Err(Error::InvalidDigit(invalid_digit));
     }
 
     let exponents = 0..(number.len() as u32);
