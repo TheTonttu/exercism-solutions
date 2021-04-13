@@ -60,6 +60,12 @@ pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>,
         .map(|(digit, exponent)| *digit * from_base.pow(exponent))
         .sum();
 
+    let output_digits = convert_decimal_to_n_base(decimal_number, to_base);
+
+    Ok(output_digits)
+}
+
+fn convert_decimal_to_n_base(decimal_number: u32, to_base: u32) -> Vec<u32> {
     let mut remainder = decimal_number;
     let mut output_digits = Vec::new();
     while remainder > 0 {
@@ -71,6 +77,5 @@ pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>,
     if output_digits.is_empty() {
         output_digits.push(0);
     }
-
-    Ok(output_digits)
+    output_digits
 }
