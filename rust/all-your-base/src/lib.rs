@@ -51,11 +51,13 @@ pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>,
         return Err(Error::InvalidDigit(*invalid_digit));
     }
 
+    let exponents = 0..(number.len() as u32);
+
     let decimal_number: u32 = number
         .iter()
         .rev()
-        .enumerate()
-        .map(|(exponent, b)| b * from_base.pow(exponent as u32))
+        .zip(exponents)
+        .map(|(digit, exponent)| *digit * from_base.pow(exponent))
         .sum();
 
     let mut remainder = decimal_number;
