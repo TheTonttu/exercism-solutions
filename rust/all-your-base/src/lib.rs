@@ -6,20 +6,15 @@ pub enum Error {
 }
 
 ///
-/// Convert a number between two bases.
+/// Converts a number between two number bases.
 ///
 /// A number is any slice of digits.
 /// A digit is any unsigned integer (e.g. u8, u16, u32, u64, or usize).
 /// Bases are specified as unsigned integers.
 ///
-/// Return an `Err(.)` if the conversion is impossible.
-/// The tests do not test for specific values inside the `Err(.)`.
+/// Returns an `Err(.)` if the conversion is impossible, e.g. any of the bases are below 2.
 ///
-///
-/// You are allowed to change the function signature as long as all test still pass.
-///
-///
-/// Example:
+/// # Examples
 /// Input
 ///   number: &[4, 2]
 ///   from_base: 10
@@ -31,10 +26,8 @@ pub enum Error {
 /// which is equivalent to 101010 in binary.
 ///
 ///
-/// Notes:
+/// # Remarks
 ///  * The empty slice ( "[]" ) is equal to the number 0.
-///  * Never output leading 0 digits, unless the input number is 0, in which the output must be `[0]`.
-///    However, your function must be able to process input with leading 0 digits.
 ///
 pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>, Error> {
     const MIN_BASE: u32 = 2;
