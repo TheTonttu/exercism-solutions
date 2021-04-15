@@ -9,7 +9,7 @@ pub enum Error {
 /// Converts a number between two number bases.
 ///
 /// A number is any slice of digits.
-/// A digit is any unsigned integer (e.g. u8, u16, u32, u64, or usize).
+/// A digit is u32.
 /// Bases are specified as unsigned integers.
 ///
 /// Returns an `Err(.)` if the conversion is impossible, e.g. any of the bases are below 2.
