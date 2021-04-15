@@ -30,6 +30,23 @@ pub enum Error {
 ///  * The empty slice ( "[]" ) is equal to the number 0.
 ///
 pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>, Error> {
+    validate_input(number, from_base, to_base)?;
+
+    let exponents = 0..(number.len() as u32);
+
+    let decimal_number: u32 = number
+        .iter()
+        .rev()
+        .zip(exponents)
+        .map(|(digit, exponent)| *digit * from_base.pow(exponent))
+        .sum();
+
+    let output_digits = convert_decimal_to_n_base(decimal_number, to_base);
+
+    Ok(output_digits)
+}
+
+fn validate_input(number: &[u32], from_base: u32, to_base: u32) -> Result<(), Error> {
     const MIN_BASE: u32 = 2;
 
     if from_base < MIN_BASE {
@@ -44,18 +61,7 @@ pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>,
         return Err(Error::InvalidDigit(invalid_digit));
     }
 
-    let exponents = 0..(number.len() as u32);
-
-    let decimal_number: u32 = number
-        .iter()
-        .rev()
-        .zip(exponents)
-        .map(|(digit, exponent)| *digit * from_base.pow(exponent))
-        .sum();
-
-    let output_digits = convert_decimal_to_n_base(decimal_number, to_base);
-
-    Ok(output_digits)
+    Ok(())
 }
 
 fn convert_decimal_to_n_base(decimal_number: u32, to_base: u32) -> Vec<u32> {
