@@ -50,18 +50,14 @@ fn validate_input(number: &[u32], from_base: u32, to_base: u32) -> Result<(), Er
     const MIN_BASE: u32 = 2;
 
     if from_base < MIN_BASE {
-        return Err(Error::InvalidInputBase);
+        Err(Error::InvalidInputBase)
+    } else if to_base < MIN_BASE {
+        Err(Error::InvalidOutputBase)
+    } else if let Some(invalid_digit) = number.iter().copied().find(|n| *n >= from_base) {
+        Err(Error::InvalidDigit(invalid_digit))
+    } else {
+        Ok(())
     }
-
-    if to_base < MIN_BASE {
-        return Err(Error::InvalidOutputBase);
-    }
-
-    if let Some(invalid_digit) = number.iter().copied().find(|n| *n >= from_base) {
-        return Err(Error::InvalidDigit(invalid_digit));
-    }
-
-    Ok(())
 }
 
 fn convert_decimal_to_n_base(decimal_number: u32, to_base: u32) -> Vec<u32> {
