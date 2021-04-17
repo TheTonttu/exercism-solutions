@@ -1,33 +1,53 @@
-pub struct Allergies;
+use crate::Allergen::*;
+use std::slice::Iter;
 
-#[derive(Debug, PartialEq)]
+pub struct Allergies {
+    allergens: Vec<Allergen>,
+}
+
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Allergen {
-    Eggs,
-    Peanuts,
-    Shellfish,
-    Strawberries,
-    Tomatoes,
-    Chocolate,
-    Pollen,
-    Cats,
+    Eggs = 1,
+    Peanuts = 2,
+    Shellfish = 4,
+    Strawberries = 8,
+    Tomatoes = 16,
+    Chocolate = 32,
+    Pollen = 64,
+    Cats = 128,
+}
+
+impl Allergen {
+    pub fn iter() -> Iter<'static, Allergen> {
+        static ALLERGENS: [Allergen; 8] = [
+            Cats,
+            Pollen,
+            Chocolate,
+            Tomatoes,
+            Strawberries,
+            Shellfish,
+            Peanuts,
+            Eggs,
+        ];
+        ALLERGENS.iter()
+    }
 }
 
 impl Allergies {
     pub fn new(score: u32) -> Self {
-        unimplemented!(
-            "Given the '{}' score, construct a new Allergies struct.",
-            score
-        );
+        let allergens = Allergen::iter()
+            .copied()
+            .filter(|a| (score & *a as u32) == *a as u32)
+            .collect();
+
+        Allergies { allergens }
     }
 
     pub fn is_allergic_to(&self, allergen: &Allergen) -> bool {
-        unimplemented!(
-            "Determine if the patient is allergic to the '{:?}' allergen.",
-            allergen
-        );
+        self.allergens.contains(allergen)
     }
 
     pub fn allergies(&self) -> Vec<Allergen> {
-        unimplemented!("Return the list of allergens contained within the score with which the Allergies struct was made.");
+        self.allergens.clone()
     }
 }
