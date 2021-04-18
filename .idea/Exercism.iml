@@ -100,6 +100,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/all-your-base/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/allergies/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/allergies/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/affine-cipher/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/affine-cipher/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/leap/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/hello-world/target" />
@@ -148,6 +150,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/pangram/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/all-your-base/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/allergies/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/affine-cipher/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
