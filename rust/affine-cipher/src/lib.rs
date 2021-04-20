@@ -21,11 +21,7 @@ pub fn encode(plaintext: &str, a: i32, b: i32) -> Result<String, AffineCipherErr
         .map(|n| ((n + ASCII_LOWERCASE_SECTION_START) as u8) as char)
         .enumerate()
         .flat_map(|(i, c)| {
-            if i != 0 && i % GROUP_SIZE == 0 {
-                Some(' ')
-            } else {
-                None
-            }
+            (i != 0 && i % GROUP_SIZE == 0).then(|| ' ')
             .into_iter()
             .chain(std::iter::once(c))
         })
