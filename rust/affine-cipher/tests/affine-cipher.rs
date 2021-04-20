@@ -42,7 +42,6 @@ fn encode_deep_thought() {
 }
 
 #[test]
-#[ignore]
 fn encode_all_the_letters() {
     assert_eq!(
         encode("The quick brown fox jumps over the lazy dog.", 17, 33).unwrap(),
