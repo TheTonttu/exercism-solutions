@@ -21,13 +21,11 @@ fn encode_o_m_g() {
 }
 
 #[test]
-#[ignore]
 fn encode_mindblowingly() {
     assert_eq!(encode("mindblowingly", 11, 15).unwrap(), "rzcwa gnxzc dgt")
 }
 
 #[test]
-#[ignore]
 fn encode_numbers() {
     assert_eq!(
         encode("Testing,1 2 3, testing.", 3, 4).unwrap(),
@@ -36,7 +34,6 @@ fn encode_numbers() {
 }
 
 #[test]
-#[ignore]
 fn encode_deep_thought() {
     assert_eq!(
         encode("Truth is fiction", 5, 17).unwrap(),

@@ -10,14 +10,25 @@ pub enum AffineCipherError {
 pub fn encode(plaintext: &str, a: i32, b: i32) -> Result<String, AffineCipherError> {
     const ALPHABET_COUNT: i32 = 26;
     const ASCII_LOWERCASE_SECTION_START: i32 = 97;
+    const GROUP_SIZE: usize = 5;
 
     Ok(plaintext
         .to_ascii_lowercase()
         .chars()
-        .filter(|c| !c.is_whitespace())
+        .filter(|c| c.is_alphanumeric())
         .map(|c| (c as i32) - ASCII_LOWERCASE_SECTION_START)
         .map(|n| (a * n + b) % ALPHABET_COUNT)
         .map(|n| ((n + ASCII_LOWERCASE_SECTION_START) as u8) as char)
+        .enumerate()
+        .flat_map(|(i, c)| {
+            if i != 0 && i % GROUP_SIZE == 0 {
+                Some(' ')
+            } else {
+                None
+            }
+            .into_iter()
+            .chain(std::iter::once(c))
+        })
         .collect())
 }
 
