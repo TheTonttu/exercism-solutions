@@ -48,10 +48,14 @@ fn validate_keys(a: &i32, b: &i32) -> Result<(), AffineCipherError> {
     match (a, b) {
         (0, _) => Err(AffineCipherError::NotCoprime(*a)),
         (_, 0) => Err(AffineCipherError::NotCoprime(*b)),
-        (a, _) if gcd(a, &ALPHABET_COUNT) != 1 => Err(AffineCipherError::NotCoprime(*a)),
-        (a, b) if gcd(a, b) == 1 => Ok(()),
+        (a, _) if !are_coprimes(a, &ALPHABET_COUNT) => Err(AffineCipherError::NotCoprime(*a)),
+        (a, b) if are_coprimes(a, b) => Ok(()),
         (_, _) => Ok(()),
     }
+}
+
+fn are_coprimes(first: &i32, second: &i32) -> bool {
+    gcd(first, second) == 1
 }
 
 /// Calculates greatest common divisor between numbers `first` and `second`.
