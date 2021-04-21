@@ -1,3 +1,5 @@
+const ALPHABET_COUNT: i32 = 26;
+
 /// While the problem description indicates a return status of 1 should be returned on errors,
 /// it is much more common to return a `Result`, so we provide an error type for the result here.
 #[derive(Debug, Eq, PartialEq)]
@@ -9,6 +11,8 @@ pub enum AffineCipherError {
 /// returning a return code, the more common convention in Rust is to return a `Result`.
 pub fn encode(plaintext: &str, a: i32, b: i32) -> Result<String, AffineCipherError> {
     const GROUP_SIZE: usize = 5;
+
+    validate_keys(&a, &b)?;
 
     Ok(plaintext
         .to_ascii_lowercase()
@@ -25,7 +29,6 @@ pub fn encode(plaintext: &str, a: i32, b: i32) -> Result<String, AffineCipherErr
 }
 
 fn encode_char(char: &char, a: &i32, b: &i32) -> Option<char> {
-    const ALPHABET_COUNT: i32 = 26;
     const ASCII_LOWERCASE_SECTION_START: i32 = 97;
 
     match char {
@@ -38,6 +41,35 @@ fn encode_char(char: &char, a: &i32, b: &i32) -> Option<char> {
         }
         numeric if numeric.is_numeric() => Some(*numeric),
         _ => None,
+    }
+}
+
+fn validate_keys(a: &i32, b: &i32) -> Result<(), AffineCipherError> {
+    match (a, b) {
+        (0, _) => Err(AffineCipherError::NotCoprime(*a)),
+        (_, 0) => Err(AffineCipherError::NotCoprime(*b)),
+        (a, _) if gcd(a, &ALPHABET_COUNT) != 1 => Err(AffineCipherError::NotCoprime(*a)),
+        (a, b) if gcd(a, b) == 1 => Ok(()),
+        (_, _) => Ok(()),
+    }
+}
+
+/// Calculates greatest common divisor between numbers `first` and `second`.
+fn gcd(first: &i32, second: &i32) -> i32 {
+    let mut max = *first;
+    let mut min = *second;
+    if min > max {
+        std::mem::swap(&mut min, &mut max);
+    }
+
+    loop {
+        let remainder = max % min;
+        if remainder == 0 {
+            return min;
+        }
+
+        max = min;
+        min = remainder;
     }
 }
 
