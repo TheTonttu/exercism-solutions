@@ -66,7 +66,6 @@ fn encode_with_a_not_coprime_to_m() {
 }
 
 #[test]
-#[ignore]
 fn decode_exercism() {
     assert_eq!(decode("tytgn fjr", 3, 7).unwrap(), "exercism")
 }
