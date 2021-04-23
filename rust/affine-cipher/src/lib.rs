@@ -80,20 +80,14 @@ fn gcd(first: &i32, second: &i32) -> i32 {
 /// Decodes the ciphertext using the affine cipher with key (`a`, `b`). Note that, rather than
 /// returning a return code, the more common convention in Rust is to return a `Result`.
 pub fn decode(ciphertext: &str, a: i32, b: i32) -> Result<String, AffineCipherError> {
+    validate_keys(&a, &b)?;
+
     let a_mmi = mmi(&a, &ALPHABET_COUNT);
-    println!("a_mmi: {}", a_mmi);
 
     Ok(ciphertext
         .to_ascii_lowercase()
         .chars()
         .filter_map(|c| decode_char(&c, &a_mmi, &b))
-        // .enumerate()
-        // .flat_map(|(i, c)| {
-        //     (i != 0 && i % GROUP_SIZE == 0)
-        //         .then(|| ' ')
-        //         .into_iter()
-        //         .chain(std::iter::once(c))
-        // })
         .collect())
 }
 
@@ -103,13 +97,10 @@ fn decode_char(char: &char, a_mmi: &i32, b: &i32) -> Option<char> {
     match char {
         alphabetic if alphabetic.is_alphabetic() => {
             let num = (*alphabetic as i32) - ASCII_LOWERCASE_SECTION_START;
-            println!("{}: {}", alphabetic, num);
 
             let decrypted = (a_mmi * (num - b)).rem_euclid(ALPHABET_COUNT);
             let decrypted_char = ((decrypted + ASCII_LOWERCASE_SECTION_START) as u8) as char;
-            println!("{}: {}", decrypted_char, decrypted);
 
-            println!();
             Some(decrypted_char)
         }
         numeric if numeric.is_numeric() => Some(*numeric),

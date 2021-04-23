@@ -115,7 +115,6 @@ fn decode_with_too_many_spaces() {
 }
 
 #[test]
-#[ignore]
 fn decode_with_a_not_coprime_to_m() {
     const EXPECTED_ERROR: AffineCipherError = AffineCipherError::NotCoprime(13);
     match decode("Test", 13, 11) {
