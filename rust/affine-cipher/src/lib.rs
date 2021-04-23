@@ -1,4 +1,5 @@
 const ALPHABET_COUNT: i32 = 26;
+const ASCII_LOWERCASE_SECTION_START: i32 = 97;
 
 /// While the problem description indicates a return status of 1 should be returned on errors,
 /// it is much more common to return a `Result`, so we provide an error type for the result here.
@@ -30,13 +31,11 @@ pub fn encode(plaintext: &str, a: i32, b: i32) -> Result<String, AffineCipherErr
 }
 
 fn encode_char(char: &char, a: &i32, b: &i32) -> Option<char> {
-    const ASCII_LOWERCASE_SECTION_START: i32 = 97;
-
     match char {
         alphabetic if alphabetic.is_alphabetic() => {
-            let num = (*alphabetic as i32) - ASCII_LOWERCASE_SECTION_START;
+            let num = get_alphabet_position(alphabetic);
             let encrypted = (a * num + b) % ALPHABET_COUNT;
-            let encrypted_char = ((encrypted + ASCII_LOWERCASE_SECTION_START) as u8) as char;
+            let encrypted_char = get_alphabet_from_position(&encrypted);
 
             Some(encrypted_char)
         }
@@ -83,14 +82,12 @@ pub fn decode(ciphertext: &str, a: i32, b: i32) -> Result<String, AffineCipherEr
 }
 
 fn decode_char(char: &char, a_mmi: &i32, b: &i32) -> Option<char> {
-    const ASCII_LOWERCASE_SECTION_START: i32 = 97;
-
     match char {
         alphabetic if alphabetic.is_alphabetic() => {
-            let num = (*alphabetic as i32) - ASCII_LOWERCASE_SECTION_START;
+            let num = get_alphabet_position(alphabetic);
 
             let decrypted = (a_mmi * (num - b)).rem_euclid(ALPHABET_COUNT);
-            let decrypted_char = ((decrypted + ASCII_LOWERCASE_SECTION_START) as u8) as char;
+            let decrypted_char = get_alphabet_from_position(&decrypted);
 
             Some(decrypted_char)
         }
@@ -107,6 +104,14 @@ fn validate_keys(a: &i32, b: &i32) -> Result<(), AffineCipherError> {
         (a, b) if are_coprimes(a, b) => Ok(()),
         (_, _) => Ok(()),
     }
+}
+
+fn get_alphabet_position(alphabetic: &char) -> i32 {
+    (*alphabetic as i32) - ASCII_LOWERCASE_SECTION_START
+}
+
+fn get_alphabet_from_position(alphabet_position: &i32) -> char {
+    ((alphabet_position + ASCII_LOWERCASE_SECTION_START) as u8) as char
 }
 
 /// Calculates modular multiplicative inverse `n` of `a`
