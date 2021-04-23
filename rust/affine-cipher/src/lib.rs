@@ -105,10 +105,11 @@ fn decode_char(char: &char, a_mmi: &i32, b: &i32) -> Option<char> {
             let num = (*alphabetic as i32) - ASCII_LOWERCASE_SECTION_START;
             println!("{}: {}", alphabetic, num);
 
-            let decrypted = a_mmi * (num - b) % ALPHABET_COUNT;
-            println!("decrypted: {}", decrypted);
+            let decrypted = (a_mmi * (num - b)).rem_euclid(ALPHABET_COUNT);
             let decrypted_char = ((decrypted + ASCII_LOWERCASE_SECTION_START) as u8) as char;
+            println!("{}: {}", decrypted_char, decrypted);
 
+            println!();
             Some(decrypted_char)
         }
         numeric if numeric.is_numeric() => Some(*numeric),
