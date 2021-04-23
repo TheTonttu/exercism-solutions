@@ -19,6 +19,7 @@ pub fn encode(plaintext: &str, a: i32, b: i32) -> Result<String, AffineCipherErr
         .chars()
         .filter_map(|c| encode_char(&c, &a, &b))
         .enumerate()
+        // Add grouping
         .flat_map(|(i, c)| {
             (i != 0 && i % GROUP_SIZE == 0)
                 .then(|| ' ')
@@ -41,16 +42,6 @@ fn encode_char(char: &char, a: &i32, b: &i32) -> Option<char> {
         }
         numeric if numeric.is_numeric() => Some(*numeric),
         _ => None,
-    }
-}
-
-fn validate_keys(a: &i32, b: &i32) -> Result<(), AffineCipherError> {
-    match (a, b) {
-        (0, _) => Err(AffineCipherError::NotCoprime(*a)),
-        (_, 0) => Err(AffineCipherError::NotCoprime(*b)),
-        (a, _) if !are_coprimes(a, &ALPHABET_COUNT) => Err(AffineCipherError::NotCoprime(*a)),
-        (a, b) if are_coprimes(a, b) => Ok(()),
-        (_, _) => Ok(()),
     }
 }
 
@@ -105,6 +96,16 @@ fn decode_char(char: &char, a_mmi: &i32, b: &i32) -> Option<char> {
         }
         numeric if numeric.is_numeric() => Some(*numeric),
         _ => None,
+    }
+}
+
+fn validate_keys(a: &i32, b: &i32) -> Result<(), AffineCipherError> {
+    match (a, b) {
+        (0, _) => Err(AffineCipherError::NotCoprime(*a)),
+        (_, 0) => Err(AffineCipherError::NotCoprime(*b)),
+        (a, _) if !are_coprimes(a, &ALPHABET_COUNT) => Err(AffineCipherError::NotCoprime(*a)),
+        (a, b) if are_coprimes(a, b) => Ok(()),
+        (_, _) => Ok(()),
     }
 }
 
