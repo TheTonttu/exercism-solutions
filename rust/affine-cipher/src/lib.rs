@@ -1,5 +1,5 @@
 const ALPHABET_COUNT: i32 = 26;
-const ASCII_LOWERCASE_SECTION_START: i32 = 97;
+const ASCII_LOWERCASE_SECTION_START: i32 = 'a' as i32;
 
 /// While the problem description indicates a return status of 1 should be returned on errors,
 /// it is much more common to return a `Result`, so we provide an error type for the result here.
