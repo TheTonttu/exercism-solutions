@@ -27,11 +27,12 @@ pub fn to_bytes(values: &[u32]) -> Vec<u8> {
             extracted.insert(0, extracted_value);
             remainder >>= 7;
         }
-        if extracted.is_empty() {
-            extracted.push(0);
-        }
 
-        encoded.extend(extracted);
+        if extracted.is_empty() {
+            encoded.push(0);
+        } else {
+            encoded.extend(extracted);
+        }
     }
 
     encoded
