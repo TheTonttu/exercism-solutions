@@ -5,7 +5,7 @@ pub enum Error {
 }
 
 const BITMASK_7: u32 = 0b01111111;
-const SIGN_BIT: u32 = 0b10000000;
+const SIGN_BIT: u8 = 0b10000000;
 
 /// Convert a list of numbers to a stream of bytes encoded with variable length encoding.
 pub fn to_bytes(values: &[u32]) -> Vec<u8> {
@@ -19,8 +19,8 @@ pub fn to_bytes(values: &[u32]) -> Vec<u8> {
         while remainder > 0 {
             let extracted_value = if extracted.is_empty() {
                 (remainder & BITMASK_7) as u8
-            }  else {
-                ((remainder & BITMASK_7) | SIGN_BIT) as u8
+            } else {
+                ((remainder & BITMASK_7) | SIGN_BIT as u32) as u8
             };
 
             println!("extract: {:02X?}", extracted_value);
@@ -40,5 +40,24 @@ pub fn to_bytes(values: &[u32]) -> Vec<u8> {
 
 /// Given a stream of bytes, extract all numbers which are encoded in there.
 pub fn from_bytes(bytes: &[u8]) -> Result<Vec<u32>, Error> {
-    unimplemented!("Convert the list of bytes {:?} to a list of numbers", bytes)
+    let mut decoded = Vec::new();
+
+    let mut decoded_number = 0u32;
+    for octet in bytes {
+        decoded_number <<= 7;
+        // Remove possible sign bit
+        let extracted = octet & !SIGN_BIT;
+        decoded_number |= extracted as u32;
+
+        if octet & SIGN_BIT == 0 {
+            decoded.push(decoded_number);
+            decoded_number = 0;
+        }
+    }
+
+    if decoded.is_empty() {
+        Err(Error::IncompleteNumber)
+    } else {
+        Ok(decoded)
+    }
 }
