@@ -49,10 +49,7 @@ pub fn from_bytes(bytes: &[u8]) -> Result<Vec<u32>, Error> {
             return Err(Error::Overflow);
         }
 
-        decoded_number <<= OCTET_SIZE;
-        // Remove possible sign bit
-        let extracted = exclude_sign_bit(octet);
-        decoded_number |= extracted as u32;
+        decoded_number = add_octet(&decoded_number, octet);
 
         if is_end_octet(octet) {
             decoded.push(decoded_number);
@@ -65,6 +62,14 @@ pub fn from_bytes(bytes: &[u8]) -> Result<Vec<u32>, Error> {
     } else {
         Ok(decoded)
     }
+}
+
+fn add_octet(number: &u32, octet: &u8) -> u32 {
+    let mut result = *number;
+    result <<= OCTET_SIZE;
+    result |= exclude_sign_bit(octet) as u32;
+
+    result
 }
 
 fn exclude_sign_bit(octet: &u8) -> u8 {
