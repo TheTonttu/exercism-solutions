@@ -4,9 +4,9 @@ pub enum Error {
     Overflow,
 }
 
-const BITMASK_7: u32 = 0b01111111;
-const SIGN_BIT: u8 = 0b10000000;
+const EXTRACT_BITMASK: u32 = 0b01111111;
 const OCTET_SIZE: u32 = 7;
+const SIGN_BIT: u8 = 0b10000000;
 
 /// Convert a list of numbers to a stream of bytes encoded with variable length encoding.
 pub fn to_bytes(values: &[u32]) -> Vec<u8> {
@@ -19,9 +19,9 @@ pub fn to_bytes(values: &[u32]) -> Vec<u8> {
         let mut remainder = *number;
         while remainder > 0 {
             let extracted_value = if extracted.is_empty() {
-                (remainder & BITMASK_7) as u8
+                (remainder & EXTRACT_BITMASK) as u8
             } else {
-                ((remainder & BITMASK_7) | SIGN_BIT as u32) as u8
+                ((remainder & EXTRACT_BITMASK) | SIGN_BIT as u32) as u8
             };
 
             println!("extract: {:02X?}", extracted_value);
@@ -45,16 +45,16 @@ pub fn from_bytes(bytes: &[u8]) -> Result<Vec<u32>, Error> {
 
     let mut decoded_number = 0u32;
     for octet in bytes {
-        if decoded_number.leading_zeros() < OCTET_SIZE {
+        if !can_fit_octet(&decoded_number) {
             return Err(Error::Overflow);
         }
 
         decoded_number <<= OCTET_SIZE;
         // Remove possible sign bit
-        let extracted = octet & !SIGN_BIT;
+        let extracted = exclude_sign_bit(octet);
         decoded_number |= extracted as u32;
 
-        if octet & SIGN_BIT == 0 {
+        if is_end_octet(octet) {
             decoded.push(decoded_number);
             decoded_number = 0;
         }
@@ -65,4 +65,16 @@ pub fn from_bytes(bytes: &[u8]) -> Result<Vec<u32>, Error> {
     } else {
         Ok(decoded)
     }
+}
+
+fn exclude_sign_bit(octet: &u8) -> u8 {
+    octet & !SIGN_BIT
+}
+
+fn can_fit_octet(number: &u32) -> bool {
+    number.leading_zeros() >= OCTET_SIZE
+}
+
+fn is_end_octet(octet: &u8) -> bool {
+    octet & SIGN_BIT == 0
 }
