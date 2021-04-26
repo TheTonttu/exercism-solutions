@@ -44,6 +44,10 @@ pub fn from_bytes(bytes: &[u8]) -> Result<Vec<u32>, Error> {
 
     let mut decoded_number = 0u32;
     for octet in bytes {
+        if decoded_number.leading_zeros() < 7 {
+            return Err(Error::Overflow);
+        }
+
         decoded_number <<= 7;
         // Remove possible sign bit
         let extracted = octet & !SIGN_BIT;
