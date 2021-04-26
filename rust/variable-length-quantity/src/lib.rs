@@ -6,6 +6,7 @@ pub enum Error {
 
 const BITMASK_7: u32 = 0b01111111;
 const SIGN_BIT: u8 = 0b10000000;
+const OCTET_SIZE: u32 = 7;
 
 /// Convert a list of numbers to a stream of bytes encoded with variable length encoding.
 pub fn to_bytes(values: &[u32]) -> Vec<u8> {
@@ -25,7 +26,7 @@ pub fn to_bytes(values: &[u32]) -> Vec<u8> {
 
             println!("extract: {:02X?}", extracted_value);
             extracted.insert(0, extracted_value);
-            remainder >>= 7;
+            remainder >>= OCTET_SIZE;
         }
 
         if extracted.is_empty() {
@@ -44,11 +45,11 @@ pub fn from_bytes(bytes: &[u8]) -> Result<Vec<u32>, Error> {
 
     let mut decoded_number = 0u32;
     for octet in bytes {
-        if decoded_number.leading_zeros() < 7 {
+        if decoded_number.leading_zeros() < OCTET_SIZE {
             return Err(Error::Overflow);
         }
 
-        decoded_number <<= 7;
+        decoded_number <<= OCTET_SIZE;
         // Remove possible sign bit
         let extracted = octet & !SIGN_BIT;
         decoded_number |= extracted as u32;
