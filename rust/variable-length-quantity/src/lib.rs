@@ -15,24 +15,23 @@ pub fn to_bytes(values: &[u32]) -> Vec<u8> {
     let mut encoded = Vec::new();
 
     for number in values {
-        let mut extracted = Vec::new();
+        let mut number_octets = Vec::new();
         let mut remainder = *number;
         while remainder > 0 {
-            let extracted_value = if extracted.is_empty() {
+            let extracted_octet = if number_octets.is_empty() {
                 (remainder & EXTRACT_BITMASK) as u8
             } else {
                 ((remainder & EXTRACT_BITMASK) | SIGN_BIT as u32) as u8
             };
 
-            println!("extract: {:02X?}", extracted_value);
-            extracted.insert(0, extracted_value);
+            number_octets.insert(0, extracted_octet);
             remainder >>= OCTET_SIZE;
         }
 
-        if extracted.is_empty() {
+        if number_octets.is_empty() {
             encoded.push(0);
         } else {
-            encoded.extend(extracted);
+            encoded.extend(number_octets);
         }
     }
 
