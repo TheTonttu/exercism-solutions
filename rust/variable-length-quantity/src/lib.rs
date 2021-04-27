@@ -10,8 +10,6 @@ const SIGN_BIT: u8 = 0b10000000;
 
 /// Convert a list of numbers to a stream of bytes encoded with variable length encoding.
 pub fn to_bytes(values: &[u32]) -> Vec<u8> {
-    println!("values hex: {:02X?}", values);
-
     let mut encoded = Vec::new();
 
     for number in values {
