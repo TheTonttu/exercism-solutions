@@ -5,7 +5,17 @@ pub fn translate(input: &str) -> String {
     if starts_with_vowel_sound(input) {
         [input, "ay"].concat()
     } else if starts_with_consonant_cluster_followed_by_y(input) {
-        String::from("oi!")
+        if let Some(consonant_count) = start_consonant_count(input) {
+            let consonant_cluster = input[0..consonant_count].to_string();
+            [
+                input[consonant_count..].to_string(),
+                consonant_cluster,
+                "ay".to_string(),
+            ]
+            .concat()
+        } else {
+            String::from("oi!")
+        }
     } else if let Some(consonant_count) = start_consonant_count(input) {
         let consonant_cluster = input[0..consonant_count].to_string();
         [
