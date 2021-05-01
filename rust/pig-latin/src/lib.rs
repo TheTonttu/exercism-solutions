@@ -33,7 +33,8 @@ fn take_start_consonant_cluster(word: &str) -> String {
             break;
         }
 
-        if previous.is_none() {
+        let is_starting_char = previous.is_none();
+        if is_starting_char {
             if let Some(&next) = peekable_word_iterator.peek() {
                 if VOWEL_SOUNDS.contains(&(current, next)) {
                     break;
