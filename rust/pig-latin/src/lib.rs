@@ -1,78 +1,52 @@
 const VOWELS: [char; 10] = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];
-const VOWEL_SOUNDS: [[char; 2]; 4] = [['x', 'r'], ['y', 't'], ['X', 'R'], ['Y', 'T']];
+const VOWEL_SOUNDS: [(char, char); 4] = [('x', 'r'), ('y', 't'), ('X', 'R'), ('Y', 'T')];
+const CONSONANT_SOUNDS: [(char, char); 1] = [('q', 'u')];
 
 pub fn translate(input: &str) -> String {
-    if starts_with_vowel_sound(input) {
-        [input, "ay"].concat()
-    } else if starts_with_consonant_cluster_followed_by_y(input) {
-        if let Some(consonant_count) = start_consonant_count(input) {
-            let consonant_cluster = input[0..consonant_count].to_string();
-            [
-                input[consonant_count..].to_string(),
-                consonant_cluster,
-                "ay".to_string(),
-            ]
-            .concat()
-        } else {
-            String::from("oi!")
-        }
-    } else if let Some(consonant_count) = start_consonant_count(input) {
-        let consonant_cluster = input[0..consonant_count].to_string();
+    if let Some(consonant_cluster) = take_start_consonant_cluster(input) {
         [
-            input[consonant_count..].to_string(),
+            input[consonant_cluster.len()..].to_string(),
             consonant_cluster,
             "ay".to_string(),
         ]
         .concat()
     } else {
-        match input.chars().next() {
-            Some(first_char) => [
-                input[1..].to_string(),
-                first_char.to_string(),
-                "ay".to_string(),
-            ]
-            .concat(),
-            None => String::new(),
-        }
+        [input, "ay"].concat()
     }
 }
 
-fn starts_with_vowel_sound(input: &str) -> bool {
-    match input.chars().next() {
-        Some(first_char) => {
-            if VOWELS.contains(&first_char) {
-                true
-            } else if let Some(second_char) = input.chars().nth(1) {
-                VOWEL_SOUNDS.contains(&[first_char, second_char])
-            } else {
-                false
+fn take_start_consonant_cluster(input: &str) -> Option<String> {
+    let mut consonant_cluster = String::new();
+
+    let mut previous = None;
+    let mut peekable_input = input.chars().peekable();
+    while let Some(curr) = peekable_input.next() {
+        if VOWELS.contains(&curr) {
+            break;
+        }
+
+        if previous.is_none() {
+            if let Some(&next) = peekable_input.peek() {
+                if VOWEL_SOUNDS.contains(&(curr, next)) {
+                    break;
+                }
             }
         }
-        None => false,
-    }
-}
 
-fn starts_with_consonant_cluster_followed_by_y(input: &str) -> bool {
-    let mut consonant_count = 0;
+        consonant_cluster.push(curr);
 
-    // TODO: Separate check for two character word (consonant + y) scenario
-    for char in input.chars() {
-        if VOWELS.contains(&char) {
-            return false;
-        } else if (char == 'y' || char == 'Y') && consonant_count >= 2 {
-            return true;
-        } else {
-            consonant_count += 1;
+        if let Some(&next) = peekable_input.peek() {
+            if !previous.is_none() && next == 'y' || next == 'Y' {
+                break;
+            } else if CONSONANT_SOUNDS.contains(&(curr, next)) {
+                consonant_cluster.push(next);
+                // Skip iterating next char because it is now part of consonant cluster.
+                peekable_input.next();
+            }
         }
+
+        previous = Some(curr);
     }
-    false
-}
 
-fn start_consonant_count(input: &str) -> Option<usize> {
-    let count = input
-        .chars()
-        .take_while(|c| !(VOWELS.contains(&c) || *c == 'y' || *c == 'Y'))
-        .count();
-
-    (count >= 1).then(|| count)
+    (!consonant_cluster.is_empty()).then(|| consonant_cluster)
 }
