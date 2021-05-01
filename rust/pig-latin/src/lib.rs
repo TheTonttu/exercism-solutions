@@ -44,7 +44,7 @@ fn take_start_consonant_cluster(input: &str) -> Option<String> {
         consonant_cluster.push(curr);
 
         if let Some(&next) = peekable_input.peek() {
-            if !previous.is_none() && next == 'y' || next == 'Y' {
+            if previous.is_some() && (next == 'y' || next == 'Y') {
                 break;
             } else if CONSONANT_SOUNDS.contains(&(curr, next)) {
                 consonant_cluster.push(next);
