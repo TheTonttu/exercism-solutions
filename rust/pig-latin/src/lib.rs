@@ -39,10 +39,8 @@ fn take_start_consonant_cluster(word: &str) -> String {
                     break;
                 }
             }
-        }
-
-        // Y is considered vowel if it is preceded by consonant cluster
-        if previous.is_some() && curr == 'y' {
+        } else if curr == 'y' {
+            // Y is considered vowel if it is preceded by consonant cluster.
             break;
         }
 
