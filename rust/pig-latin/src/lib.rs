@@ -12,19 +12,17 @@ pub fn translate(input: &str) -> String {
 }
 
 fn translate_word(word: &str) -> String {
-    if let Some(consonant_cluster) = take_start_consonant_cluster(word) {
-        [
-            word[consonant_cluster.len()..].to_string(),
-            consonant_cluster,
-            PIG_LATIN_SOUND.to_string(),
-        ]
-        .concat()
-    } else {
-        [word, PIG_LATIN_SOUND].concat()
-    }
+    let consonant_cluster = take_start_consonant_cluster(word);
+
+    [
+        word[consonant_cluster.len()..].to_string(),
+        consonant_cluster,
+        PIG_LATIN_SOUND.to_string(),
+    ]
+    .concat()
 }
 
-fn take_start_consonant_cluster(input: &str) -> Option<String> {
+fn take_start_consonant_cluster(input: &str) -> String {
     let mut consonant_cluster = String::new();
 
     let mut previous = None;
@@ -57,5 +55,5 @@ fn take_start_consonant_cluster(input: &str) -> Option<String> {
         previous = Some(curr);
     }
 
-    (!consonant_cluster.is_empty()).then(|| consonant_cluster)
+    consonant_cluster
 }
