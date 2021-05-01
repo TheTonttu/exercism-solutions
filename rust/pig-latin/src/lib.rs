@@ -1,3 +1,4 @@
+const PIG_LATIN_SOUND: &str = "ay";
 const VOWELS: [char; 10] = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];
 const VOWEL_SOUNDS: [(char, char); 4] = [('x', 'r'), ('y', 't'), ('X', 'R'), ('Y', 'T')];
 const CONSONANT_SOUNDS: [(char, char); 1] = [('q', 'u')];
@@ -15,11 +16,11 @@ fn translate_word(word: &str) -> String {
         [
             word[consonant_cluster.len()..].to_string(),
             consonant_cluster,
-            "ay".to_string(),
+            PIG_LATIN_SOUND.to_string(),
         ]
         .concat()
     } else {
-        [word, "ay"].concat()
+        [word, PIG_LATIN_SOUND].concat()
     }
 }
 
