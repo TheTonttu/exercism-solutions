@@ -41,12 +41,15 @@ fn take_start_consonant_cluster(word: &str) -> String {
             }
         }
 
+        // Y is considered vowel if it is preceded by consonant cluster
+        if previous.is_some() && curr == 'y' {
+            break;
+        }
+
         consonant_cluster.push(curr);
 
         if let Some(&next) = peekable_word_iterator.peek() {
-            if previous.is_some() && next == 'y' {
-                break;
-            } else if CONSONANT_SOUNDS.contains(&(curr, next)) {
+            if CONSONANT_SOUNDS.contains(&(curr, next)) {
                 consonant_cluster.push(next);
                 // Skip iterating next char because it is now part of consonant cluster.
                 peekable_word_iterator.next();
