@@ -22,18 +22,18 @@ fn translate_word(word: &str) -> String {
     .concat()
 }
 
-fn take_start_consonant_cluster(input: &str) -> String {
+fn take_start_consonant_cluster(word: &str) -> String {
     let mut consonant_cluster = String::new();
 
     let mut previous = None;
-    let mut peekable_input = input.chars().peekable();
-    while let Some(curr) = peekable_input.next() {
+    let mut peekable_word_iterator = word.chars().peekable();
+    while let Some(curr) = peekable_word_iterator.next() {
         if VOWELS.contains(&curr) {
             break;
         }
 
         if previous.is_none() {
-            if let Some(&next) = peekable_input.peek() {
+            if let Some(&next) = peekable_word_iterator.peek() {
                 if VOWEL_SOUNDS.contains(&(curr, next)) {
                     break;
                 }
@@ -42,13 +42,13 @@ fn take_start_consonant_cluster(input: &str) -> String {
 
         consonant_cluster.push(curr);
 
-        if let Some(&next) = peekable_input.peek() {
+        if let Some(&next) = peekable_word_iterator.peek() {
             if previous.is_some() && (next == 'y' || next == 'Y') {
                 break;
             } else if CONSONANT_SOUNDS.contains(&(curr, next)) {
                 consonant_cluster.push(next);
                 // Skip iterating next char because it is now part of consonant cluster.
-                peekable_input.next();
+                peekable_word_iterator.next();
             }
         }
 
