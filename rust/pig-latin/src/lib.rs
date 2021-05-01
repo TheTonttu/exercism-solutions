@@ -3,15 +3,23 @@ const VOWEL_SOUNDS: [(char, char); 4] = [('x', 'r'), ('y', 't'), ('X', 'R'), ('Y
 const CONSONANT_SOUNDS: [(char, char); 1] = [('q', 'u')];
 
 pub fn translate(input: &str) -> String {
-    if let Some(consonant_cluster) = take_start_consonant_cluster(input) {
+    input
+        .split(' ')
+        .map(translate_word)
+        .collect::<Vec<String>>()
+        .join(" ")
+}
+
+fn translate_word(word: &str) -> String {
+    if let Some(consonant_cluster) = take_start_consonant_cluster(word) {
         [
-            input[consonant_cluster.len()..].to_string(),
+            word[consonant_cluster.len()..].to_string(),
             consonant_cluster,
             "ay".to_string(),
         ]
         .concat()
     } else {
-        [input, "ay"].concat()
+        [word, "ay"].concat()
     }
 }
 
