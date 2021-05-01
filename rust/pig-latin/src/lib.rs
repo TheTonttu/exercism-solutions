@@ -28,33 +28,33 @@ fn take_start_consonant_cluster(word: &str) -> String {
 
     let mut previous = None;
     let mut peekable_word_iterator = word.chars().peekable();
-    while let Some(curr) = peekable_word_iterator.next() {
-        if VOWELS.contains(&curr) {
+    while let Some(current) = peekable_word_iterator.next() {
+        if VOWELS.contains(&current) {
             break;
         }
 
         if previous.is_none() {
             if let Some(&next) = peekable_word_iterator.peek() {
-                if VOWEL_SOUNDS.contains(&(curr, next)) {
+                if VOWEL_SOUNDS.contains(&(current, next)) {
                     break;
                 }
             }
-        } else if curr == 'y' {
+        } else if current == 'y' {
             // Y is considered vowel if it is preceded by consonant cluster.
             break;
         }
 
-        consonant_cluster.push(curr);
+        consonant_cluster.push(current);
 
         if let Some(&next) = peekable_word_iterator.peek() {
-            if CONSONANT_SOUNDS.contains(&(curr, next)) {
+            if CONSONANT_SOUNDS.contains(&(current, next)) {
                 consonant_cluster.push(next);
                 // Skip iterating next char because it is now part of consonant cluster.
                 peekable_word_iterator.next();
             }
         }
 
-        previous = Some(curr);
+        previous = Some(current);
     }
 
     consonant_cluster
