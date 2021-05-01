@@ -1,10 +1,11 @@
 const PIG_LATIN_SOUND: &str = "ay";
-const VOWELS: [char; 10] = ['a', 'e', 'i', 'o', 'u', 'A', 'E', 'I', 'O', 'U'];
-const VOWEL_SOUNDS: [(char, char); 4] = [('x', 'r'), ('y', 't'), ('X', 'R'), ('Y', 'T')];
+const VOWELS: [char; 5] = ['a', 'e', 'i', 'o', 'u'];
+const VOWEL_SOUNDS: [(char, char); 2] = [('x', 'r'), ('y', 't')];
 const CONSONANT_SOUNDS: [(char, char); 1] = [('q', 'u')];
 
 pub fn translate(input: &str) -> String {
     input
+        .to_lowercase()
         .split(' ')
         .map(translate_word)
         .collect::<Vec<String>>()
@@ -43,7 +44,7 @@ fn take_start_consonant_cluster(word: &str) -> String {
         consonant_cluster.push(curr);
 
         if let Some(&next) = peekable_word_iterator.peek() {
-            if previous.is_some() && (next == 'y' || next == 'Y') {
+            if previous.is_some() && next == 'y' {
                 break;
             } else if CONSONANT_SOUNDS.contains(&(curr, next)) {
                 consonant_cluster.push(next);
