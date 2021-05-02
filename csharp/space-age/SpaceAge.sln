@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceAge", "SpaceAge.csproj", "{93189A56-2333-4EE5-8B5B-8D9B860DD636}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{93189A56-2333-4EE5-8B5B-8D9B860DD636}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93189A56-2333-4EE5-8B5B-8D9B860DD636}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93189A56-2333-4EE5-8B5B-8D9B860DD636}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93189A56-2333-4EE5-8B5B-8D9B860DD636}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {40CF5F77-EFB8-4F95-BDF4-82E33B580552}
+	EndGlobalSection
+EndGlobal
