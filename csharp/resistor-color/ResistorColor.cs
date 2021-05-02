@@ -5,19 +5,26 @@ public static class ResistorColor
 {
     public static int ColorCode(string color)
     {
-        return (int)Enum.Parse<ResistorColorCode>(color, ignoreCase: true);
+        if (Enum.TryParse<ResistorColorCode>(color, ignoreCase: true, out var colorCode))
+        {
+            return (int)colorCode;
+        }
+        return (int)ResistorColorCode.Undefined;
     }
 
     public static string[] Colors()
     {
-        return Enum.GetNames(typeof(ResistorColorCode))
-                   .Select(s => s.ToLower())
+        return Enum.GetValues(typeof(ResistorColorCode))
+                   .Cast<ResistorColorCode>()
+                   .Where(e => e != ResistorColorCode.Undefined)
+                   .Select(e => e.ToString().ToLower())
                    .ToArray();
     }
 }
 
 public enum ResistorColorCode
 {
+    Undefined = int.MinValue,
     Black = 0,
     Brown = 1,
     Red = 2,

@@ -22,4 +22,11 @@ public class ResistorColorTests {
     public void Colors() {
         Assert.Equal(new[] { "black", "brown", "red", "orange", "yellow", "green", "blue", "violet", "grey", "white" }, ResistorColor.Colors());
     }
+
+    // Additional tests
+
+    [Fact]
+    public void Undefined_color() {
+        Assert.Equal((int)ResistorColorCode.Undefined, ResistorColor.ColorCode("cyan with hint of marine"));
+    }
 }
