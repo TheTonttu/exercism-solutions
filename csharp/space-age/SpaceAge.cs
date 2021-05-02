@@ -5,7 +5,7 @@ public class SpaceAge
 {
     private const double EarthOrbitalPeriodInDays = 365.25;
 
-    private readonly Dictionary<Planet, double> OrbitalPeriodMultipliers = new Dictionary<Planet, double>() {
+    private static readonly Dictionary<Planet, double> OrbitalPeriodMultipliers = new Dictionary<Planet, double>() {
         { Planet.Earth, 1 },
         { Planet.Mercury, 1/0.2408467 },
         { Planet.Venus, 1/0.61519726 },
@@ -35,32 +35,32 @@ public class SpaceAge
 
     public double OnVenus()
     {
-        throw new NotImplementedException("You need to implement this function.");
+        return CalculateYears(Planet.Venus);
     }
 
     public double OnMars()
     {
-        throw new NotImplementedException("You need to implement this function.");
+        return CalculateYears(Planet.Mars);
     }
 
     public double OnJupiter()
     {
-        throw new NotImplementedException("You need to implement this function.");
+        return CalculateYears(Planet.Jupiter);
     }
 
     public double OnSaturn()
     {
-        throw new NotImplementedException("You need to implement this function.");
+        return CalculateYears(Planet.Saturn);
     }
 
     public double OnUranus()
     {
-        throw new NotImplementedException("You need to implement this function.");
+        return CalculateYears(Planet.Uranus);
     }
 
     public double OnNeptune()
     {
-        throw new NotImplementedException("You need to implement this function.");
+        return CalculateYears(Planet.Neptune);
     }
 
     private double CalculateYears(Planet planet)
