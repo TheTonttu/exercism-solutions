@@ -65,7 +65,7 @@ public class SpaceAge
 
     private double CalculateYears(Planet planet)
     {
-        return _days / EarthOrbitalPeriodInDays * 1 / OrbitalPeriodMultipliers[planet];
+        return _days / EarthOrbitalPeriodInDays / OrbitalPeriodMultipliers[planet];
     }
 }
 
