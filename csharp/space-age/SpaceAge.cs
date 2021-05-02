@@ -30,40 +30,40 @@ public class SpaceAge
 
     public double OnMercury()
     {
-        return CalculateYears(Planet.Mercury);
+        return CalculateAgeInPlanetYears(Planet.Mercury);
     }
 
     public double OnVenus()
     {
-        return CalculateYears(Planet.Venus);
+        return CalculateAgeInPlanetYears(Planet.Venus);
     }
 
     public double OnMars()
     {
-        return CalculateYears(Planet.Mars);
+        return CalculateAgeInPlanetYears(Planet.Mars);
     }
 
     public double OnJupiter()
     {
-        return CalculateYears(Planet.Jupiter);
+        return CalculateAgeInPlanetYears(Planet.Jupiter);
     }
 
     public double OnSaturn()
     {
-        return CalculateYears(Planet.Saturn);
+        return CalculateAgeInPlanetYears(Planet.Saturn);
     }
 
     public double OnUranus()
     {
-        return CalculateYears(Planet.Uranus);
+        return CalculateAgeInPlanetYears(Planet.Uranus);
     }
 
     public double OnNeptune()
     {
-        return CalculateYears(Planet.Neptune);
+        return CalculateAgeInPlanetYears(Planet.Neptune);
     }
 
-    private double CalculateYears(Planet planet)
+    private double CalculateAgeInPlanetYears(Planet planet)
     {
         return _earthYears / OrbitalPeriodMultipliers[planet];
     }
