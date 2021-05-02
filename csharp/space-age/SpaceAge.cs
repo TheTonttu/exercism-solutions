@@ -16,16 +16,16 @@ public class SpaceAge
         { Planet.Neptune, 164.79132 },
     };
 
-    private double _days;
+    private double _earthYears;
 
     public SpaceAge(int seconds)
     {
-        _days = TimeSpan.FromSeconds(seconds).TotalDays;
+        _earthYears = TimeSpan.FromSeconds(seconds).TotalDays / EarthOrbitalPeriodInDays;
     }
 
     public double OnEarth()
     {
-        return CalculateYears(Planet.Earth);
+        return _earthYears;
     }
 
     public double OnMercury()
@@ -65,7 +65,7 @@ public class SpaceAge
 
     private double CalculateYears(Planet planet)
     {
-        return _days / EarthOrbitalPeriodInDays / OrbitalPeriodMultipliers[planet];
+        return _earthYears / OrbitalPeriodMultipliers[planet];
     }
 }
 
