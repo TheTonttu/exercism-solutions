@@ -12,11 +12,16 @@ public static class TwoFer
 
     public static string Speak(string name)
     {
-        name = name?.Trim();
-        if (String.IsNullOrEmpty(name))
+        string sanitizedName = SanitizeName(name);
+        return String.Format(MessageTemplate, sanitizedName);
+    }
+
+    private static string SanitizeName(string name)
+    {
+        if (String.IsNullOrWhiteSpace(name))
         {
-            name = DefaultName;
+            return DefaultName;
         }
-        return String.Format(MessageTemplate, name);
+        return name.Trim();
     }
 }
