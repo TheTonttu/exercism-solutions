@@ -2,10 +2,21 @@
 
 public static class TwoFer
 {
-    // In order to get the tests running, first you need to make sure the Speak method 
-    // can be called both without any arguments and also by passing one string argument.
+    private const string MessageTemplate = "One for {0}, one for me.";
+    private const string DefaultName = "you";
+
     public static string Speak()
     {
-        throw new NotImplementedException("You need to implement this function.");
+        return Speak(String.Empty);
+    }
+
+    public static string Speak(string name)
+    {
+        name = name?.Trim();
+        if (String.IsNullOrEmpty(name))
+        {
+            name = DefaultName;
+        }
+        return String.Format(MessageTemplate, name);
     }
 }
