@@ -7,13 +7,13 @@ public class SpaceAge
 
     private static readonly Dictionary<Planet, double> OrbitalPeriodMultipliers = new Dictionary<Planet, double>() {
         { Planet.Earth, 1 },
-        { Planet.Mercury, 1/0.2408467 },
-        { Planet.Venus, 1/0.61519726 },
-        { Planet.Mars, 1/1.8808158 },
-        { Planet.Jupiter, 1/11.862615 },
-        { Planet.Saturn, 1/29.447498 },
-        { Planet.Uranus, 1/84.016846 },
-        { Planet.Neptune, 1/164.79132 },
+        { Planet.Mercury, 0.2408467 },
+        { Planet.Venus, 0.61519726 },
+        { Planet.Mars, 1.8808158 },
+        { Planet.Jupiter, 11.862615 },
+        { Planet.Saturn, 29.447498 },
+        { Planet.Uranus, 84.016846 },
+        { Planet.Neptune, 164.79132 },
     };
 
     private double _days;
@@ -65,7 +65,7 @@ public class SpaceAge
 
     private double CalculateYears(Planet planet)
     {
-        return _days / EarthOrbitalPeriodInDays * OrbitalPeriodMultipliers[planet];
+        return _days / EarthOrbitalPeriodInDays * 1 / OrbitalPeriodMultipliers[planet];
     }
 }
 
