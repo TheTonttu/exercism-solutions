@@ -2,8 +2,10 @@
 
 public static class HelloWorld
 {
+    private const string Greeting = "Hello, World!";
+
     public static string Hello()
     {
-        throw new NotImplementedException("You need to implement this function.");
+        return Greeting;
     }
 }
