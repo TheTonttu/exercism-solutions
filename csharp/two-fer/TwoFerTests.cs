@@ -17,4 +17,26 @@ public class TwoFerTests {
     public void Another_name_given() {
         Assert.Equal("One for Bob, one for me.", TwoFer.Speak("Bob"));
     }
+
+    // Additional tests
+
+    [Fact]
+    public void Name_with_prefix_whitespace_given() {
+        Assert.Equal("One for Bob, one for me.", TwoFer.Speak("   Bob"));
+    }
+
+    [Fact]
+    public void Name_with_postfix_whitespace_given() {
+        Assert.Equal("One for Bob, one for me.", TwoFer.Speak("Bob   "));
+    }
+
+    [Fact]
+    public void Whitespace_name_given() {
+        Assert.Equal("One for you, one for me.", TwoFer.Speak("   "));
+    }
+
+    [Fact]
+    public void Null_name_given() {
+        Assert.Equal("One for you, one for me.", TwoFer.Speak(null));
+    }
 }
