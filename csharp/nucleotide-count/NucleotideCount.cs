@@ -1,10 +1,26 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public static class NucleotideCount
 {
+    private const string NucleotideChars = "ACGT";
+
     public static IDictionary<char, int> Count(string sequence)
     {
-        throw new NotImplementedException("You need to implement this function.");
+        if (sequence.Any(c => !NucleotideChars.Contains(c)))
+        {
+            throw new ArgumentException("Sequence contains invalid nucleotide symbols.");
+        }
+
+        var nucleotideCounts = sequence.GroupBy(c => c)
+                                       .ToDictionary(g => g.Key, g => g.Count());
+
+        foreach (char nucleotide in NucleotideChars)
+        {
+            nucleotideCounts.TryAdd(nucleotide, 0);
+        }
+
+        return nucleotideCounts;
     }
 }
