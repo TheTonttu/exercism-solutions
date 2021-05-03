@@ -57,4 +57,19 @@ public class NucleotideCountTests {
     public void Strand_with_invalid_nucleotides() {
         Assert.Throws<ArgumentException>(() => NucleotideCount.Count("AGXXACT"));
     }
+
+    // Additional tests
+
+    [Fact]
+    public void Null_strand() {
+        var expected = new Dictionary<char, int>
+        {
+            ['A'] = 0,
+            ['C'] = 0,
+            ['G'] = 0,
+            ['T'] = 0
+        };
+        Assert.Equal(expected, NucleotideCount.Count(null));
+    }
+
 }
