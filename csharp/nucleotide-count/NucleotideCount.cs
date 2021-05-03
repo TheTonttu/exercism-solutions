@@ -8,7 +8,7 @@ public static class NucleotideCount
 
     public static IDictionary<char, int> Count(string sequence)
     {
-        if (sequence?.Any(c => !NucleotideChars.Contains(c, StringComparison.OrdinalIgnoreCase)) ?? false)
+        if (!HasValidNucleotideSymbols(sequence))
         {
             throw new ArgumentException("Sequence contains invalid nucleotide symbols.");
         }
@@ -23,4 +23,6 @@ public static class NucleotideCount
 
         return nucleotideCounts;
     }
+
+    private static bool HasValidNucleotideSymbols(string sequence) => sequence?.All(c => NucleotideChars.Contains(c, StringComparison.OrdinalIgnoreCase)) ?? true;
 }
