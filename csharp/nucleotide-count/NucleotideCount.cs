@@ -8,12 +8,12 @@ public static class NucleotideCount
 
     public static IDictionary<char, int> Count(string sequence)
     {
-        if (sequence?.Any(c => !NucleotideChars.Contains(c)) ?? false)
+        if (sequence?.Any(c => !NucleotideChars.Contains(c, StringComparison.OrdinalIgnoreCase)) ?? false)
         {
             throw new ArgumentException("Sequence contains invalid nucleotide symbols.");
         }
 
-        var nucleotideCounts = sequence?.GroupBy(c => c)
+        var nucleotideCounts = sequence?.GroupBy(c => char.ToUpper(c))
                                        .ToDictionary(g => g.Key, g => g.Count()) ?? new Dictionary<char, int>();
 
         foreach (char nucleotide in NucleotideChars)

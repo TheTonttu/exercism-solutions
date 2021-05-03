@@ -72,4 +72,16 @@ public class NucleotideCountTests {
         Assert.Equal(expected, NucleotideCount.Count(null));
     }
 
+    [Fact]
+    public void Strand_case_does_not_matter() {
+        var expected = new Dictionary<char, int>
+        {
+            ['A'] = 2,
+            ['C'] = 2,
+            ['G'] = 2,
+            ['T'] = 2
+        };
+        Assert.Equal(expected, NucleotideCount.Count("AaCcGgTt"));
+    }
+
 }
