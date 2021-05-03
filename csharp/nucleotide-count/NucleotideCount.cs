@@ -13,8 +13,9 @@ public static class NucleotideCount
             throw new ArgumentException("Sequence contains invalid nucleotide symbols.");
         }
 
-        var nucleotideCounts = sequence?.GroupBy(c => char.ToUpper(c))
-                                       .ToDictionary(g => g.Key, g => g.Count()) ?? new Dictionary<char, int>();
+        var nucleotideCounts = sequence?.GroupBy(c => char.ToUpperInvariant(c))
+                                       .ToDictionary(g => g.Key,
+                                                     g => g.Count()) ?? new Dictionary<char, int>();
 
         foreach (char nucleotide in NucleotideChars)
         {
