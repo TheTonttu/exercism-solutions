@@ -5,26 +5,29 @@ using System.Text;
 public class Robot : IDisposable
 {
     private static readonly Random RandomGenerator = new Random();
+    // Not sure if this has more hash collisions compared to storing the strings directly.
+    // Should be more memory efficient due to keeping track of integers instead of the whole 5 char strings.
     private static readonly HashSet<int> NameHashRegistry = new HashSet<int>();
+
     private bool _isDisposed;
 
     public string Name { get; private set; }
 
     public Robot()
     {
-        ReplaceName();
+        ChangeName();
     }
 
     public void Reset()
     {
         if (_isDisposed) { throw new ObjectDisposedException("Cannot reset disposed robot."); }
 
-        ReplaceName();
+        ChangeName();
     }
 
     const string Alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    private void ReplaceName()
+    private void ChangeName()
     {
         string newName;
         do
@@ -69,7 +72,7 @@ public class Robot : IDisposable
             {
                 if (Name != null)
                 {
-                    // Unregister name once the robot is out of scope and collected. Otherwise name registry will just keep collecting unused names.
+                    // Unregister name once the robot is out of scope and collected. Otherwise registry is filled with unused names.
                     NameHashRegistry.Remove(Name.GetHashCode());
                     Name = null;
                 }
