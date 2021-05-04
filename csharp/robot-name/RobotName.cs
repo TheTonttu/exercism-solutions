@@ -4,7 +4,8 @@ using System.Text;
 
 public class Robot : IDisposable
 {
-    private static readonly Random RandomGenerator = new Random();
+    private static readonly RobotNameGenerator NameGenerator = new RobotNameGenerator();
+
     // Not sure if this has more hash collisions compared to storing the strings directly.
     // Should be more memory efficient due to keeping track of integers instead of the whole 5 char strings.
     private static readonly HashSet<int> NameHashRegistry = new HashSet<int>();
@@ -30,40 +31,12 @@ public class Robot : IDisposable
         string newName;
         do
         {
-            newName = GenerateRobotName();
+            newName = NameGenerator.Generate();
         } while (!NameHashRegistry.Add(newName.GetHashCode()));
 
         int oldNameHash = Name?.GetHashCode() ?? default;
         NameHashRegistry.Remove(oldNameHash);
         Name = newName;
-    }
-
-    private string GenerateRobotName()
-    {
-        const int LetterCount = 2;
-        const int NumberCount = 3;
-
-        var nameBuilder = new StringBuilder();
-        for (int i = 0; i < LetterCount; i++)
-        {
-            char randomLetter = GenerateRandomLetter();
-            nameBuilder.Append(randomLetter);
-        }
-
-        for (int i = 0; i < NumberCount; i++)
-        {
-            int randomNumber = RandomGenerator.Next(10);
-            nameBuilder.Append(randomNumber);
-        }
-
-        return nameBuilder.ToString();
-    }
-
-    private char GenerateRandomLetter()
-    {
-        const string Letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        int randomIndex = RandomGenerator.Next(Letters.Length);
-        return Letters[randomIndex];
     }
 
     #region IDisposable Members
@@ -93,4 +66,37 @@ public class Robot : IDisposable
     }
 
     #endregion
+}
+
+public class RobotNameGenerator
+{
+    private static readonly Random RandomGenerator = new Random();
+
+    public string Generate()
+    {
+        const int LetterCount = 2;
+        const int NumberCount = 3;
+
+        var nameBuilder = new StringBuilder();
+        for (int i = 0; i < LetterCount; i++)
+        {
+            char randomLetter = GenerateRandomLetter();
+            nameBuilder.Append(randomLetter);
+        }
+
+        for (int i = 0; i < NumberCount; i++)
+        {
+            int randomNumber = RandomGenerator.Next(10);
+            nameBuilder.Append(randomNumber);
+        }
+
+        return nameBuilder.ToString();
+    }
+
+    private char GenerateRandomLetter()
+    {
+        const string Letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        int randomIndex = RandomGenerator.Next(Letters.Length);
+        return Letters[randomIndex];
+    }
 }
