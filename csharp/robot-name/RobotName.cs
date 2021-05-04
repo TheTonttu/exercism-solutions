@@ -25,8 +25,6 @@ public class Robot : IDisposable
         ChangeName();
     }
 
-    const string Alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
     private void ChangeName()
     {
         string newName;
@@ -48,9 +46,8 @@ public class Robot : IDisposable
         var nameBuilder = new StringBuilder();
         for (int i = 0; i < LetterCount; i++)
         {
-            int randomIndex = RandomGenerator.Next(0, Alphabets.Length - 1);
-            char randomChar = Alphabets[randomIndex];
-            nameBuilder.Append(randomChar);
+            char randomLetter = GenerateRandomLetter();
+            nameBuilder.Append(randomLetter);
         }
 
         for (int i = 0; i < NumberCount; i++)
@@ -60,6 +57,13 @@ public class Robot : IDisposable
         }
 
         return nameBuilder.ToString();
+    }
+
+    private char GenerateRandomLetter()
+    {
+        const string Letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        int randomIndex = RandomGenerator.Next(0, Letters.Length - 1);
+        return Letters[randomIndex];
     }
 
     #region IDispoable Members
