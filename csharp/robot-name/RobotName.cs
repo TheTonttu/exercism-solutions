@@ -52,7 +52,7 @@ public class Robot : IDisposable
 
         for (int i = 0; i < NumberCount; i++)
         {
-            int randomNumber = RandomGenerator.Next(0, 9);
+            int randomNumber = RandomGenerator.Next(10);
             nameBuilder.Append(randomNumber);
         }
 
@@ -62,11 +62,11 @@ public class Robot : IDisposable
     private char GenerateRandomLetter()
     {
         const string Letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        int randomIndex = RandomGenerator.Next(0, Letters.Length - 1);
+        int randomIndex = RandomGenerator.Next(Letters.Length);
         return Letters[randomIndex];
     }
 
-    #region IDispoable Members
+    #region IDisposable Members
 
     protected virtual void Dispose(bool disposing)
     {
