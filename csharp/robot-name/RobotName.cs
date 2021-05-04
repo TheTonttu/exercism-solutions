@@ -22,7 +22,6 @@ public class Robot : IDisposable
     public void Reset()
     {
         if (_isDisposed) { throw new ObjectDisposedException("Cannot reset disposed robot."); }
-
         ChangeName();
     }
 
@@ -95,8 +94,8 @@ public class RobotNameGenerator
 
     private char GenerateRandomLetter()
     {
-        const string Letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        int randomIndex = RandomGenerator.Next(Letters.Length);
-        return Letters[randomIndex];
+        const int AsciiUpperCaseLetterSectionLength = 26;
+        char randomLetter = (char)('A' + RandomGenerator.Next(AsciiUpperCaseLetterSectionLength));
+        return randomLetter;
     }
 }
