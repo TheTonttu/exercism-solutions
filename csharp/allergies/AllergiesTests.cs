@@ -1,5 +1,8 @@
 // This file was auto-generated based on version 2.0.0 of the canonical data.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 public class AllergiesTests {
@@ -303,5 +306,30 @@ public class AllergiesTests {
         var sut = new Allergies(509);
         var expected = new[] { Allergen.Eggs, Allergen.Shellfish, Allergen.Strawberries, Allergen.Tomatoes, Allergen.Chocolate, Allergen.Pollen, Allergen.Cats };
         Assert.Equal(expected, sut.List());
+    }
+
+    // Additional tests
+
+    [Fact]
+    public void Int_min_mask() {
+        var sut = new Allergies(int.MinValue);
+        Assert.Empty(sut.List());
+        AssertAllergy(sut, Array.Empty<Allergen>());
+    }
+
+    [Fact]
+    public void Int_max_mask() {
+        var sut = new Allergies(int.MaxValue);
+        var expected = new[] { Allergen.Eggs, Allergen.Peanuts, Allergen.Shellfish, Allergen.Strawberries, Allergen.Tomatoes, Allergen.Chocolate, Allergen.Pollen, Allergen.Cats };
+        Assert.Equal(expected, sut.List());
+        AssertAllergy(sut, expected);
+    }
+
+    private void AssertAllergy(Allergies allergies, ICollection<Allergen> expectedAllergens) {
+        var allAllergens = Enum.GetValues(typeof(Allergen)).Cast<Allergen>().ToList();
+
+        foreach (Allergen allergen in allAllergens) {
+            Assert.True(allergies.IsAllergicTo(allergen) || !expectedAllergens.Contains(allergen), $"Allergy to {allergen} was not expected.");
+        }
     }
 }
