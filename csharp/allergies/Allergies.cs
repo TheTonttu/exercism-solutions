@@ -30,7 +30,7 @@ public class Allergies
 
     public Allergen[] List()
     {
-        // Array could also be precalculated in constructor.
+        // Could also precalculate array in constructor and then return copy of the array.
         return Enum.GetValues(typeof(Allergen))
             .Cast<Allergen>()
             .Where(e => _allergen.HasFlag(e))
