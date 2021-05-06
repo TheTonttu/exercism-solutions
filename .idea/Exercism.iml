@@ -106,6 +106,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/variable-length-quantity/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/pig-latin/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/pig-latin/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/anagram/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/anagram/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/leap/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/hello-world/target" />
@@ -157,6 +159,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/affine-cipher/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/variable-length-quantity/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/pig-latin/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/anagram/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
