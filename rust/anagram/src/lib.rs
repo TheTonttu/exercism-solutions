@@ -7,9 +7,7 @@ pub fn anagrams_for<'a>(word: &str, possible_anagrams: &[&'a str]) -> HashSet<&'
         .iter()
         .map(|w| (w, counts(*w)))
         .filter(|(_w, counts)| {
-            char_counts
-                .iter()
-                .all(|(c, count)| counts.get(c).map(|count2| count == count2) == Some(true))
+            subtract(&char_counts, counts).is_empty()
         })
         .map(|(w, _counts)| *w)
         .collect()
@@ -20,4 +18,17 @@ fn counts(word: &str) -> HashMap<char, usize> {
         *hm.entry(c).or_insert(0) += 1;
         hm
     })
+}
+
+fn subtract(hm1: &HashMap<char, usize>, hm2: &HashMap<char, usize>) -> HashMap<char, usize> {
+    println!("{:?}", hm1);
+    println!("{:?}", hm2);
+    let mut hm = hm1.clone();
+    for (c, count) in hm2.iter() {
+        let entry = hm.entry(*c).or_insert(0);
+        *entry = entry.wrapping_sub(*count);
+    }
+    println!("{:?}", hm);
+    println!();
+    hm.drain().filter(|(_c, count)| *count != 0).collect()
 }
