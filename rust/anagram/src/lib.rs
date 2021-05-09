@@ -2,12 +2,7 @@ use std::collections::HashSet;
 
 pub fn anagrams_for<'a>(word: &str, possible_anagrams: &[&'a str]) -> HashSet<&'a str> {
     let lowercase_word = word.to_lowercase();
-
-    let sorted_chars = {
-        let mut chars: Vec<char> = lowercase_word.chars().collect();
-        chars.sort_unstable();
-        chars
-    };
+    let sorted_chars = get_sorted_chars(&lowercase_word);
 
     let mut anagrams = HashSet::new();
     for candidate in possible_anagrams {
@@ -19,11 +14,7 @@ pub fn anagrams_for<'a>(word: &str, possible_anagrams: &[&'a str]) -> HashSet<&'
             continue;
         }
 
-        let sorted_candidate_chars = {
-            let mut chars: Vec<char> = lowercase_candidate.chars().collect();
-            chars.sort_unstable();
-            chars
-        };
+        let sorted_candidate_chars = get_sorted_chars(&lowercase_candidate);
 
         if sorted_chars
             .iter()
@@ -35,4 +26,10 @@ pub fn anagrams_for<'a>(word: &str, possible_anagrams: &[&'a str]) -> HashSet<&'
     }
 
     anagrams
+}
+
+fn get_sorted_chars(word: &str) -> Vec<char> {
+    let mut chars: Vec<char> = word.chars().collect();
+    chars.sort_unstable();
+    chars
 }
