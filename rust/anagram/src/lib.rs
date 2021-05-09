@@ -10,18 +10,23 @@ pub fn anagrams_for<'a>(word: &str, possible_anagrams: &[&'a str]) -> HashSet<&'
 
     possible_anagrams
         .iter()
-        .filter(|w| w.len() == word.len())
-        .filter_map(|w| {
-            let w_lower = w.to_lowercase();
-            (w_lower != lowercase_word).then(|| (w, w_lower))
+        .filter(|candidate| candidate.len() == word.len())
+        .filter_map(|candidate| {
+            let lowercase_candidate = candidate.to_lowercase();
+            (lowercase_candidate != lowercase_word).then(|| (candidate, lowercase_candidate))
         })
-        .map(|(w, w_lower)| {
-            let mut sorted_w: Vec<char> = w_lower.chars().collect();
-            sorted_w.sort_unstable();
+        .map(|(candidate, lowercase_candidate)| {
+            let mut sorted_candidate_chars: Vec<char> = lowercase_candidate.chars().collect();
+            sorted_candidate_chars.sort_unstable();
 
-            (w, sorted_w)
+            (candidate, sorted_candidate_chars)
         })
-        .filter(|(_w, s_w)| sorted_chars.iter().zip(s_w).all(|(c1, c2)| c1 == c2))
-        .map(|(w, _s_w)| *w)
+        .filter(|(_candidate, sorted_candidate_chars)| {
+            sorted_chars
+                .iter()
+                .zip(sorted_candidate_chars)
+                .all(|(c1, c2)| c1 == c2)
+        })
+        .map(|(candidate, _sorted_candidate_chars)| *candidate)
         .collect()
 }
