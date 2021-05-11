@@ -4,7 +4,7 @@ using System.Linq;
 
 public class GradeSchool
 {
-    private readonly Dictionary<int, List<string>> _grades = new Dictionary<int, List<string>>();
+    private readonly Dictionary<int, SortedSet<string>> _grades = new Dictionary<int, SortedSet<string>>();
 
     public void Add(string student, int grade)
     {
@@ -14,18 +14,16 @@ public class GradeSchool
         }
         else
         {
-            _grades.Add(grade, new List<string>() { student });
+            _grades.Add(grade, new SortedSet<string>() { student });
         }
     }
 
     public IEnumerable<string> Roster()
     {
-        var roster = new List<string>();
-        foreach (var grade in _grades.OrderBy(kv => kv.Key).Select(kv => kv.Value))
-        {
-            roster.AddRange(grade.OrderBy(student => student));
-        }
-        return roster;
+        return _grades
+            .OrderBy(kv => kv.Key)
+            .SelectMany(kv => kv.Value)
+            .ToArray();
     }
 
     public IEnumerable<string> Grade(int grade)
@@ -34,6 +32,6 @@ public class GradeSchool
         {
             return Enumerable.Empty<string>();
         }
-        return gradeStudentList.OrderBy(student => student).ToArray();
+        return gradeStudentList.ToArray();
     }
 }
