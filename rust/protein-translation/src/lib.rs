@@ -20,9 +20,9 @@ impl<'a> CodonsInfo<'a> {
 
         rna.as_bytes()
             .chunks(CODON_LENGTH)
-            .filter_map(|c| str::from_utf8(c).ok())
-            .map(|c| self.name_for(c))
-            .take_while(|&c| c != Some(STOP_MARK))
+            .filter_map(|chunk| str::from_utf8(chunk).ok())
+            .map(|sequence| self.name_for(sequence))
+            .take_while(|&maybe_codon| maybe_codon != Some(STOP_MARK))
             .collect()
     }
 }
