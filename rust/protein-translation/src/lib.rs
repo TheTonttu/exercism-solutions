@@ -22,7 +22,7 @@ impl<'a> CodonsInfo<'a> {
             .chunks(3)
             .map(|c| c.iter().collect::<String>())
             .map(|c| self.name_for(&c))
-            .take_while(|c| c.is_none() || c.and_then(|c| Some(c != STOP_MARK)) == Some(true))
+            .take_while(|&c| c != Some(STOP_MARK))
             .collect();
 
         (!codons.is_empty() && codons.iter().all(|c| c.is_some()))
