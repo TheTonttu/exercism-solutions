@@ -16,17 +16,13 @@ impl<'a> CodonsInfo<'a> {
     pub fn of_rna(&self, rna: &str) -> Option<Vec<&'a str>> {
         const STOP_MARK: &str = "stop codon";
 
-        let codons: Vec<Option<&str>> = rna
-            .chars()
+        rna.chars()
             .collect::<Vec<char>>()
             .chunks(3)
             .map(|c| c.iter().collect::<String>())
             .map(|c| self.name_for(&c))
             .take_while(|&c| c != Some(STOP_MARK))
-            .collect();
-
-        (!codons.is_empty() && codons.iter().all(|c| c.is_some()))
-            .then(|| codons.into_iter().flatten().collect())
+            .collect()
     }
 }
 
