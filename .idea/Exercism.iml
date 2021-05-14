@@ -110,6 +110,8 @@
       <sourceFolder url="file://$MODULE_DIR$/rust/anagram/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/rust/protein-translation/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/rust/protein-translation/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/robot-name/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/rust/robot-name/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/rust/raindrops/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/leap/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/hello-world/target" />
@@ -163,6 +165,7 @@
       <excludeFolder url="file://$MODULE_DIR$/rust/pig-latin/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/anagram/target" />
       <excludeFolder url="file://$MODULE_DIR$/rust/protein-translation/target" />
+      <excludeFolder url="file://$MODULE_DIR$/rust/robot-name/target" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
