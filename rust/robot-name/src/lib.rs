@@ -22,10 +22,13 @@ impl Robot {
 }
 
 fn gen_random_name() -> String {
+    const LETTER_COUNT: usize = 2;
+    const NUMBER_COUNT: usize = 3;
+
     let mut rng = rand::thread_rng();
 
-    let letters: String = (0..2).map(|_| rng.gen_range('A'..'Z')).collect();
-    let numbers: String = (0..3).map(|_| rng.gen_range('0'..='9')).collect();
+    let letters: String = (0..LETTER_COUNT).map(|_| rng.gen_range('A'..='Z')).collect();
+    let numbers: String = (0..NUMBER_COUNT).map(|_| rng.gen_range('0'..='9')).collect();
 
     [letters, numbers].concat()
 }
