@@ -1,5 +1,5 @@
 use robot_name as robot;
-use std::collections::HashSet;
+//use serial_test::serial;
 
 fn assert_name_matches_pattern(n: &str) {
     assert!(n.len() == 5, "name is exactly 5 characters long");
@@ -68,6 +68,8 @@ fn test_new_name_is_different_from_old_name() {
 
 #[test]
 fn test_unique_names() {
+    use std::collections::HashSet;
+
     const ROBOT_COUNT: usize = 1000;
 
     let mut robots = Vec::with_capacity(ROBOT_COUNT);
@@ -85,3 +87,35 @@ fn test_unique_names() {
         );
     }
 }
+
+// Does not work because #[serial] doesn't seem to guarantee that non-serial test cases have finished
+// #[test]
+// #[serial]
+// fn test_name_release() {
+//     println!("init");
+//     assert_registry_size(0);
+//
+//     {
+//         println!("1");
+//         let _r1 = robot::Robot::new();
+//         assert_registry_size(1);
+//
+//         println!("2");
+//         let _r2 = robot::Robot::new();
+//         assert_registry_size(2);
+//
+//         println!("3");
+//         let _r3 = robot::Robot::new();
+//         assert_registry_size(3);
+//     }
+//
+//     println!("finish");
+//     assert_registry_size(0);
+// }
+//
+// fn assert_registry_size(expected_size: usize) {
+//     let registry = robot::NAME_REGISTRY.lock().unwrap();
+//     let registry_size = registry.len();
+//     drop(registry);
+//     assert_eq!(registry_size, expected_size);
+// }

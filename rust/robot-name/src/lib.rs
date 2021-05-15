@@ -22,9 +22,20 @@ impl Robot {
     }
 
     pub fn reset_name(&mut self) {
-        NAME_REGISTRY.lock().unwrap().remove(&self.name);
+        unregister_name(&self.name);
         self.name = gen_unique_name();
     }
+}
+
+// Unregister name when robot goes out of scope.
+impl Drop for Robot {
+    fn drop(&mut self) {
+        unregister_name(&self.name);
+    }
+}
+
+fn unregister_name(name: &str) {
+    NAME_REGISTRY.lock().unwrap().remove(name);
 }
 
 fn gen_unique_name() -> String {
