@@ -77,6 +77,11 @@ fn test_unique_names() {
         let r = robot::Robot::new();
         let name = r.name().to_string();
         robots.push(r);
-        assert!(names.insert(name.clone()), "robot {} name '{}' was not unique", i, name);
+        assert!(
+            names.insert(name.clone()),
+            "robot {} name '{}' was not unique",
+            i,
+            name
+        );
     }
 }
