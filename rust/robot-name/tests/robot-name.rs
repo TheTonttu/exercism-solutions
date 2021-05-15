@@ -1,4 +1,5 @@
 use robot_name as robot;
+use std::collections::HashSet;
 
 fn assert_name_matches_pattern(n: &str) {
     assert!(n.len() == 5, "name is exactly 5 characters long");
@@ -61,4 +62,21 @@ fn test_new_name_is_different_from_old_name() {
     r.reset_name();
     let n2 = r.name().to_string();
     assert_ne!(n1, n2, "Robot name should change when reset");
+}
+
+// Additional tests
+
+#[test]
+fn test_unique_names() {
+    const ROBOT_COUNT: usize = 1000;
+
+    let mut robots = Vec::with_capacity(ROBOT_COUNT);
+    let mut names = HashSet::with_capacity(ROBOT_COUNT);
+
+    for i in 0..ROBOT_COUNT {
+        let r = robot::Robot::new();
+        let name = r.name().to_string();
+        robots.push(r);
+        assert!(names.insert(name.clone()), "robot {} name '{}' was not unique", i, name);
+    }
 }
