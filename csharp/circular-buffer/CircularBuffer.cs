@@ -20,14 +20,33 @@ public class CircularBuffer<T>
         {
             throw new InvalidOperationException("No data available.");
         }
-        var firstBufferedItem = _innerArray[_tailIndex];
-        _tailIndex++;
-        bool wasLastItem = _tailIndex > _headIndex;
-        if (wasLastItem)
+        T firstBufferedItem = _innerArray[_tailIndex];
+        bool wasHeadWrapped = IsHeadWrapped();
+        int nextTailIndex = _tailIndex + 1;
+        if (wasHeadWrapped)
         {
-            // No further data
-            _tailIndex = UninitializedIndex;
-            _headIndex = UninitializedIndex;
+            if (nextTailIndex >= _innerArray.Length)
+            {
+                _tailIndex = 0;
+            }
+            else
+            {
+                _tailIndex = nextTailIndex;
+            }
+        }
+        else
+        {
+            bool wasLastItem = nextTailIndex > _headIndex;
+            if (wasLastItem)
+            {
+                // No further data
+                _tailIndex = UninitializedIndex;
+                _headIndex = UninitializedIndex;
+            }
+            else
+            {
+                _tailIndex = nextTailIndex;
+            }
         }
         return firstBufferedItem;
     }
@@ -41,29 +60,65 @@ public class CircularBuffer<T>
             _innerArray[_headIndex] = value;
             return;
         }
-        int bufferLength = GetBufferLength();
-        if (bufferLength >= _innerArray.Length)
+
+        if (IsBufferFull())
         {
             throw new InvalidOperationException("Buffer is full.");
         }
+
         _headIndex++;
+        if (_headIndex >= _innerArray.Length)
+        {
+            _headIndex = 0;
+        }
         _innerArray[_headIndex] = value;
     }
 
     public void Overwrite(T value)
     {
-        int bufferLength = GetBufferLength();
-        if (bufferLength < _innerArray.Length)
+        if (!IsBufferFull())
         {
             Write(value);
             return;
         }
-        throw new NotImplementedException("You need to implement this function.");
+
+        if (IsHeadWrapped())
+        {
+            _tailIndex++;
+            _headIndex++;
+        }
+        else if (_headIndex + 1 >= _innerArray.Length)
+        {
+            _tailIndex++;
+            _headIndex = 0;
+        }
+        else
+        {
+            _headIndex = _tailIndex;
+            _tailIndex++;
+        }
+
+        if (_tailIndex >= _innerArray.Length)
+        {
+            _tailIndex = 0;
+        }
+        _innerArray[_headIndex] = value;
     }
+
+    private bool IsBufferFull() => GetBufferLength() >= _innerArray.Length;
 
     private int GetBufferLength()
     {
+        if (IsHeadWrapped())
+        {
+            return (_tailIndex - _headIndex) + 1;
+        }
         return (_headIndex - _tailIndex) + 1;
+    }
+
+    private bool IsHeadWrapped()
+    {
+        return _tailIndex > _headIndex;
     }
 
     public void Clear()
