@@ -2,76 +2,56 @@
 
 public class CircularBuffer<T>
 {
-    private const int UninitializedIndex = int.MinValue;
+    // The implementation is not really a circular buffer but more like linked list.
 
-    private readonly T[] _innerArray;
-    private int _tailIndex = UninitializedIndex;
-    private int _headIndex = UninitializedIndex;
+    private readonly int _capacity;
+
+    // Could also be done with LinkedList<T>
+    private Node<T> _tail = null;
+    private Node<T> _head = null;
+
+    private int _length;
 
     public CircularBuffer(int capacity)
     {
-        _innerArray = new T[capacity];
-
+        _capacity = capacity;
     }
 
     public T Read()
     {
-        if (_headIndex == UninitializedIndex)
+        if (_tail == null)
         {
             throw new InvalidOperationException("No data available.");
         }
-        T firstBufferedItem = _innerArray[_tailIndex];
-        bool wasHeadWrapped = IsHeadWrapped();
-        int nextTailIndex = _tailIndex + 1;
-        if (wasHeadWrapped)
+
+        T oldestBufferedItem = _tail.Value;
+        _tail = _tail.Next;
+        if (_tail == null)
         {
-            if (nextTailIndex >= _innerArray.Length)
-            {
-                _tailIndex = 0;
-            }
-            else
-            {
-                _tailIndex = nextTailIndex;
-            }
+            _head = null;
         }
-        else
-        {
-            bool wasLastItem = nextTailIndex > _headIndex;
-            if (wasLastItem)
-            {
-                // No further data
-                _tailIndex = UninitializedIndex;
-                _headIndex = UninitializedIndex;
-            }
-            else
-            {
-                _tailIndex = nextTailIndex;
-            }
-        }
-        return firstBufferedItem;
+        _length -= 1;
+
+        return oldestBufferedItem;
     }
 
     public void Write(T value)
     {
-        if (_headIndex == UninitializedIndex)
-        {
-            _tailIndex = 0;
-            _headIndex = 0;
-            _innerArray[_headIndex] = value;
-            return;
-        }
-
         if (IsBufferFull())
         {
             throw new InvalidOperationException("Buffer is full.");
         }
 
-        _headIndex++;
-        if (_headIndex >= _innerArray.Length)
+        if (_head == null)
         {
-            _headIndex = 0;
+            _head = new Node<T>(value);
+            _tail = _head;
         }
-        _innerArray[_headIndex] = value;
+        else
+        {
+            AddHead(value);
+        }
+        _length += 1;
     }
 
     public void Overwrite(T value)
@@ -82,48 +62,40 @@ public class CircularBuffer<T>
             return;
         }
 
-        if (IsHeadWrapped())
-        {
-            _tailIndex++;
-            _headIndex++;
-        }
-        else if (_headIndex + 1 >= _innerArray.Length)
-        {
-            _tailIndex++;
-            _headIndex = 0;
-        }
-        else
-        {
-            _headIndex = _tailIndex;
-            _tailIndex++;
-        }
+        // Remove tail node
+        _tail = _tail.Next;
 
-        if (_tailIndex >= _innerArray.Length)
-        {
-            _tailIndex = 0;
-        }
-        _innerArray[_headIndex] = value;
+        AddHead(value);
+        _length += 1;
     }
 
-    private bool IsBufferFull() => GetBufferLength() >= _innerArray.Length;
-
-    private int GetBufferLength()
+    private void AddHead(T headValue)
     {
-        if (IsHeadWrapped())
-        {
-            return (_tailIndex - _headIndex) + 1;
-        }
-        return (_headIndex - _tailIndex) + 1;
+        var oldHead = _head;
+        var newHead = new Node<T>(headValue);
+        // Old head is already included in the tail chain so no need to assign it anywhere explicitly.
+        oldHead.Next = newHead;
+        _head = newHead;
     }
 
-    private bool IsHeadWrapped()
-    {
-        return _tailIndex > _headIndex;
-    }
+    private bool IsBufferFull() => _length >= _capacity;
 
     public void Clear()
     {
-        _tailIndex = UninitializedIndex;
-        _headIndex = UninitializedIndex;
+        _tail = null;
+        _head = null;
+        _length = 0;
+    }
+}
+
+internal class Node<T>
+{
+    public Node<T> Next { get; set; }
+
+    public T Value { get; }
+
+    public Node(T value)
+    {
+        Value = value;
     }
 }
