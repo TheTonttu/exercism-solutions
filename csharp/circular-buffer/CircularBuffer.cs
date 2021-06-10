@@ -2,100 +2,59 @@
 
 public class CircularBuffer<T>
 {
-    // The implementation is not really a circular buffer but more like linked list.
+    private int _headIndex;
+    private int _tailIndex;
+    private T[] _innerArray;
 
-    private readonly int _capacity;
-
-    // Could also be done with LinkedList<T>
-    private Node<T> _tail = null;
-    private Node<T> _head = null;
-
-    private int _length;
+    public int Capacity => _innerArray.Length;
+    public int Size { get; private set; }
+    public bool IsFull => Size >= Capacity;
 
     public CircularBuffer(int capacity)
     {
-        _capacity = capacity;
+        _innerArray = new T[capacity];
     }
 
     public T Read()
     {
-        if (_tail == null)
+        if (Size == 0)
         {
             throw new InvalidOperationException("No data available.");
         }
+        T oldestItem = _innerArray[_headIndex];
+        _headIndex = (_headIndex + 1) % Capacity;
+        Size -= 1;
 
-        T oldestBufferedItem = _tail.Value;
-        _tail = _tail.Next;
-        if (_tail == null)
-        {
-            _head = null;
-        }
-        _length -= 1;
-
-        return oldestBufferedItem;
+        return oldestItem;
     }
 
     public void Write(T value)
     {
-        if (IsBufferFull())
+        if (IsFull)
         {
             throw new InvalidOperationException("Buffer is full.");
         }
-
-        if (_head == null)
-        {
-            _head = new Node<T>(value);
-            _tail = _head;
-        }
-        else
-        {
-            AddHead(value);
-        }
-        _length += 1;
+        _innerArray[_tailIndex] = value;
+        _tailIndex = (_tailIndex + 1) % Capacity;
+        Size += 1;
     }
 
     public void Overwrite(T value)
     {
-        if (!IsBufferFull())
+        if (!IsFull)
         {
             Write(value);
             return;
         }
-
-        // Remove tail node
-        _tail = _tail.Next;
-
-        AddHead(value);
-        _length += 1;
+        _innerArray[_tailIndex] = value;
+        _headIndex = (_headIndex + 1) % Capacity;
+        _tailIndex = (_tailIndex + 1) % Capacity;
     }
-
-    private void AddHead(T headValue)
-    {
-        var oldHead = _head;
-        var newHead = new Node<T>(headValue);
-        // Old head is already included in the tail chain so no need to assign it anywhere explicitly.
-        oldHead.Next = newHead;
-        _head = newHead;
-    }
-
-    private bool IsBufferFull() => _length >= _capacity;
 
     public void Clear()
     {
-        _tail = null;
-        _head = null;
-        _length = 0;
-    }
-}
-
-internal class Node<T>
-{
-    public Node<T> Next { get; set; }
-
-    public T Value { get; }
-
-    public Node(T value)
-    {
-        Value = value;
+        _headIndex = 0;
+        _tailIndex = 0;
+        Size = 0;
     }
 }
