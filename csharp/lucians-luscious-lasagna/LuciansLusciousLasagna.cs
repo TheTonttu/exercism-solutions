@@ -4,9 +4,23 @@ public class Lasagna
 
     public int ExpectedMinutesInOven() => 40;
 
-    public int RemainingMinutesInOven(int minutesInOven) => ExpectedMinutesInOven() - minutesInOven;
+    public int RemainingMinutesInOven(int minutesInOven)
+    {
+        return ExpectedMinutesInOven() - minutesInOven;
+    }
 
-    public int PreparationTimeInMinutes(int layerCount) => layerCount * LayerPreparationTimeInMinutes;
+    public int PreparationTimeInMinutes(int layerCount)
+    {
+        return layerCount * LayerPreparationTimeInMinutes;
+    }
 
-    public int ElapsedTimeInMinutes(int layerCount, int minutesInOven) => PreparationTimeInMinutes(layerCount) + (ExpectedMinutesInOven() - RemainingMinutesInOven(minutesInOven));
+    public int ElapsedTimeInMinutes(int layerCount, int minutesInOven)
+    {
+        return PreparationTimeInMinutes(layerCount) + ElapsedMinutesInOven(minutesInOven);
+    }
+
+    private int ElapsedMinutesInOven(int minutesInOven)
+    {
+        return ExpectedMinutesInOven() - RemainingMinutesInOven(minutesInOven);
+    }
 }
