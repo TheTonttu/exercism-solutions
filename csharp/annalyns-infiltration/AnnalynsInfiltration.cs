@@ -19,18 +19,17 @@ static class QuestLogic
 
     public static bool CanFreePrisoner(bool knightIsAwake, bool archerIsAwake, bool prisonerIsAwake, bool petDogIsPresent)
     {
-        return !archerIsAwake
-            && IsPrisonerQuiet(prisonerIsAwake, petDogIsPresent)
-            && IsKnightOutOfAction(knightIsAwake, petDogIsPresent);
+        return CanFreeWithDog(archerIsAwake, petDogIsPresent)
+            || CanFreeWithoutDog(knightIsAwake, archerIsAwake, prisonerIsAwake);
     }
 
-    private static bool IsPrisonerQuiet(bool prisonerIsAwake, bool petDogIsPresent)
+    private static bool CanFreeWithDog(bool archerIsAwake, bool petDogIsPresent)
     {
-        return (prisonerIsAwake || petDogIsPresent);
+        return !archerIsAwake && petDogIsPresent;
     }
 
-    private static bool IsKnightOutOfAction(bool knightIsAwake, bool petDogIsPresent)
+    private static bool CanFreeWithoutDog(bool knightIsAwake, bool archerIsAwake, bool prisonerIsAwake)
     {
-        return !knightIsAwake || (knightIsAwake && petDogIsPresent);
+        return !knightIsAwake && !archerIsAwake && prisonerIsAwake;
     }
 }
