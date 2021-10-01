@@ -1,19 +1,21 @@
-using System;
-
 static class LogLine
 {
     public static string Message(string logLine)
     {
-        throw new NotImplementedException("Please implement the (static) LogLine.Message() method");
+        int separatorIndex = logLine.IndexOf(":");
+        int messageStartIndex = separatorIndex + 1;
+        return logLine[messageStartIndex..].Trim();
     }
 
     public static string LogLevel(string logLine)
     {
-        throw new NotImplementedException("Please implement the (static) LogLine.LogLevel() method");
+        int levelStartIndex = 1;
+        int levelEndIndex = logLine.IndexOf("]");
+        return logLine[levelStartIndex..levelEndIndex].ToLowerInvariant();
     }
 
     public static string Reformat(string logLine)
     {
-        throw new NotImplementedException("Please implement the (static) LogLine.Reformat() method");
+        return $"{Message(logLine)} ({LogLevel(logLine)})";
     }
 }
