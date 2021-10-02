@@ -36,122 +36,117 @@ public class LogAnalysisTests
         Assert.Equal("WARNING", log.LogLevel()); ;
     }
 
-    #region Own unit tests
+    #region Additional unit tests
 
-    [Fact]
-    public void SubstringAfter_NoDelimiterMatch()
+    [Theory]
+    // Delimiter, no match
+    [InlineData("I am not the 1st test", "2nd", "")]
+    // Delimiter, empty
+    [InlineData("I am not the 1st test", "", "I am not the 1st test")]
+    // Line, null
+    [InlineData(null, ":", null)]
+    // Line, empty
+    [InlineData("", ":", "")]
+    public void SubstringAfter_SafeScenarios(string line, string delimiter, string expectedSubstring)
     {
-        Assert.Equal(String.Empty, "I am not the 1st test".SubstringAfter("bonk"));
+        string substring = line.SubstringAfter(delimiter);
+
+        if (expectedSubstring == null)
+        {
+            Assert.Null(substring);
+        }
+        else
+        {
+            Assert.Equal(expectedSubstring, substring);
+        }
     }
 
-    [Fact]
-    public void SubstringAfter_DelimiterIsNull()
+    [Theory]
+    // Delimiter, null
+    [InlineData("I am not the 1st test", null, typeof(ArgumentNullException))]
+    public void SubstringAfter_ErrorScenarios(string line, string delimiter, Type expectedExceptionType)
     {
-        Assert.Throws<ArgumentNullException>("delimiter", () => "I am not the 1st test".SubstringAfter(null));
+        Assert.Throws(expectedExceptionType, () => line.SubstringAfter(delimiter));
     }
 
-    [Fact]
-    public void SubstringAfter_EmptyDelimiter()
+
+    [Theory]
+    // Start delimiter, no match
+    [InlineData("[INFO]: File Deleted.", "{", "]", "")]
+    // Start delimiter, empty
+    [InlineData("[INFO]: File Deleted.", "", "]", "[INFO")]
+    // End delimiter, no match
+    [InlineData("[INFO]: File Deleted.", "[", "}", "")]
+    // End delimiter, empty
+    [InlineData("[INFO]: File Deleted.", "[", "", "")]
+    // Delimiters, empty
+    [InlineData("[INFO]: File Deleted.", "", "", "")]
+    // Line, null
+    [InlineData(null, "[", "]", null)]
+    // Line, empty
+    [InlineData("", "[", "]", "")]
+    public void SubstringBetween_SafeScenarios(string line, string startDelimiter, string endDelimiter, string expectedSubstring)
     {
-        Assert.Equal("I am not the 1st test", "I am not the 1st test".SubstringAfter(String.Empty));
+        string substring = line.SubstringBetween(startDelimiter, endDelimiter);
+
+        if (expectedSubstring == null)
+        {
+            Assert.Null(substring);
+        }
+        else
+        {
+            Assert.Equal(expectedSubstring, substring);
+        }
     }
 
-    [Fact]
-    public void SubstringAfter_LineIsNull()
+    [Theory]
+    // Start delimiter, null
+    [InlineData("[INFO]: File Deleted.", null, "]", typeof(ArgumentNullException))]
+    // End delimiter, null
+    [InlineData("[INFO]: File Deleted.", "[", null, typeof(ArgumentNullException))]
+    public void SubstringBetween_ErrorScenarios(string line, string startDelimiter, string endDelimiter, Type expectedExceptionType)
     {
-        string line = null;
-        Assert.Null(line.SubstringAfter(":"));
+        Assert.Throws(expectedExceptionType, () => line.SubstringBetween(startDelimiter, endDelimiter));
     }
 
-    [Fact]
-    public void SubstringAfter_LineIsEmpty()
+
+    [Theory]
+    // Log line, null => message, null
+    [InlineData(null, null)]
+    // Log line, empty => message, empty
+    [InlineData("", "")]
+    public void MessageScenarios(string logLine, string expectedMessage)
     {
-        string line = String.Empty;
-        Assert.Equal(String.Empty, line.SubstringAfter(":"));
+        string message = logLine.Message();
+
+        if (expectedMessage == null)
+        {
+            Assert.Null(message);
+        }
+        else
+        {
+            Assert.Equal(expectedMessage, message);
+        }
     }
 
-    [Fact]
-    public void SubstringBetween_NoStartDelimiterMatch()
-    {
-        Assert.Equal(String.Empty, "{INFO]: File Deleted.".SubstringBetween("[", "]"));
-    }
 
-    [Fact]
-    public void SubstringBetween_StartDelimiterIsNull()
+    [Theory]
+    // Log line, null => log level, null
+    [InlineData(null, null)]
+    // Log line, empty => log level, empty
+    [InlineData("", "")]
+    public void LogLevelScenarios(string logLine, string expectedLogLevel)
     {
-        Assert.Throws<ArgumentNullException>("startDelimiter", () => "[INFO]: File Deleted.".SubstringBetween(null, "]"));
-    }
+        string logLevel = logLine.LogLevel();
 
-    [Fact]
-    public void SubstringBetween_EmptyStartDelimiterMatch()
-    {
-        Assert.Equal("[INFO", "[INFO]: File Deleted.".SubstringBetween(String.Empty, "]"));
-    }
-
-    [Fact]
-    public void SubstringBetween_NoEndDelimiterMatch()
-    {
-        Assert.Equal(String.Empty, "[INFO}: File Deleted.".SubstringBetween("[", "]"));
-    }
-
-    [Fact]
-    public void SubstringBetween_EndDelimiterIsNull()
-    {
-        Assert.Throws<ArgumentNullException>("endDelimiter", () => "[INFO]: File Deleted.".SubstringBetween("[", null));
-    }
-
-    [Fact]
-    public void SubstringBetween_EmptyEndDelimiter()
-    {
-        Assert.Equal(String.Empty, "[INFO]: File Deleted.".SubstringBetween("[", String.Empty));
-    }
-
-    [Fact]
-    public void SubstringBetween_EmptyDelimiters()
-    {
-        Assert.Equal(String.Empty, "[INFO]: File Deleted.".SubstringBetween(String.Empty, String.Empty));
-    }
-
-    [Fact]
-    public void SubstringBetween_LineIsNull()
-    {
-        string line = null;
-        Assert.Null(line.SubstringBetween("[", "]"));
-    }
-
-    [Fact]
-    public void SubstringBetween_LineIsEmpty()
-    {
-        string line = String.Empty;
-        Assert.Equal(String.Empty, line.SubstringBetween("[", "]"));
-    }
-
-    [Fact]
-    public void Message_LineIsNull()
-    {
-        string log = null;
-        Assert.Null(log.Message());
-    }
-
-    [Fact]
-    public void Message_LineIsEmpty()
-    {
-        string log = String.Empty;
-        Assert.Equal(String.Empty, log.Message());
-    }
-
-    [Fact]
-    public void LogLevel_LineIsNull()
-    {
-        string log = null;
-        Assert.Null(log.LogLevel());
-    }
-
-    [Fact]
-    public void LogLevel_LineIsEmpty()
-    {
-        string log = String.Empty;
-        Assert.Equal(String.Empty, log.LogLevel());
+        if (expectedLogLevel == null)
+        {
+            Assert.Null(logLevel);
+        }
+        else
+        {
+            Assert.Equal(expectedLogLevel, logLevel);
+        }
     }
 
     #endregion
