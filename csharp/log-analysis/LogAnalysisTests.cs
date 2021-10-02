@@ -111,6 +111,9 @@ public class LogAnalysisTests
 
 
     [Theory]
+    // Surrounding whitespace is trimmed from message
+    [InlineData("[INFO]:  File Deleted. ", "File Deleted.")]
+    [InlineData("[INFO]: \n \r\t File Deleted. \t\r \n", "File Deleted.")]
     // Log line, null => message, null
     [InlineData(null, null)]
     // Log line, empty => message, empty
