@@ -2,7 +2,7 @@ using System;
 
 public class Player
 {
-    private Random _random = new();
+    private readonly Random _random = new();
 
     public int RollDie() =>
         _random.Next(1, 18);
