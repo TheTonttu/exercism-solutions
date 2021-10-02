@@ -1,9 +1,19 @@
-using System;
+using System.Text;
 
 static class Badge
 {
     public static string Print(int? id, string name, string? department)
     {
-        throw new NotImplementedException("Please implement the (static) Badge.Print() method");
+        var badgePrintBuilder = new StringBuilder();
+        if (id != null)
+        {
+            badgePrintBuilder.Append($"[{id}] - ");
+        }
+        badgePrintBuilder.Append($"{name} - ");
+
+        string formattedDepartment = department?.ToUpperInvariant() ?? "OWNER";
+        badgePrintBuilder.Append($"{formattedDepartment}");
+
+        return badgePrintBuilder.ToString();
     }
 }
