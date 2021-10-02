@@ -2,35 +2,52 @@ using System;
 
 class RemoteControlCar
 {
-    // TODO: define the constructor for the 'RemoteControlCar' class
+    private const int FullBatteryLevel = 100;
 
-    public bool BatteryDrained()
+    private readonly int _speed;
+    private readonly int _batteryDrain;
+
+    private int _distanceDriven = 0;
+    private int _batteryLevel = FullBatteryLevel;
+
+    public RemoteControlCar(int speed, int batteryDrain)
     {
-        throw new NotImplementedException("Please implement the RemoteControlCar.BatteryDrained() method");
+        _speed = speed;
+        _batteryDrain = batteryDrain;
     }
 
-    public int DistanceDriven()
-    {
-        throw new NotImplementedException("Please implement the RemoteControlCar.DistanceDriven() method");
-    }
+    public bool BatteryDrained() => _batteryLevel <= 0;
+
+    public int DistanceDriven() => _distanceDriven;
 
     public void Drive()
     {
-        throw new NotImplementedException("Please implement the RemoteControlCar.Drive() method");
+        if (BatteryDrained()) { return; }
+
+        _distanceDriven += _speed;
+        _batteryLevel -= _batteryDrain;
     }
 
-    public static RemoteControlCar Nitro()
-    {
-        throw new NotImplementedException("Please implement the (static) RemoteControlCar.Nitro() method");
-    }
+    public static RemoteControlCar Nitro() => new(speed: 50, batteryDrain: 4);
 }
 
 class RaceTrack
 {
-    // TODO: define the constructor for the 'RaceTrack' class
+    private readonly int _distance;
+
+    public RaceTrack(int distance)
+    {
+        _distance = distance;
+    }
 
     public bool CarCanFinish(RemoteControlCar car)
     {
-        throw new NotImplementedException("Please implement the RaceTrack.CarCanFinish() method");
+        while (car.DistanceDriven() < _distance)
+        {
+            if (car.BatteryDrained()) { return false; }
+
+            car.Drive();
+        }
+        return true;
     }
 }
