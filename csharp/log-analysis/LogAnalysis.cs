@@ -2,56 +2,48 @@ using System;
 
 public static class LogAnalysis
 {
-    private const int NotFoundIndex = -1;
-
-    public static string SubstringAfter(this string str, string delimiter)
+    public static string SubstringAfter(this string line, string delimiter)
     {
-        if (delimiter is null)
-        {
-            throw new ArgumentNullException(nameof(delimiter));
-        }
+        if (delimiter is null) { throw new ArgumentNullException(nameof(delimiter)); }
+        if (String.IsNullOrEmpty(line)) { return line; }
 
-        if (String.IsNullOrEmpty(str)) { return String.Empty; }
-
-        int delimiterIndex = str.IndexOf(delimiter);
-        if (delimiterIndex <= NotFoundIndex) { return String.Empty; }
+        int delimiterIndex = line.IndexOf(delimiter);
+        if (!IndexFound(delimiterIndex)) { return String.Empty; }
 
         int substringIndex = delimiterIndex + delimiter.Length;
-        return str[substringIndex..];
+        return line[substringIndex..];
     }
 
-    public static string SubstringBetween(this string str, string startDelimiter, string endDelimiter)
+    public static string SubstringBetween(this string line, string startDelimiter, string endDelimiter)
     {
-        if (startDelimiter is null)
-        {
-            throw new ArgumentNullException(nameof(startDelimiter));
-        }
+        if (startDelimiter is null) { throw new ArgumentNullException(nameof(startDelimiter)); }
+        if (endDelimiter is null) { throw new ArgumentNullException(nameof(endDelimiter)); }
+        if (String.IsNullOrEmpty(line)) { return line; }
 
-        if (endDelimiter is null)
-        {
-            throw new ArgumentNullException(nameof(endDelimiter));
-        }
-
-        if (String.IsNullOrEmpty(str)) { return String.Empty; }
-
-        int startDelimiterIndex = str.IndexOf(startDelimiter);
-        if (startDelimiterIndex <= NotFoundIndex) { return String.Empty; }
+        int startDelimiterIndex = line.IndexOf(startDelimiter);
+        if (!IndexFound(startDelimiterIndex)) { return String.Empty; }
 
         int substringStartIndex = startDelimiterIndex + startDelimiter.Length;
-        int endDelimiterIndex = str.IndexOf(endDelimiter, substringStartIndex);
-        if (endDelimiterIndex <= NotFoundIndex) { return String.Empty; }
+        int endDelimiterIndex = line.IndexOf(endDelimiter, substringStartIndex);
+        if (!IndexFound(endDelimiterIndex)) { return String.Empty; }
 
         int substringEndIndex = endDelimiterIndex;
-        return str[substringStartIndex..substringEndIndex];
+        return line[substringStartIndex..substringEndIndex];
     }
 
     public static string Message(this string logLine)
     {
-        return logLine.SubstringAfter(":").Trim();
+        return logLine.SubstringAfter(":")?.Trim();
     }
 
     public static string LogLevel(this string logLine)
     {
         return logLine.SubstringBetween("[", "]");
+    }
+
+    private static bool IndexFound(int index)
+    {
+        const int NotFoundIndex = -1;
+        return index > NotFoundIndex;
     }
 }

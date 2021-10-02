@@ -57,6 +57,20 @@ public class LogAnalysisTests
     }
 
     [Fact]
+    public void SubstringAfter_LineIsNull()
+    {
+        string line = null;
+        Assert.Null(line.SubstringAfter(":"));
+    }
+
+    [Fact]
+    public void SubstringAfter_LineIsEmpty()
+    {
+        string line = String.Empty;
+        Assert.Equal(String.Empty, line.SubstringAfter(":"));
+    }
+
+    [Fact]
     public void SubstringBetween_NoStartDelimiterMatch()
     {
         Assert.Equal(String.Empty, "{INFO]: File Deleted.".SubstringBetween("[", "]"));
@@ -99,9 +113,30 @@ public class LogAnalysisTests
     }
 
     [Fact]
+    public void SubstringBetween_LineIsNull()
+    {
+        string line = null;
+        Assert.Null(line.SubstringBetween("[", "]"));
+    }
+
+    [Fact]
+    public void SubstringBetween_LineIsEmpty()
+    {
+        string line = String.Empty;
+        Assert.Equal(String.Empty, line.SubstringBetween("[", "]"));
+    }
+
+    [Fact]
     public void Message_LineIsNull()
     {
         string log = null;
+        Assert.Null(log.Message());
+    }
+
+    [Fact]
+    public void Message_LineIsEmpty()
+    {
+        string log = String.Empty;
         Assert.Equal(String.Empty, log.Message());
     }
 
@@ -109,6 +144,13 @@ public class LogAnalysisTests
     public void LogLevel_LineIsNull()
     {
         string log = null;
+        Assert.Null(log.LogLevel());
+    }
+
+    [Fact]
+    public void LogLevel_LineIsEmpty()
+    {
+        string log = String.Empty;
         Assert.Equal(String.Empty, log.LogLevel());
     }
 
