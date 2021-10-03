@@ -62,8 +62,11 @@ public static class ListMutatingLanguages
     public static bool HasLanguage(List<string> languages, string language) =>
         languages.Contains(language, StringComparer.OrdinalIgnoreCase);
 
-    public static List<string> ReverseList(List<string> languages) =>
-        new(languages.Reverse<string>());
+    public static List<string> ReverseList(List<string> languages)
+    {
+        languages.Reverse();
+        return languages;
+    }
 
     public static bool IsExciting(List<string> languages) =>
         PositionOnList(languages, "C#") switch
