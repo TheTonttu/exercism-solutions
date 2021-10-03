@@ -2,49 +2,49 @@ using System;
 
 abstract class Character
 {
-    protected Character(string characterType)
+    private readonly string _characterType;
+
+    protected readonly int _baseDamage;
+
+    protected Character(string characterType, int baseDamage)
     {
-        throw new NotImplementedException("Please implement the Character() constructor");
+        _characterType = characterType;
+        _baseDamage = baseDamage;
     }
 
     public abstract int DamagePoints(Character target);
 
-    public virtual bool Vulnerable()
-    {
-        throw new NotImplementedException("Please implement the Character.Vulnerable() method");
-    }
+    public virtual bool Vulnerable() => false;
 
-    public override string ToString()
-    {
-        throw new NotImplementedException("Please implement the Character.ToString() method");
-    }
+    public override string ToString() => $"Character is a {_characterType}";
 }
 
 class Warrior : Character
 {
-    public Warrior() : base("TODO")
-    {
-    }
+    private const int CriticalDamage = 10;
 
-    public override int DamagePoints(Character target)
-    {
-        throw new NotImplementedException("Please implement the Warrior.DamagePoints() method");
-    }
+    public Warrior() : base(nameof(Warrior), 6) { }
+
+    public override int DamagePoints(Character target) =>
+        target.Vulnerable()
+        ? CriticalDamage
+        : _baseDamage;
 }
 
 class Wizard : Character
 {
-    public Wizard() : base("TODO")
-    {
-    }
+    private const int SpellDamage = 12;
 
-    public override int DamagePoints(Character target)
-    {
-        throw new NotImplementedException("Please implement the Wizard.DamagePoints() method");
-    }
+    private bool _isSpellPrepared;
 
-    public void PrepareSpell()
-    {
-        throw new NotImplementedException("Please implement the Wizard.PrepareSpell() method");
-    }
+    public Wizard() : base(nameof(Wizard), 3) { }
+
+    public override int DamagePoints(Character target) =>
+        _isSpellPrepared
+        ? SpellDamage
+        : _baseDamage;
+
+    public void PrepareSpell() => _isSpellPrepared = true;
+
+    public override bool Vulnerable() => !_isSpellPrepared;
 }
