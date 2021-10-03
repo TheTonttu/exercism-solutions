@@ -23,8 +23,7 @@ class BirdCount
 
     public void IncrementTodaysCount()
     {
-        int todayIndex = _birdsPerDay.Length - 1;
-        _birdsPerDay[todayIndex] += 1;
+        _birdsPerDay[^1] += 1;
     }
 
     public bool HasDayWithoutBirds()
