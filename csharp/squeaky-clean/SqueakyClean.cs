@@ -17,36 +17,45 @@ public static class Identifier
     public static string Clean(string identifier)
     {
         var cleanIdBuilder = new StringBuilder();
-        char? prevChar = null;
-        foreach (char c in identifier)
+        char? previousChar = null;
+        foreach (char currentChar in identifier)
         {
-            if (char.IsControl(c))
+            string? cleanedOutput = CleanChar(currentChar, previousChar);
+
+            if (cleanedOutput != null)
             {
-                cleanIdBuilder.Append(ControlCharReplacement);
+                cleanIdBuilder.Append(cleanedOutput);
             }
-            else if (char.IsWhiteSpace(c))
-            {
-                cleanIdBuilder.Append(WhiteSpaceReplacement);
-            }
-            else if (char.IsLetter(c))
-            {
-                char letter = c;
-
-                bool isKebabCase = prevChar == '-';
-                if (isKebabCase)
-                {
-                    letter = char.ToUpperInvariant(letter);
-                }
-
-                if (!GreekLowerCaseLetters.Contains(letter))
-                {
-                    cleanIdBuilder.Append(letter);
-                }
-
-            }
-
-            prevChar = c;
+            previousChar = currentChar;
         }
         return cleanIdBuilder.ToString();
+    }
+
+    private static string? CleanChar(char currentChar, char? previousChar)
+    {
+        if (char.IsControl(currentChar))
+        {
+            return ControlCharReplacement;
+        }
+        else if (char.IsWhiteSpace(currentChar))
+        {
+            return WhiteSpaceReplacement;
+        }
+        else if (char.IsLetter(currentChar))
+        {
+            char letter = currentChar;
+
+            bool isKebabCase = previousChar == '-';
+            if (isKebabCase)
+            {
+                letter = char.ToUpperInvariant(letter);
+            }
+
+            if (!GreekLowerCaseLetters.Contains(letter))
+            {
+                return letter.ToString();
+            }
+        }
+        return null;
     }
 }
