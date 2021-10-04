@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 
 public static class Identifier
 {
     private const string ControlCharReplacement = "CTRL";
     private const string WhiteSpaceReplacement = "_";
     private const char KebabCaseWordSeparator = '-';
-
-    private static readonly HashSet<char> GreekLowerCaseLetters =
-        Enumerable.Range('α', 'ω' - 'α' + 1)
-                  .Select(i => (char)i)
-                  .ToHashSet();
 
     public static string Clean(string identifier)
     {
@@ -52,11 +43,13 @@ public static class Identifier
                 letter = char.ToUpperInvariant(letter);
             }
 
-            if (!GreekLowerCaseLetters.Contains(letter))
+            if (!IsGreekLowercaseLetter(letter))
             {
                 return letter.ToString();
             }
         }
         return null;
     }
+
+    private static bool IsGreekLowercaseLetter(char letter) => letter is >= 'α' and <= 'ω';
 }
