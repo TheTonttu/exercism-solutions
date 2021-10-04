@@ -25,15 +25,10 @@ public static class Identifier
 
     private static string? CleanChar(char currentChar, char? previousChar)
     {
-        if (char.IsControl(currentChar))
-        {
-            return ControlCharReplacement;
-        }
-        else if (char.IsWhiteSpace(currentChar))
-        {
-            return WhiteSpaceReplacement;
-        }
-        else if (char.IsLetter(currentChar))
+        if (char.IsControl(currentChar)) { return ControlCharReplacement; }
+        if (char.IsWhiteSpace(currentChar)) { return WhiteSpaceReplacement; }
+
+        if (char.IsLetter(currentChar))
         {
             char letter = currentChar;
 
@@ -48,6 +43,7 @@ public static class Identifier
                 return letter.ToString();
             }
         }
+
         return null;
     }
 
