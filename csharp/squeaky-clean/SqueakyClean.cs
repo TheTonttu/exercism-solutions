@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 public static class Identifier
 {
@@ -9,43 +10,37 @@ public static class Identifier
     public static string Clean(string identifier)
     {
         var cleanIdBuilder = new StringBuilder();
-        char? previousChar = null;
-        foreach (char currentChar in identifier)
+        char? prevChar = null;
+        foreach (char currChar in identifier)
         {
-            string? cleanedOutput = CleanChar(currentChar, previousChar);
-
-            if (cleanedOutput != null)
+            if (CleanChar(currChar, prevChar) is string cleanedOutput)
             {
                 cleanIdBuilder.Append(cleanedOutput);
             }
-            previousChar = currentChar;
+            prevChar = currChar;
         }
         return cleanIdBuilder.ToString();
     }
 
-    private static string? CleanChar(char currentChar, char? previousChar)
+    private static string? CleanChar(char currChar, char? prevChar)
     {
-        if (char.IsControl(currentChar)) { return ControlCharReplacement; }
-        if (char.IsWhiteSpace(currentChar)) { return WhiteSpaceReplacement; }
-
-        if (char.IsLetter(currentChar))
+        return currChar switch
         {
-            char letter = currentChar;
-
-            bool isStartOfNextKebabCaseWord = previousChar == KebabCaseWordSeparator;
-            if (isStartOfNextKebabCaseWord)
-            {
-                letter = char.ToUpperInvariant(letter);
-            }
-
-            if (!IsGreekLowercaseLetter(letter))
-            {
-                return letter.ToString();
-            }
-        }
-
-        return null;
+            _ when char.IsControl(currChar) => ControlCharReplacement,
+            _ when char.IsWhiteSpace(currChar) => WhiteSpaceReplacement,
+            char letter when char.IsLetter(currChar) => CleanLetter(letter, prevChar)?.ToString(),
+            _ => null
+        };
     }
 
+    private static char? CleanLetter(char letter, char? prevChar)
+    {
+        if (IsStartOfNextWord(prevChar)) { return char.ToUpperInvariant(letter); }
+        if (IsGreekLowercaseLetter(letter)) { return null; }
+
+        return letter;
+    }
+
+    private static bool IsStartOfNextWord(char? prevChar) => prevChar == KebabCaseWordSeparator;
     private static bool IsGreekLowercaseLetter(char letter) => letter is >= 'α' and <= 'ω';
 }
