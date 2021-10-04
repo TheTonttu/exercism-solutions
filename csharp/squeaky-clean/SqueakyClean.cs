@@ -8,6 +8,7 @@ public static class Identifier
 {
     private const string ControlCharReplacement = "CTRL";
     private const string WhiteSpaceReplacement = "_";
+    private const char KebabCaseWordSeparator = '-';
 
     private static readonly HashSet<char> GreekLowerCaseLetters =
         Enumerable.Range('α', 'ω' - 'α' + 1)
@@ -45,8 +46,8 @@ public static class Identifier
         {
             char letter = currentChar;
 
-            bool isKebabCase = previousChar == '-';
-            if (isKebabCase)
+            bool isStartOfNextKebabCaseWord = previousChar == KebabCaseWordSeparator;
+            if (isStartOfNextKebabCaseWord)
             {
                 letter = char.ToUpperInvariant(letter);
             }
