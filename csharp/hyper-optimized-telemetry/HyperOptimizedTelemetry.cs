@@ -2,14 +2,16 @@ using System;
 
 public static class TelemetryBuffer
 {
+    private const int PrefixByteIndex = 0;
+    private const short SignedPrefixIdentifier = 256;
+    private const int DataSectionStartIndex = 1;
+
     public static byte[] ToBuffer(long reading)
     {
-        const int PrefixByteIndex = 0;
-        const short SignedPrefixIdentifier = 256;
 
         var bytes = new byte[9];
         var extractedBytes = BitConverter.GetBytes(reading);
-        extractedBytes.CopyTo(bytes, 1);
+        extractedBytes.CopyTo(bytes, DataSectionStartIndex);
         if (reading > 0)
         {
             if (FitsPositiveLong(reading))
@@ -92,6 +94,48 @@ public static class TelemetryBuffer
 
     public static long FromBuffer(byte[] buffer)
     {
-        throw new NotImplementedException("Please implement the static TelemetryBuffer.FromBuffer() method");
+        const int Invalid = 0;
+
+        (bool isSigned, byte byteCount) = ParsePrefix(buffer);
+        if (byteCount > 8) { return Invalid; }
+
+        if (isSigned)
+        {
+            if (byteCount == 8)
+            {
+                return BitConverter.ToInt64(buffer, DataSectionStartIndex);
+            }
+            else if (byteCount == 4)
+            {
+                return BitConverter.ToInt32(buffer, DataSectionStartIndex);
+            }
+            else
+            {
+                return BitConverter.ToInt16(buffer, DataSectionStartIndex);
+            }
+        }
+        else
+        {
+            if (byteCount == 4)
+            {
+                return BitConverter.ToUInt32(buffer, DataSectionStartIndex);
+            }
+            else
+            {
+                return BitConverter.ToUInt16(buffer, DataSectionStartIndex);
+            }
+        }
+    }
+
+    private static (bool IsSigned, byte ByteCount) ParsePrefix(byte[] buffer)
+    {
+        byte byteCount = buffer[PrefixByteIndex];
+        bool isSigned = byteCount > 8;
+
+        return (
+            isSigned,
+            isSigned
+                ? (byte)(SignedPrefixIdentifier - byteCount)
+                : byteCount);
     }
 }
