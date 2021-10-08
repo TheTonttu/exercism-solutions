@@ -8,7 +8,7 @@ public static class TelemetryBuffer
 
     public static byte[] ToBuffer(long reading)
     {
-        (bool isSigned, byte[] readingBytes) = ExtractBytes(reading);
+        (bool isSigned, byte[] readingBytes) = ParseSignAndBytes(reading);
 
         var bytes = new byte[9];
         bytes[PrefixByteIndex] = CreatePrefix(isSigned, readingBytes.Length);
@@ -21,7 +21,8 @@ public static class TelemetryBuffer
     {
         const int Invalid = 0;
 
-        (bool isSigned, byte byteCount) = ExtractPrefix(buffer);
+        byte prefix = buffer[PrefixByteIndex];
+        (bool isSigned, byte byteCount) = ParsePrefix(prefix);
         if (byteCount is not (2 or 4 or 8)) { return Invalid; }
 
         return ComposeReading(buffer, isSigned, byteCount);
@@ -32,7 +33,7 @@ public static class TelemetryBuffer
             ? SignedPrefixIdentifier - length
             : length);
 
-    private static (bool IsSigned, byte[] Bytes) ExtractBytes(long reading) =>
+    private static (bool IsSigned, byte[] Bytes) ParseSignAndBytes(long reading) =>
         reading switch
         {
             > UInt32.MaxValue or < Int32.MinValue => (true, BitConverter.GetBytes(reading)),
@@ -52,15 +53,16 @@ public static class TelemetryBuffer
             (false, _) => BitConverter.ToUInt16(buffer, DataSectionStartIndex)
         };
 
-    private static (bool IsSigned, byte ByteCount) ExtractPrefix(byte[] buffer)
+    private static (bool IsSigned, byte ByteCount) ParsePrefix(byte prefix)
     {
-        byte byteCount = buffer[PrefixByteIndex];
-        bool isSigned = byteCount > 8;
+        const int MaxByteCount = 8;
+        bool isSigned = prefix > MaxByteCount;
 
-        return (
-            isSigned,
-            isSigned
-                ? (byte)(SignedPrefixIdentifier - byteCount)
-                : byteCount);
+        byte byteCount =
+            (byte)(isSigned
+                ? SignedPrefixIdentifier - prefix
+                : prefix);
+
+        return (isSigned, byteCount);
     }
 }
