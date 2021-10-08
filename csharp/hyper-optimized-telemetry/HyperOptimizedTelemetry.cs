@@ -8,95 +8,20 @@ public static class TelemetryBuffer
 
     public static byte[] ToBuffer(long reading)
     {
+        (bool isSigned, byte[] readingBytes) = ExtractBytes(reading);
 
         var bytes = new byte[9];
-        var extractedBytes = BitConverter.GetBytes(reading);
-        extractedBytes.CopyTo(bytes, DataSectionStartIndex);
-        if (reading >= 0)
-        {
-            if (FitsPositiveLong(reading))
-            {
-                bytes[PrefixByteIndex] = SignedPrefixIdentifier - 8;
-            }
-            else if (FitsUInt32(reading))
-            {
-                bytes[PrefixByteIndex] = 4;
-            }
-            else if (FitPositiveInt32(reading))
-            {
-                bytes[PrefixByteIndex] = SignedPrefixIdentifier - 4;
-            }
-            else if (FitsUInt16(reading))
-            {
-                bytes[PrefixByteIndex] = 2;
-            }
-            else
-            {
-                bytes[PrefixByteIndex] = SignedPrefixIdentifier - 2;
-            }
-        }
-        else
-        {
-            if (FitsNegativeLong(reading))
-            {
-                bytes[PrefixByteIndex] = SignedPrefixIdentifier - 8;
-            }
-            else if (FitsNegativeInt32(reading))
-            {
-                bytes[PrefixByteIndex] = SignedPrefixIdentifier - 4;
-                for (int i = 5; i < bytes.Length; i++)
-                {
-                    bytes[i] = 0;
-                }
-            }
-            else
-            {
-                bytes[PrefixByteIndex] = 256 - 2;
-                for (int i = 3; i < bytes.Length; i++)
-                {
-                    bytes[i] = 0;
-                }
-            }
-        }
+        bytes[PrefixByteIndex] = CreatePrefix(isSigned, readingBytes.Length);
+        readingBytes.CopyTo(bytes, DataSectionStartIndex);
 
         return bytes;
-    }
-
-    private static bool FitsNegativeInt32(long reading)
-    {
-        return reading < Int16.MinValue;
-    }
-
-    private static bool FitsNegativeLong(long reading)
-    {
-        return reading < Int32.MinValue;
-    }
-
-    private static bool FitsUInt16(long reading)
-    {
-        return reading > Int16.MaxValue;
-    }
-
-    private static bool FitPositiveInt32(long reading)
-    {
-        return reading > UInt16.MaxValue;
-    }
-
-    private static bool FitsUInt32(long reading)
-    {
-        return reading > Int32.MaxValue;
-    }
-
-    private static bool FitsPositiveLong(long reading)
-    {
-        return reading > UInt32.MaxValue;
     }
 
     public static long FromBuffer(byte[] buffer)
     {
         const int Invalid = 0;
 
-        (bool isSigned, byte byteCount) = ParsePrefix(buffer);
+        (bool isSigned, byte byteCount) = ExtractPrefix(buffer);
         if (byteCount > 8) { return Invalid; }
 
         if (isSigned)
@@ -127,7 +52,22 @@ public static class TelemetryBuffer
         }
     }
 
-    private static (bool IsSigned, byte ByteCount) ParsePrefix(byte[] buffer)
+    private static byte CreatePrefix(bool isSigned, int length) =>
+        (byte)(isSigned
+            ? SignedPrefixIdentifier - length
+            : length);
+
+    private static (bool IsSigned, byte[] Bytes) ExtractBytes(long reading) =>
+        reading switch
+        {
+            > UInt32.MaxValue or < Int32.MinValue => (true, BitConverter.GetBytes(reading)),
+            > Int32.MaxValue => (false, BitConverter.GetBytes(Convert.ToUInt32(reading))),
+            > UInt16.MaxValue or < Int16.MinValue => (true, BitConverter.GetBytes(Convert.ToInt32(reading))),
+            > Int16.MaxValue => (false, BitConverter.GetBytes(Convert.ToUInt16(reading))),
+            _ => (true, BitConverter.GetBytes(Convert.ToInt16(reading))),
+        };
+
+    private static (bool IsSigned, byte ByteCount) ExtractPrefix(byte[] buffer)
     {
         byte byteCount = buffer[PrefixByteIndex];
         bool isSigned = byteCount > 8;
