@@ -22,34 +22,9 @@ public static class TelemetryBuffer
         const int Invalid = 0;
 
         (bool isSigned, byte byteCount) = ExtractPrefix(buffer);
-        if (byteCount > 8) { return Invalid; }
+        if (byteCount is not (2 or 4 or 8)) { return Invalid; }
 
-        if (isSigned)
-        {
-            if (byteCount == 8)
-            {
-                return BitConverter.ToInt64(buffer, DataSectionStartIndex);
-            }
-            else if (byteCount == 4)
-            {
-                return BitConverter.ToInt32(buffer, DataSectionStartIndex);
-            }
-            else
-            {
-                return BitConverter.ToInt16(buffer, DataSectionStartIndex);
-            }
-        }
-        else
-        {
-            if (byteCount == 4)
-            {
-                return BitConverter.ToUInt32(buffer, DataSectionStartIndex);
-            }
-            else
-            {
-                return BitConverter.ToUInt16(buffer, DataSectionStartIndex);
-            }
-        }
+        return ComposeReading(buffer, isSigned, byteCount);
     }
 
     private static byte CreatePrefix(bool isSigned, int length) =>
@@ -65,6 +40,16 @@ public static class TelemetryBuffer
             > UInt16.MaxValue or < Int16.MinValue => (true, BitConverter.GetBytes(Convert.ToInt32(reading))),
             > Int16.MaxValue => (false, BitConverter.GetBytes(Convert.ToUInt16(reading))),
             _ => (true, BitConverter.GetBytes(Convert.ToInt16(reading))),
+        };
+
+    private static long ComposeReading(byte[] buffer, bool isSigned, int byteCount) =>
+        (isSigned, byteCount) switch
+        {
+            (true, 8) => BitConverter.ToInt64(buffer, DataSectionStartIndex),
+            (true, 4) => BitConverter.ToInt32(buffer, DataSectionStartIndex),
+            (true, _) => BitConverter.ToInt16(buffer, DataSectionStartIndex),
+            (false, 4) => BitConverter.ToUInt32(buffer, DataSectionStartIndex),
+            (false, _) => BitConverter.ToUInt16(buffer, DataSectionStartIndex)
         };
 
     private static (bool IsSigned, byte ByteCount) ExtractPrefix(byte[] buffer)
