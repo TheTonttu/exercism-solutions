@@ -10,11 +10,11 @@ public static class TelemetryBuffer
     {
         (bool isSigned, byte[] readingBytes) = ParseSignAndBytes(reading);
 
-        var bytes = new byte[9];
-        bytes[PrefixByteIndex] = CreatePrefix(isSigned, readingBytes.Length);
-        readingBytes.CopyTo(bytes, DataSectionStartIndex);
+        var buffer = new byte[9];
+        buffer[PrefixByteIndex] = CreatePrefix(isSigned, readingBytes.Length);
+        readingBytes.CopyTo(buffer, DataSectionStartIndex);
 
-        return bytes;
+        return buffer;
     }
 
     public static long FromBuffer(byte[] buffer)
