@@ -12,7 +12,7 @@ public static class TelemetryBuffer
         var bytes = new byte[9];
         var extractedBytes = BitConverter.GetBytes(reading);
         extractedBytes.CopyTo(bytes, DataSectionStartIndex);
-        if (reading > 0)
+        if (reading >= 0)
         {
             if (FitsPositiveLong(reading))
             {
