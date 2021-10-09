@@ -11,7 +11,7 @@ public static class TelemetryBuffer
         (bool isSigned, byte[] readingBytes) = ParseSignAndBytes(reading);
 
         var buffer = new byte[9];
-        buffer[PrefixByteIndex] = CreatePrefix(isSigned, readingBytes.Length);
+        buffer[PrefixByteIndex] = ComposePrefix(isSigned, readingBytes.Length);
         readingBytes.CopyTo(buffer, DataSectionStartIndex);
 
         return buffer;
@@ -19,19 +19,11 @@ public static class TelemetryBuffer
 
     public static long FromBuffer(byte[] buffer)
     {
-        const int Invalid = 0;
-
         byte prefix = buffer[PrefixByteIndex];
         (bool isSigned, byte byteCount) = ParsePrefix(prefix);
-        if (byteCount is not (2 or 4 or 8)) { return Invalid; }
 
         return ComposeReading(buffer, isSigned, byteCount);
     }
-
-    private static byte CreatePrefix(bool isSigned, int length) =>
-        (byte)(isSigned
-            ? SignedPrefixIdentifier - length
-            : length);
 
     private static (bool IsSigned, byte[] Bytes) ParseSignAndBytes(long reading) =>
         reading switch
@@ -43,14 +35,20 @@ public static class TelemetryBuffer
             _ => (true, BitConverter.GetBytes(Convert.ToInt16(reading))),
         };
 
+    private static byte ComposePrefix(bool isSigned, int length) =>
+        (byte)(isSigned
+            ? SignedPrefixIdentifier - length
+            : length);
+
     private static long ComposeReading(byte[] buffer, bool isSigned, int byteCount) =>
         (isSigned, byteCount) switch
         {
             (true, 8) => BitConverter.ToInt64(buffer, DataSectionStartIndex),
             (true, 4) => BitConverter.ToInt32(buffer, DataSectionStartIndex),
-            (true, _) => BitConverter.ToInt16(buffer, DataSectionStartIndex),
+            (true, 2) => BitConverter.ToInt16(buffer, DataSectionStartIndex),
             (false, 4) => BitConverter.ToUInt32(buffer, DataSectionStartIndex),
-            (false, _) => BitConverter.ToUInt16(buffer, DataSectionStartIndex)
+            (false, 2) => BitConverter.ToUInt16(buffer, DataSectionStartIndex),
+            _ => 0
         };
 
     private static (bool IsSigned, byte ByteCount) ParsePrefix(byte prefix)
