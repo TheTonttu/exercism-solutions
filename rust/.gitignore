@@ -1,3 +1,7 @@
+# Compiled files and executables
+debug/
+target/
+
 # User-specific stuff
 */.idea/**/workspace.xml
 */.idea/**/tasks.xml
