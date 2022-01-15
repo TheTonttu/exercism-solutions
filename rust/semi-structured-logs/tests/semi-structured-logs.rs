@@ -1,4 +1,4 @@
-use semi_structured_logs::{error, info, log, warn, LogLevel};
+use semi_structured_logs::{debug, error, info, log, warn, LogLevel};
 
 #[test]
 fn emits_info() {
@@ -6,19 +6,16 @@ fn emits_info() {
 }
 
 #[test]
-#[ignore]
 fn emits_warning() {
     assert_eq!(warn("Timezone not set"), "[WARNING]: Timezone not set");
 }
 
 #[test]
-#[ignore]
 fn emits_error() {
     assert_eq!(error("Disk full"), "[ERROR]: Disk full");
 }
 
 #[test]
-#[ignore]
 fn log_emits_info() {
     assert_eq!(
         log(LogLevel::Info, "Timezone changed"),
@@ -27,7 +24,6 @@ fn log_emits_info() {
 }
 
 #[test]
-#[ignore]
 fn log_emits_warning() {
     assert_eq!(
         log(LogLevel::Warning, "Timezone not set"),
@@ -36,18 +32,20 @@ fn log_emits_warning() {
 }
 
 #[test]
-#[ignore]
 fn log_emits_error() {
     assert_eq!(log(LogLevel::Error, "Disk full"), "[ERROR]: Disk full");
 }
 
 #[test]
-#[cfg(feature = "add-a-variant")]
-#[ignore]
 fn add_a_variant() {
-    // this test won't even compile until the enum is complete, which is why it is feature-gated.
     assert_eq!(
         log(LogLevel::Debug, "reached line 123"),
         "[DEBUG]: reached line 123",
     );
+}
+
+// Extra tests:
+#[test]
+fn emits_debug() {
+    assert_eq!(debug("Coordinates (4, 2)"), "[DEBUG]: Coordinates (4, 2)");
 }
