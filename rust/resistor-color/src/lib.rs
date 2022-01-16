@@ -1,7 +1,7 @@
 use enum_iterator::IntoEnumIterator;
 use int_enum::IntEnum;
 
-#[repr(u8)]
+#[repr(usize)]
 #[derive(Clone, Copy, Debug, PartialEq, IntEnum, IntoEnumIterator)]
 pub enum ResistorColor {
     Black = 0,
@@ -17,11 +17,11 @@ pub enum ResistorColor {
 }
 
 pub fn color_to_value(_color: ResistorColor) -> usize {
-    _color.int_value().into()
+    _color.int_value()
 }
 
 pub fn value_to_color_string(value: usize) -> String {
-    match ResistorColor::from_int(value as u8) {
+    match ResistorColor::from_int(value) {
         Ok(color) => format!("{:?}", color),
         Err(_) => "value out of range".to_string()
     }
