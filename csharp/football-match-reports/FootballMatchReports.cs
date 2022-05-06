@@ -26,10 +26,10 @@ public static class PlayAnalyzer
         _ => throw new ArgumentException("Unsupported type", nameof(report)),
     };
 
-    private static string GetManagerDescription(Manager manager) => manager switch
+    private static string GetManagerDescription(Manager manager)
     {
-        { Club: var club } when String.IsNullOrWhiteSpace(club) => manager.Name,
-        { } => $"{manager.Name} ({manager.Club})",
-        _ => String.Empty,
-    };
+        return String.IsNullOrWhiteSpace(manager.Club)
+            ? manager.Name
+            : $"{manager.Name} ({manager.Club})";
+    }
 }
