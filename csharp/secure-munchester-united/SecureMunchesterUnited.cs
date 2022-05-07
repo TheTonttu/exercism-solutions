@@ -1,11 +1,16 @@
-using System;
-
 public class SecurityPassMaker
 {
-    public string GetDisplayName(TeamSupport support)
+    public string GetDisplayName(TeamSupport support) => support switch
     {
-        throw new NotImplementedException($"Please implement the SecurityPassMaker.GetDisplayName() method");
-    }
+        Security security when IsPrincipalMember(security) => $"{security.Title} Priority Personnel",
+        Staff => support.Title,
+        _ => "Too Important for a Security Pass"
+    };
+
+    private bool IsPrincipalMember(Security security) =>
+        security.GetType() == typeof(Security);
+        // Alternative:
+        // security is not (SecurityJunior or SecurityIntern or PoliceLiaison);
 }
 
 /**** Please do not alter the code below ****/
