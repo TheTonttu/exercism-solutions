@@ -13,20 +13,36 @@ public enum LogLevel
 
 static class LogLine
 {
-    public static LogLevel ParseLogLevel(string logLine) => logLine switch
+
+    private static readonly (string Text, LogLevel LogLevel)[] LogLevelCandidates =
     {
-        string trace when IsMatch("[TRC]", trace) => LogLevel.Trace,
-        string debug when IsMatch("[DBG]", debug) => LogLevel.Debug,
-        string info when IsMatch("[INF]", info) => LogLevel.Info,
-        string warning when IsMatch("[WRN]", warning) => LogLevel.Warning,
-        string error when IsMatch("[ERR]", error) => LogLevel.Error,
-        string fatal when IsMatch("[FTL]", fatal) => LogLevel.Fatal,
-        _ => LogLevel.Unknown,
+        ("TRC", LogLevel.Trace),
+        ("DBG", LogLevel.Debug),
+        ("INF", LogLevel.Info),
+        ("WRN", LogLevel.Warning),
+        ("ERR", LogLevel.Error),
+        ("FTL", LogLevel.Fatal),
     };
+
+    public static LogLevel ParseLogLevel(string logLine)
+    {
+        const int MinimumLevelContainingLineLength = 4;
+        if (logLine is null || logLine.Length < MinimumLevelContainingLineLength)
+        {
+            return LogLevel.Unknown;
+        }
+
+        var logLevelPart = logLine.AsSpan(1, 3);
+        foreach (var candidate in LogLevelCandidates)
+        {
+            if (logLevelPart.Equals(candidate.Text, StringComparison.OrdinalIgnoreCase))
+            {
+                return candidate.LogLevel;
+            }
+        }
+        return LogLevel.Unknown;
+    }
 
     public static string OutputForShortLog(LogLevel logLevel, string message) =>
         $"{(int)logLevel}:{message}";
-
-    private static bool IsMatch(string value, string logLine) =>
-        logLine.StartsWith(value, StringComparison.OrdinalIgnoreCase);
 }

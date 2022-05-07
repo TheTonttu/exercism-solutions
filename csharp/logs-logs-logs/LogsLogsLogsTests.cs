@@ -100,4 +100,14 @@ public class LogsLogsLogsTests
     {
         Assert.Equal("0:Something unknown happened", LogLine.OutputForShortLog(LogLevel.Unknown, "Something unknown happened"));
     }
+
+    #region Extra tests
+
+    [Fact]
+    public void Parse_null_as_unknown()
+    {
+        Assert.Equal(LogLevel.Unknown, LogLine.ParseLogLevel(null));
+    }
+
+    #endregion
 }
