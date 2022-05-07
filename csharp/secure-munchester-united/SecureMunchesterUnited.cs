@@ -2,12 +2,12 @@ public class SecurityPassMaker
 {
     public string GetDisplayName(TeamSupport support) => support switch
     {
-        Security security when IsPrincipalMember(security) => $"{security.Title} Priority Personnel",
+        Security security when IsPrincipalSecurity(security) => $"{security.Title} Priority Personnel",
         Staff => support.Title,
         _ => "Too Important for a Security Pass"
     };
 
-    private bool IsPrincipalMember(Security security) =>
+    private bool IsPrincipalSecurity(Security security) =>
         security.GetType() == typeof(Security);
         // Alternative:
         // security is not (SecurityJunior or SecurityIntern or PoliceLiaison);
