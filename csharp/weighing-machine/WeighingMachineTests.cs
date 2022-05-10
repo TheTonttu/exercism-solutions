@@ -67,4 +67,18 @@ public class WeighingMachineTests
         wm.TareAdjustment = 110.567;
         Assert.Equal("-10.567 kg", wm.DisplayWeight);
     }
+
+    #region Extra tests
+
+    [Fact]
+    public void Can_format_max_weight()
+    {
+        var wm = new WeighingMachine(precision: 5);
+        wm.Weight = double.MaxValue;
+        Assert.Equal("1797693134862320000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+            "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+            "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.00000 kg", wm.DisplayWeight);
+    }
+
+    #endregion
 }
