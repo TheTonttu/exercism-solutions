@@ -4,6 +4,47 @@ using System.Globalization;
 
 class WeighingMachine
 {
+    private readonly NumberFormatInfo _weightNumberFormatInfo;
+
+    private double _weight;
+
+    public int Precision { get; }
+
+
+    public double Weight
+    {
+        get => _weight;
+        set
+        {
+            if (value < 0) { throw new ArgumentOutOfRangeException("Weight cannot be negative."); }
+            _weight = value;
+        }
+    }
+
+    public string DisplayWeight {
+        get
+        {
+            double tareAdjustedWeight = _weight - TareAdjustment;
+            return String.Format(_weightNumberFormatInfo, "{0:F} kg", tareAdjustedWeight);
+        }
+    }
+
+    public double TareAdjustment { get; set; }
+
+    public WeighingMachine(int precision)
+    {
+        Precision = precision;
+        _weightNumberFormatInfo = new NumberFormatInfo() { NumberDecimalDigits = precision };
+        TareAdjustment = 5.0;
+    }
+}
+
+#region Nope
+
+class DerpWeighingMachine
+{
+    private readonly NumberFormatInfo _weightNumberFormatInfo;
+
     private double _weight;
     private string? _cachedDisplayWeight;
     private double _tareAdjustment;
@@ -28,7 +69,7 @@ class WeighingMachine
             if (_cachedDisplayWeight == null)
             {
                 double tareAdjustedWeight = _weight - TareAdjustment;
-                _cachedDisplayWeight = FormatWeight(tareAdjustedWeight, Precision);
+                _cachedDisplayWeight = FormatWeight(tareAdjustedWeight, _weightNumberFormatInfo);
             }
             return _cachedDisplayWeight;
         }
@@ -43,56 +84,11 @@ class WeighingMachine
         }
     }
 
-    public WeighingMachine(int precision)
+    public DerpWeighingMachine(int precision)
     {
         Precision = precision;
+        _weightNumberFormatInfo = new() { NumberDecimalDigits = precision };
         TareAdjustment = 5.0;
-    }
-
-    // Pre-allocated format related stuff to avoid intermediate heap allocations.
-    private static readonly string FormatKgPostfix = " kg";
-    private static readonly string FloatFormat = "0.0000000000000000";
-    // Length of "0." from float format.
-    private const int MinFormatLength = 2;
-    // Arbitrarily chosen max format precision.
-    private static readonly int MaxFormatPrecision = FloatFormat.Length - MinFormatLength;
-
-    /// <summary>
-    /// Formats weight using intermediate stackalloc to avoid intermediate heap allocations.
-    /// </summary>
-    /// <remarks>
-    /// Remember kids, premature optimization is the root of all evil.
-    /// </remarks>
-    /// <param name="weight">Weight to format.</param>
-    /// <param name="precision">Precision of formatted weight.</param>
-    /// <returns>Formatted weight.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">Precision is over 16.</exception>
-    /// <exception cref="InvalidOperationException">Formatting failed due to poor coding.</exception>
-    private static string FormatWeight(double weight, int precision)
-    {
-        // Arbitrarily chosen max buffer length to fit formatted double.MaxValue.
-        const int MaxBufferLength = 320;
-
-        if (precision > MaxFormatPrecision) { throw new ArgumentOutOfRangeException($"Precision is too high for formatting. Max supported precision is {MaxFormatPrecision}"); }
-
-        int usedFormatLength = precision + MinFormatLength;
-        var usedFormat = FloatFormat.AsSpan(0, usedFormatLength);
-
-        // Might be faster to just use the max buffer length instead of calculating required length but it should be measured instead of assumed.
-        int bufferLength = RequiredBufferLength(weight, precision);
-        Debug.Assert(bufferLength < MaxBufferLength, "Formatting max buffer length (320) exceeded.");
-
-        Span<char> buffer = stackalloc char[bufferLength];
-        if (!weight.TryFormat(buffer, out int weightCharsWritten, usedFormat, CultureInfo.InvariantCulture))
-        {
-            throw new InvalidOperationException("Weight formatting failed due to unnecessarily complicated code.");
-        }
-
-        WriteKgPostfix(buffer, weightCharsWritten);
-
-        int totalCharsWritten = weightCharsWritten + FormatKgPostfix.Length;
-        var writtenSection = buffer.Slice(0, totalCharsWritten);
-        return new string(writtenSection);
     }
 
     private void InvalidateCache()
@@ -100,10 +96,51 @@ class WeighingMachine
         _cachedDisplayWeight = null;
     }
 
+    private static readonly string FormattedWeightKgPostfix = " kg";
+    // Arbitrarily chosen max format precision.
+    private static readonly int MaxFormatPrecision = 16;
+
+    /// <summary>
+    /// Formats weight using stackalloc to avoid intermediate heap allocations.
+    /// </summary>
+    /// <remarks>
+    /// Remember kids, premature optimization is the root of all evil.
+    /// </remarks>
+    /// <param name="weight"></param>
+    /// <param name="weightFormatInfo"></param>
+    /// <returns>Formatted weight.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Precision is over 16.</exception>
+    /// <exception cref="InvalidOperationException">Formatting failed due to poor coding.</exception>
+    private static string FormatWeight(double weight, NumberFormatInfo weightFormatInfo)
+    {
+        // Arbitrarily chosen max buffer length to fit formatted double.MaxValue.
+        const int MaxBufferLength = 320;
+
+        int precision = weightFormatInfo.NumberDecimalDigits;
+        if (precision > MaxFormatPrecision) { throw new ArgumentOutOfRangeException($"Precision is too high for formatting. Max supported precision is {MaxFormatPrecision}"); }
+
+        // Might be faster to always just use the max buffer length instead of calculating required length but it should be measured instead of assumed.
+        int bufferLength = RequiredBufferLength(weight, precision);
+        Debug.Assert(bufferLength < MaxBufferLength, "Formatting max buffer length (320) exceeded.");
+
+        const string WeightFormat = "F";
+        Span<char> buffer = stackalloc char[bufferLength];
+        if (!weight.TryFormat(buffer, out int weightCharsWritten, WeightFormat, weightFormatInfo))
+        {
+            throw new InvalidOperationException("Weight formatting failed due to unnecessarily complicated code.");
+        }
+
+        WriteKgPostfix(buffer, weightCharsWritten);
+
+        int totalCharsWritten = weightCharsWritten + FormattedWeightKgPostfix.Length;
+        var writtenSection = buffer.Slice(0, totalCharsWritten);
+        return new string(writtenSection);
+    }
+
     private static void WriteKgPostfix(Span<char> destination, int postfixStartIndex)
     {
-        var postfixSection = destination.Slice(postfixStartIndex, FormatKgPostfix.Length);
-        FormatKgPostfix.CopyTo(postfixSection);
+        var postfixSection = destination.Slice(postfixStartIndex, FormattedWeightKgPostfix.Length);
+        FormattedWeightKgPostfix.CopyTo(postfixSection);
     }
 
     private static int RequiredBufferLength(double number, int precision)
@@ -116,7 +153,7 @@ class WeighingMachine
                + precision
                + DecimalSeparatorLength
                + negativeExtra
-               + FormatKgPostfix.Length;
+               + FormattedWeightKgPostfix.Length;
     }
 
     private static int DigitCount(double number)
@@ -125,3 +162,5 @@ class WeighingMachine
         return (int)Math.Floor(Math.Log10(Math.Abs(number))) + MinimumDigitCount;
     }
 }
+
+#endregion
