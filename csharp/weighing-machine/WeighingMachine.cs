@@ -5,8 +5,11 @@ using System.Globalization;
 class WeighingMachine
 {
     private double _weight;
+    private string? _cachedDisplayWeight;
+    private double _tareAdjustment;
 
     public int Precision { get; }
+
     public double Weight
     {
         get => _weight;
@@ -14,16 +17,31 @@ class WeighingMachine
         {
             if (value < 0) { throw new ArgumentOutOfRangeException("Weight cannot be negative."); }
             _weight = value;
+            InvalidateCache();
         }
     }
-    public string DisplayWeight {
+
+    public string DisplayWeight
+    {
         get
         {
-            double tareAdjustedWeight = _weight - TareAdjustment;
-            return FormatWeight(tareAdjustedWeight, Precision);
+            if (_cachedDisplayWeight == null)
+            {
+                double tareAdjustedWeight = _weight - TareAdjustment;
+                _cachedDisplayWeight = FormatWeight(tareAdjustedWeight, Precision);
+            }
+            return _cachedDisplayWeight;
         }
     }
-    public double TareAdjustment { get; set; }
+    public double TareAdjustment
+    {
+        get => _tareAdjustment;
+        set
+        {
+            _tareAdjustment = value;
+            InvalidateCache();
+        }
+    }
 
     public WeighingMachine(int precision)
     {
@@ -31,7 +49,7 @@ class WeighingMachine
         TareAdjustment = 5.0;
     }
 
-    // Pre-allocated format related things to avoid intermediate heap allocations.
+    // Pre-allocated format related stuff to avoid intermediate heap allocations.
     private static readonly string FormatKgPostfix = " kg";
     private static readonly string FloatFormat = "0.0000000000000000";
     // Length of "0." from float format.
@@ -39,8 +57,17 @@ class WeighingMachine
     // Arbitrarily chosen max format precision.
     private static readonly int MaxFormatPrecision = FloatFormat.Length - MinFormatLength;
 
-    // Formats weight using intermediate stackalloc to avoid intermediate heap allocations.
-    // Remember kids, premature optimization is the root of all evil.
+    /// <summary>
+    /// Formats weight using intermediate stackalloc to avoid intermediate heap allocations.
+    /// </summary>
+    /// <remarks>
+    /// Remember kids, premature optimization is the root of all evil.
+    /// </remarks>
+    /// <param name="weight">Weight to format.</param>
+    /// <param name="precision">Precision of formatted weight.</param>
+    /// <returns>Formatted weight.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Precision is over 16.</exception>
+    /// <exception cref="InvalidOperationException">Formatting failed due to poor coding.</exception>
     private static string FormatWeight(double weight, int precision)
     {
         // Arbitrarily chosen max buffer length to fit formatted double.MaxValue.
@@ -66,6 +93,11 @@ class WeighingMachine
         int totalCharsWritten = weightCharsWritten + FormatKgPostfix.Length;
         var writtenSection = buffer.Slice(0, totalCharsWritten);
         return new string(writtenSection);
+    }
+
+    private void InvalidateCache()
+    {
+        _cachedDisplayWeight = null;
     }
 
     private static void WriteKgPostfix(Span<char> destination, int postfixStartIndex)
