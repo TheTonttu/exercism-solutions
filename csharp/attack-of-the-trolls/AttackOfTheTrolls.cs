@@ -27,9 +27,9 @@ static class Permissions
         _ => Permission.None
     };
 
-    public static Permission Grant(Permission current, Permission grant) => current |= grant;
+    public static Permission Grant(Permission current, Permission grant) => current | grant;
 
-    public static Permission Revoke(Permission current, Permission revoke) => current &= ~revoke;
+    public static Permission Revoke(Permission current, Permission revoke) => current & ~revoke;
 
     public static bool Check(Permission current, Permission check) => current.HasFlag(check);
 }
