@@ -1,0 +1,21 @@
+{
+  "authors": [
+    "ErikSchierboom"
+  ],
+  "contributors": [
+    "valentin-p",
+    "yzAlvin"
+  ],
+  "files": {
+    "solution": [
+      "AttackOfTheTrolls.cs"
+    ],
+    "test": [
+      "AttackOfTheTrollsTests.cs"
+    ],
+    "exemplar": [
+      ".meta/Exemplar.cs"
+    ]
+  },
+  "blurb": "Learn about flag enumerations by checking permissions of user accounts on an internet forum."
+}
