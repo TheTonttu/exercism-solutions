@@ -10,7 +10,6 @@ class WeighingMachine
 
     public int Precision { get; }
 
-
     public double Weight
     {
         get => _weight;
@@ -41,7 +40,7 @@ class WeighingMachine
 
 #region Nope
 
-class DerpWeighingMachine
+class PrematureOptimizationWeighingMachine
 {
     private readonly NumberFormatInfo _weightNumberFormatInfo;
 
@@ -84,7 +83,7 @@ class DerpWeighingMachine
         }
     }
 
-    public DerpWeighingMachine(int precision)
+    public PrematureOptimizationWeighingMachine(int precision)
     {
         Precision = precision;
         _weightNumberFormatInfo = new() { NumberDecimalDigits = precision };
