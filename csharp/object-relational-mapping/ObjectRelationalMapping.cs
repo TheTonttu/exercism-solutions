@@ -1,26 +1,62 @@
 using System;
 
-public class Orm
+public class Orm : IDisposable
 {
-    private Database database;
+    private readonly Database _database;
+
+    private bool _isDisposed;
 
     public Orm(Database database)
     {
-        this.database = database;
+        _database = database;
     }
 
     public void Begin()
     {
-        throw new NotImplementedException($"Please implement the Orm.Begin() method");
+        _database.BeginTransaction();
     }
 
     public void Write(string data)
     {
-        throw new NotImplementedException($"Please implement the Orm.Write() method");
+        try
+        {
+            _database.Write(data);
+        } catch (InvalidOperationException)
+        {
+            _database.Dispose();
+        }
     }
 
     public void Commit()
     {
-        throw new NotImplementedException($"Please implement the Orm.Commit() method");
+        try
+        {
+            _database.EndTransaction();
+        } catch (InvalidOperationException)
+        {
+            _database.Dispose();
+        }
     }
+
+    #region IDisposable Members
+
+    protected virtual void Dispose(bool disposingManaged)
+    {
+        if (_isDisposed) { return; }
+
+        if (disposingManaged)
+        {
+            _database.Dispose();
+        }
+        _isDisposed = true;
+    }
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposingManaged: true);
+        GC.SuppressFinalize(this);
+    }
+
+    #endregion IDisposable Members
 }
