@@ -1,20 +1,33 @@
-﻿using System;using System.Globalization;using System.Linq;public static class HighSchoolSweethearts{    public static string DisplaySingleLine(string studentA, string studentB)    {        const int lineLength = 61;        const string Centerpiece = " ♡ ";        Span<char> lineBuffer = stackalloc char[lineLength];        lineBuffer.Fill(' ');
+﻿using System;using System.Globalization;public static class HighSchoolSweethearts{
 
-        int writingLength = Centerpiece.Length + studentA.Length + studentB.Length;        int writingStartIndex = (lineBuffer.Length - writingLength - 1)/2;        var writingSection = lineBuffer.Slice(writingStartIndex, writingLength);
+    public static string DisplaySingleLine(string studentA, string studentB)    {        const int lineLength = 61;        const char centerpiece = '♡';        const int centerpieceIndex = lineLength / 2;        const int nameOffsetFromCenter = 2;
+        Span<char> lineBuffer = stackalloc char[lineLength];        lineBuffer.Fill(' ');
+        lineBuffer[centerpieceIndex] = centerpiece;
 
-        WriteWriting(writingSection, studentA, studentB, Centerpiece);        return new string(lineBuffer);    }
+        WriteNamesAroundCenter(lineBuffer, studentA, studentB, centerpieceIndex, nameOffsetFromCenter);        return new string(lineBuffer);    }
 
-    const string HeartBannerTemplate = @"     ******       ******   **      **   **      ** **         ** **         ****            *            ****                         ****{                       }** **                       **   **                   **     **               **       **           **         **       **           **   **             ***              *";    private static readonly int BannerWritingSectionStartIndex = HeartBannerTemplate.IndexOf('{');    private static readonly int BannerWritingSectionEndIndex = HeartBannerTemplate.IndexOf('}');    public static string DisplayBanner(string studentA, string studentB)    {        const string Centerpiece = "  +  ";        var trimmedStudentA = studentA.AsSpan().Trim();        var trimmedStudentB = studentB.AsSpan().Trim();        Span<char> bannerBuffer = stackalloc char[HeartBannerTemplate.Length];        HeartBannerTemplate.CopyTo(bannerBuffer);        bannerBuffer[BannerWritingSectionStartIndex] = ' ';        bannerBuffer[BannerWritingSectionEndIndex] = ' ';        int lineSectionLength = BannerWritingSectionEndIndex - BannerWritingSectionStartIndex + 1;        var lineSection = bannerBuffer.Slice(BannerWritingSectionStartIndex, lineSectionLength);        int writingLength = Centerpiece.Length + trimmedStudentA.Length + trimmedStudentB.Length;        int writingStartIndex = (lineSection.Length - writingLength + 1)/2;        var writingSection = lineSection.Slice(writingStartIndex, writingLength);
+    private const string BannerTemplate = @"     ******       ******   **      **   **      ** **         ** **         ****            *            ****                         ****            +            ** **                       **   **                   **     **               **       **           **         **       **           **   **             ***              *";    private static readonly int CenterpieceIndex = BannerTemplate.IndexOf('+');    private static readonly int BannerNameOffsetFromCenter = 3;    private static readonly int BannerLeftNameIndex = CenterpieceIndex - BannerNameOffsetFromCenter;    private static readonly int BannerRightNameStartIndex = CenterpieceIndex + BannerNameOffsetFromCenter;    public static string DisplayBanner(string studentA, string studentB)    {        var trimmedStudentA = studentA.AsSpan().Trim();        var trimmedStudentB = studentB.AsSpan().Trim();        Span<char> bannerBuffer = stackalloc char[BannerTemplate.Length];        BannerTemplate.CopyTo(bannerBuffer);        WriteNamesAroundCenter(bannerBuffer, trimmedStudentA, trimmedStudentB, CenterpieceIndex, BannerNameOffsetFromCenter);        return new string(bannerBuffer);    }    public static string DisplayGermanExchangeStudents(string studentA        , string studentB, DateTime start, float hours)    {        FormattableString text = $"{studentA} and {studentB} have been dating since {start:d} - that's {hours:n2} hours";        var germanCultureInfo = CultureInfo.GetCultureInfo("de-DE");        return text.ToString(germanCultureInfo);    }
 
-        WriteWriting(writingSection, trimmedStudentA, trimmedStudentB, Centerpiece);        return new string(bannerBuffer);    }    public static string DisplayGermanExchangeStudents(string studentA        , string studentB, DateTime start, float hours)    {        FormattableString text = $"{studentA} and {studentB} have been dating since {start:d} - that's {hours:n2} hours";        var germanCultureInfo = CultureInfo.GetCultureInfo("de-DE");        return text.ToString(germanCultureInfo);    }
-
-    private static void WriteWriting(Span<char> writingSection, ReadOnlySpan<char> studentA, ReadOnlySpan<char> studentB, string centerpiece)
+    private static void WriteNamesAroundCenter(Span<char> writingSpace, ReadOnlySpan<char> leftName, ReadOnlySpan<char> rightName, int centerIndex, int nameOffsetFromCenter)
     {
-        var studentASection = writingSection[..studentA.Length];        studentA.CopyTo(studentASection);        var centerpieceSection = writingSection[studentA.Length..^studentB.Length];        centerpiece.CopyTo(centerpieceSection);        var studentBSection = writingSection[^studentB.Length..];        studentB.CopyTo(studentBSection);
+        var leftNameSection = GetLeftNameSection(writingSpace, leftName, centerIndex, nameOffsetFromCenter);
+        leftName.CopyTo(leftNameSection);
+
+        var rightNameSection = GetRightNameSection(writingSpace, rightName, centerIndex, nameOffsetFromCenter);
+        rightName.CopyTo(rightNameSection);
     }
 
-    private static int RoundToEven(int number)
+    private static Span<char> GetLeftNameSection(Span<char> writingSpace, ReadOnlySpan<char> name, int centerIndex, int nameOffsetFromCenter)
     {
-        return (int)Math.Round(number / 2.0, MidpointRounding.ToZero) * 2;
+        int leftNameStartIndex = centerIndex - nameOffsetFromCenter - (name.Length - 1);
+        var leftNameSection = writingSpace.Slice(leftNameStartIndex, name.Length);
+        return leftNameSection;
+    }
+
+    private static Span<char> GetRightNameSection(Span<char> writingSpace, ReadOnlySpan<char> name, int centerIndex, int nameOffsetFromCenter)
+    {
+        int rightNameStartIndex = centerIndex + nameOffsetFromCenter;
+        var rightNameSection = writingSpace.Slice(rightNameStartIndex, name.Length);
+        return rightNameSection;
     }
 }
