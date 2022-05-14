@@ -1,12 +1,67 @@
-﻿using System;using System.Globalization;public static class HighSchoolSweethearts{
+﻿using System;
+using System.Globalization;
 
-    public static string DisplaySingleLine(string studentA, string studentB)    {        const int lineLength = 61;        const char centerpiece = '♡';        const int centerpieceIndex = lineLength / 2;        const int nameOffsetFromCenter = 2;
-        Span<char> lineBuffer = stackalloc char[lineLength];        lineBuffer.Fill(' ');
+public static class HighSchoolSweethearts
+{
+
+    public static string DisplaySingleLine(string studentA, string studentB)
+    {
+        const int lineLength = 61;
+        const char centerpiece = '♡';
+        const int centerpieceIndex = lineLength / 2;
+        const int nameOffsetFromCenter = 2;
+
+        Span<char> lineBuffer = stackalloc char[lineLength];
+        lineBuffer.Fill(' ');
         lineBuffer[centerpieceIndex] = centerpiece;
 
-        WriteNamesAroundCenter(lineBuffer, studentA, studentB, centerpieceIndex, nameOffsetFromCenter);        return new string(lineBuffer);    }
+        WriteNamesAroundCenter(lineBuffer, studentA, studentB, centerpieceIndex, nameOffsetFromCenter);
 
-    private const string BannerTemplate = @"     ******       ******   **      **   **      ** **         ** **         ****            *            ****                         ****            +            ** **                       **   **                   **     **               **       **           **         **       **           **   **             ***              *";    private static readonly int CenterpieceIndex = BannerTemplate.IndexOf('+');    private static readonly int BannerNameOffsetFromCenter = 3;    private static readonly int BannerLeftNameIndex = CenterpieceIndex - BannerNameOffsetFromCenter;    private static readonly int BannerRightNameStartIndex = CenterpieceIndex + BannerNameOffsetFromCenter;    public static string DisplayBanner(string studentA, string studentB)    {        var trimmedStudentA = studentA.AsSpan().Trim();        var trimmedStudentB = studentB.AsSpan().Trim();        Span<char> bannerBuffer = stackalloc char[BannerTemplate.Length];        BannerTemplate.CopyTo(bannerBuffer);        WriteNamesAroundCenter(bannerBuffer, trimmedStudentA, trimmedStudentB, CenterpieceIndex, BannerNameOffsetFromCenter);        return new string(bannerBuffer);    }    public static string DisplayGermanExchangeStudents(string studentA        , string studentB, DateTime start, float hours)    {        FormattableString text = $"{studentA} and {studentB} have been dating since {start:d} - that's {hours:n2} hours";        var germanCultureInfo = CultureInfo.GetCultureInfo("de-DE");        return text.ToString(germanCultureInfo);    }
+        return new string(lineBuffer);
+    }
+
+    private const string BannerTemplate = @"
+     ******       ******
+   **      **   **      **
+ **         ** **         **
+**            *            **
+**                         **
+**            +            **
+ **                       **
+   **                   **
+     **               **
+       **           **
+         **       **
+           **   **
+             ***
+              *
+";
+
+    private static readonly int CenterpieceIndex = BannerTemplate.IndexOf('+');
+    private static readonly int BannerNameOffsetFromCenter = 3;
+    private static readonly int BannerLeftNameIndex = CenterpieceIndex - BannerNameOffsetFromCenter;
+    private static readonly int BannerRightNameStartIndex = CenterpieceIndex + BannerNameOffsetFromCenter;
+
+    public static string DisplayBanner(string studentA, string studentB)
+    {
+        var trimmedStudentA = studentA.AsSpan().Trim();
+        var trimmedStudentB = studentB.AsSpan().Trim();
+
+        Span<char> bannerBuffer = stackalloc char[BannerTemplate.Length];
+        BannerTemplate.CopyTo(bannerBuffer);
+
+        WriteNamesAroundCenter(bannerBuffer, trimmedStudentA, trimmedStudentB, CenterpieceIndex, BannerNameOffsetFromCenter);
+
+        return new string(bannerBuffer);
+    }
+
+    public static string DisplayGermanExchangeStudents(string studentA
+        , string studentB, DateTime start, float hours)
+    {
+        FormattableString text = $"{studentA} and {studentB} have been dating since {start:d} - that's {hours:n2} hours";
+        var germanCultureInfo = CultureInfo.GetCultureInfo("de-DE");
+        return text.ToString(germanCultureInfo);
+    }
 
     private static void WriteNamesAroundCenter(Span<char> writingSpace, ReadOnlySpan<char> leftName, ReadOnlySpan<char> rightName, int centerIndex, int nameOffsetFromCenter)
     {
@@ -30,4 +85,4 @@
         var rightNameSection = writingSpace.Slice(rightNameStartIndex, name.Length);
         return rightNameSection;
     }
-}
+}
