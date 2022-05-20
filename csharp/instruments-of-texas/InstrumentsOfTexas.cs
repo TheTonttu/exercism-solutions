@@ -2,9 +2,11 @@ using System;
 
 public class CalculationException : Exception
 {
-    public CalculationException(int operand1, int operand2, string message, Exception inner)
-    // TODO: complete the definition of the constructor
+    public CalculationException(int operand1, int operand2, string message, Exception inner) : base(message, inner)
     {
+        _ = inner ?? throw new ArgumentNullException(nameof(inner));
+        Operand1 = operand1;
+        Operand2 = operand2;
     }
 
     public int Operand1 { get; }
@@ -22,12 +24,31 @@ public class CalculatorTestHarness
 
     public string TestMultiplication(int x, int y)
     {
-        throw new NotImplementedException("Please implement the CalculatorTestHarness.TestMultiplication() method");
+        const string SuccessMessage = "Multiply succeeded";
+        try
+        {
+            Multiply(x, y);
+            return SuccessMessage;
+        }
+        catch (CalculationException ex) when (ex.Operand1 < 0 && ex.Operand2 < 0)
+        {
+            return $"Multiply failed for negative operands. {ex.InnerException.Message}";
+        }
+        catch (CalculationException ex)
+        {
+            return $"Multiply failed for mixed or positive operands. {ex.InnerException.Message}";
+        }
     }
 
     public void Multiply(int x, int y)
     {
-        throw new NotImplementedException("Please implement the CalculatorTestHarness.Multiply() method");
+        try
+        {
+            _ = calculator.Multiply(x, y);
+        } catch (OverflowException ex)
+        {
+            throw new CalculationException(x, y, "Multiplication failed due to overflow.", ex);
+        }
     }
 }
 
