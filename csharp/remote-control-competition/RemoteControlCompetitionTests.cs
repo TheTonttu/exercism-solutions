@@ -52,4 +52,19 @@ public class RemoteControlCompetitionTests
         var rankings = TestTrack.GetRankedCars(prc1, prc2);
         Assert.Same(prc1, rankings[1]);
     }
+
+    #region Extra tests
+
+    [Fact]
+    [Task(2)]
+    public void ComparisonIsNullSafe()
+    {
+        ProductionRemoteControlCar nullCar = null;
+        ProductionRemoteControlCar normalCar = new();
+        var cars = new List<ProductionRemoteControlCar> { normalCar, nullCar };
+        cars.Sort();
+        Assert.Equal(new ProductionRemoteControlCar[] { nullCar, normalCar }, cars);
+    }
+
+    #endregion Extra tests
 }

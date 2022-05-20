@@ -1,9 +1,14 @@
 using System;
 using System.Collections.Generic;
 
-// TODO implement the IRemoteControlCar interface
+public interface IRemoteControlCar
+{
+    int DistanceTravelled { get; }
 
-public class ProductionRemoteControlCar
+    void Drive();
+}
+
+public class ProductionRemoteControlCar : IRemoteControlCar, IComparable<ProductionRemoteControlCar>
 {
     public int DistanceTravelled { get; private set; }
     public int NumberOfVictories { get; set; }
@@ -12,9 +17,16 @@ public class ProductionRemoteControlCar
     {
         DistanceTravelled += 10;
     }
+
+    public int CompareTo(ProductionRemoteControlCar other)
+    {
+        const int GreaterThan = 1;
+        if (other == null) { return GreaterThan; }
+        return this.NumberOfVictories - other.NumberOfVictories;
+    }
 }
 
-public class ExperimentalRemoteControlCar
+public class ExperimentalRemoteControlCar : IRemoteControlCar
 {
     public int DistanceTravelled { get; private set; }
 
@@ -28,12 +40,19 @@ public static class TestTrack
 {
     public static void Race(IRemoteControlCar car)
     {
-        throw new NotImplementedException($"Please implement the (static) TestTrack.Race() method");
+        car.Drive();
     }
 
-    public static List<ProductionRemoteControlCar> GetRankedCars(ProductionRemoteControlCar prc1,
+    public static List<ProductionRemoteControlCar> GetRankedCars(
+        ProductionRemoteControlCar prc1,
         ProductionRemoteControlCar prc2)
     {
-        throw new NotImplementedException($"Please implement the (static) TestTrack.GetRankedCars() method");
+        var rankingList = new List<ProductionRemoteControlCar>()
+        {
+            prc1, prc2
+        };
+        rankingList.Sort();
+
+        return rankingList;
     }
 }
