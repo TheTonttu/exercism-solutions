@@ -29,14 +29,9 @@ public class WeatherStation
     public bool HasHistory => _recordDates.Count > 1;
 
     public Outlook ShortTermOutlook =>
-        _latestReading.Equals(MissingReading)
+        IsLatestReadingMissing()
             ? throw new ArgumentException()
-            : (_latestReading.Pressure, _latestReading.Temperature) switch
-            {
-                ( < 10m, < 30m) => Outlook.Cool,
-                (_, > 50) => Outlook.Good,
-                _ => Outlook.Warm
-            };
+            : ShortTermOutlookFromLatestReading();
 
     public Outlook LongTermOutlook =>
         (_latestReading.WindDirection, _latestReading.Temperature) switch
@@ -44,15 +39,26 @@ public class WeatherStation
             (WindDirection.Southerly, _) => Outlook.Good,
             (WindDirection.Northerly, _) => Outlook.Cool,
             (WindDirection.Westerly, _) => Outlook.Rainy,
-            (WindDirection.Easterly, > 20) => Outlook.Good,
-            (WindDirection.Easterly, <= 20) => Outlook.Warm,
+            (WindDirection.Easterly, > 20m) => Outlook.Good,
+            (WindDirection.Easterly, <= 20m) => Outlook.Warm,
             _ => throw new ArgumentException()
         };
 
     public State RunSelfTest() =>
-        _latestReading.Equals(MissingReading)
+        IsLatestReadingMissing()
             ? State.Bad
             : State.Good;
+
+    private bool IsLatestReadingMissing() =>
+        _latestReading.Equals(MissingReading);
+
+    private Outlook ShortTermOutlookFromLatestReading() =>
+        (_latestReading.Pressure, _latestReading.Temperature) switch
+        {
+            ( < 10m, < 30m) => Outlook.Cool,
+            (_, > 50m) => Outlook.Good,
+            _ => Outlook.Warm
+        };
 }
 
 /*** Please do not modify this struct ***/
