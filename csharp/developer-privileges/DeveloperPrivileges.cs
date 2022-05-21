@@ -10,24 +10,22 @@ public class Authenticator
         NameAndAddress = new[] { "Chanakya", "Mumbai", "India" }
     };
 
-    public IDictionary<string, Identity> Developers { get; } = new NameIdentityMap() {
+    public IDictionary<string, Identity> Developers { get; } = new NameIdentityMap()
+    {
+        ["Bertrand"] =
+        new Identity()
         {
-            "Bertrand",
-            new Identity() {
-                Email = "bert@ex.ism",
-                FacialFeatures = new() { EyeColor = "blue", PhiltrumWidth = 0.8m },
-                NameAndAddress = new[] { "Bertrand", "Paris", "France" }
-            }
+            Email = "bert@ex.ism",
+            FacialFeatures = new() { EyeColor = "blue", PhiltrumWidth = 0.8m },
+            NameAndAddress = new[] { "Bertrand", "Paris", "France" }
         },
+        ["Anders"] =
+        new Identity()
         {
-            "Anders",
-            new Identity() {
-                Email = "anders@ex.ism",
-                FacialFeatures = new() { EyeColor = "brown", PhiltrumWidth = 0.85m },
-                NameAndAddress = new[] { "Anders", "Redmond", "USA" }
-            }
+            Email = "anders@ex.ism",
+            FacialFeatures = new() { EyeColor = "brown", PhiltrumWidth = 0.85m },
+            NameAndAddress = new[] { "Anders", "Redmond", "USA" }
         }
-
     };
 }
 
