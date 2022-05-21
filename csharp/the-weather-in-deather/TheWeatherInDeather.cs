@@ -28,63 +28,31 @@ public class WeatherStation
     public decimal LatestRainfall => _latestReading.Rainfall;
     public bool HasHistory => _recordDates.Count > 1;
 
-    public Outlook ShortTermOutlook
-    {
-        get
+    public Outlook ShortTermOutlook =>
+        _latestReading.Equals(MissingReading)
+            ? throw new ArgumentException()
+            : (_latestReading.Pressure, _latestReading.Temperature) switch
+            {
+                ( < 10m, < 30m) => Outlook.Cool,
+                (_, > 50) => Outlook.Good,
+                _ => Outlook.Warm
+            };
+
+    public Outlook LongTermOutlook =>
+        (_latestReading.WindDirection, _latestReading.Temperature) switch
         {
-            if (_latestReading.Equals(MissingReading))
-            {
-                throw new ArgumentException();
-            }
+            (WindDirection.Southerly, _) => Outlook.Good,
+            (WindDirection.Northerly, _) => Outlook.Cool,
+            (WindDirection.Westerly, _) => Outlook.Rainy,
+            (WindDirection.Easterly, > 20) => Outlook.Good,
+            (WindDirection.Easterly, <= 20) => Outlook.Warm,
+            _ => throw new ArgumentException()
+        };
 
-            if (_latestReading.Pressure < 10m && _latestReading.Temperature < 30m)
-            {
-                return Outlook.Cool;
-            }
-            else if (_latestReading.Temperature > 50)
-            {
-                return Outlook.Good;
-            }
-            else
-            {
-                return Outlook.Warm;
-            }
-        }
-    }
-
-    public Outlook LongTermOutlook
-    {
-        get
-        {
-            if (_latestReading.WindDirection == WindDirection.Southerly
-                || _latestReading.WindDirection == WindDirection.Easterly
-                && _latestReading.Temperature > 20)
-            {
-                return Outlook.Good;
-            }
-            if (_latestReading.WindDirection == WindDirection.Northerly)
-            {
-                return Outlook.Cool;
-            }
-            if (_latestReading.WindDirection == WindDirection.Easterly
-                && _latestReading.Temperature <= 20)
-            {
-                return Outlook.Warm;
-            }
-            if (_latestReading.WindDirection == WindDirection.Westerly)
-            {
-                return Outlook.Rainy;
-            }
-            throw new ArgumentException();
-        }
-    }
-
-    public State RunSelfTest()
-    {
-        return _latestReading.Equals(MissingReading)
+    public State RunSelfTest() =>
+        _latestReading.Equals(MissingReading)
             ? State.Bad
             : State.Good;
-    }
 }
 
 /*** Please do not modify this struct ***/
