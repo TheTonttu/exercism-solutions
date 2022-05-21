@@ -1,13 +1,34 @@
-using System;
 using System.Collections.Generic;
+using NameIdentityMap = System.Collections.Generic.Dictionary<string, Identity>;
 
 public class Authenticator
 {
-    // TODO: Implement the Authenticator.Admin property
-    public Identity Admin { get; }
+    public Identity Admin { get; } = new()
+    {
+        Email = "admin@ex.ism",
+        FacialFeatures = new() { EyeColor = "green", PhiltrumWidth = 0.9m },
+        NameAndAddress = new[] { "Chanakya", "Mumbai", "India" }
+    };
 
-    // TODO: Implement the Authenticator.Developers property
-    public IDictionary<string, Identity> Developers { get; }
+    public IDictionary<string, Identity> Developers { get; } = new NameIdentityMap() {
+        {
+            "Bertrand",
+            new Identity() {
+                Email = "bert@ex.ism",
+                FacialFeatures = new() { EyeColor = "blue", PhiltrumWidth = 0.8m },
+                NameAndAddress = new[] { "Bertrand", "Paris", "France" }
+            }
+        },
+        {
+            "Anders",
+            new Identity() {
+                Email = "anders@ex.ism",
+                FacialFeatures = new() { EyeColor = "brown", PhiltrumWidth = 0.85m },
+                NameAndAddress = new[] { "Anders", "Redmond", "USA" }
+            }
+        }
+
+    };
 }
 
 //**** please do not modify the FacialFeatures class ****
