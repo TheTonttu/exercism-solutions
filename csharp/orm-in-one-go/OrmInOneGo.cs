@@ -2,20 +2,38 @@ using System;
 
 public class Orm
 {
-    private Database database;
+    private readonly Database _database;
 
     public Orm(Database database)
     {
-        this.database = database;
+        _database = database;
     }
 
     public void Write(string data)
     {
-        throw new NotImplementedException($"Please implement the Orm.Write() method");
+        using var db = _database;
+
+        db.BeginTransaction();
+        db.Write(data);
+        db.EndTransaction();
     }
 
     public bool WriteSafely(string data)
     {
-        throw new NotImplementedException($"Please implement the Orm.WriteSafely() method");
+        try
+        {
+            _database.BeginTransaction();
+            _database.Write(data);
+            _database.EndTransaction();
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+        finally
+        {
+            _database.Dispose();
+        }
     }
 }
