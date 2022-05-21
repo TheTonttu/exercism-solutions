@@ -3,85 +3,51 @@ using System.Collections.Generic;
 
 public class WeatherStation
 {
-    private Reading reading;
-    private List<DateTime> recordDates = new List<DateTime>();
-    private List<decimal> temperatures = new List<decimal>();
+    private static readonly Reading MissingReading = new();
+
+    private readonly List<DateTime> _recordDates = new();
+    private readonly List<decimal> _temperatures = new();
+    private Reading _latestReading;
 
     public void AcceptReading(Reading reading)
     {
-        this.reading = reading;
-        recordDates.Add(DateTime.Now);
-        temperatures.Add(reading.Temperature);
+        _latestReading = reading;
+        _recordDates.Add(DateTime.Now);
+        _temperatures.Add(reading.Temperature);
     }
 
     public void ClearAll()
     {
-        reading = new Reading();
-        recordDates.Clear();
-        temperatures.Clear();
+        _latestReading = MissingReading;
+        _recordDates.Clear();
+        _temperatures.Clear();
     }
 
-    public decimal LatestTemperature
-    {
-        get
-        {
-            return reading.Temperature;
-        }
-    }
-
-    public decimal LatestPressure
-    {
-        get
-        {
-            return reading.Pressure;
-        }
-    }
-
-    public decimal LatestRainfall
-    {
-        get
-        {
-            return reading.Rainfall;
-        }
-    }
-
-    public bool HasHistory
-    {
-        get
-        {
-            if (recordDates.Count > 1)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
+    public decimal LatestTemperature => _latestReading.Temperature;
+    public decimal LatestPressure => _latestReading.Pressure;
+    public decimal LatestRainfall => _latestReading.Rainfall;
+    public bool HasHistory => _recordDates.Count > 1;
 
     public Outlook ShortTermOutlook
     {
         get
         {
-            if (reading.Equals(new Reading()))
+            if (_latestReading.Equals(MissingReading))
             {
                 throw new ArgumentException();
             }
+
+            if (_latestReading.Pressure < 10m && _latestReading.Temperature < 30m)
+            {
+                return Outlook.Cool;
+            }
+            else if (_latestReading.Temperature > 50)
+            {
+                return Outlook.Good;
+            }
             else
             {
-                if (reading.Pressure < 10m && reading.Temperature < 30m)
-                {
-                    return Outlook.Cool;
-                }
-                else if (reading.Temperature > 50)
-                {
-                    return Outlook.Good;
-                }
-                else
-                {
-                    return Outlook.Warm;
-                }
+                return Outlook.Warm;
             }
         }
     }
@@ -90,22 +56,22 @@ public class WeatherStation
     {
         get
         {
-            if (reading.WindDirection == WindDirection.Southerly
-                || reading.WindDirection == WindDirection.Easterly
-                && reading.Temperature > 20)
+            if (_latestReading.WindDirection == WindDirection.Southerly
+                || _latestReading.WindDirection == WindDirection.Easterly
+                && _latestReading.Temperature > 20)
             {
                 return Outlook.Good;
             }
-            if (reading.WindDirection == WindDirection.Northerly)
+            if (_latestReading.WindDirection == WindDirection.Northerly)
             {
                 return Outlook.Cool;
             }
-            if (reading.WindDirection == WindDirection.Easterly
-                && reading.Temperature <= 20)
+            if (_latestReading.WindDirection == WindDirection.Easterly
+                && _latestReading.Temperature <= 20)
             {
                 return Outlook.Warm;
             }
-            if (reading.WindDirection == WindDirection.Westerly)
+            if (_latestReading.WindDirection == WindDirection.Westerly)
             {
                 return Outlook.Rainy;
             }
@@ -115,14 +81,9 @@ public class WeatherStation
 
     public State RunSelfTest()
     {
-        if (reading.Equals(new Reading()))
-        {
-            return State.Bad;
-        }
-        else
-        {
-            return State.Good;
-        }
+        return _latestReading.Equals(MissingReading)
+            ? State.Bad
+            : State.Good;
     }
 }
 
