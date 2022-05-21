@@ -2,30 +2,22 @@ using System;
 
 static class GameMaster
 {
-    public static string Describe(Character character)
-    {
-        throw new NotImplementedException("Please implement the (static) GameMaster.Describe(Character) method");
-    }
+    public static string Describe(Character character) =>
+        $"You're a level {character.Level} {character.Class} with {character.HitPoints} hit points.";
 
-    public static string Describe(Destination destination)
-    {
-        throw new NotImplementedException("Please implement the (static) GameMaster.Describe(Destination) method");
-    }
+    public static string Describe(Destination destination) =>
+        $"You've arrived at {destination.Name}, which has {destination.Inhabitants} inhabitants.";
 
-    public static string Describe(TravelMethod travelMethod)
-    {
-        throw new NotImplementedException("Please implement the (static) GameMaster.Describe(TravelMethod) method");
-    }
+    public static string Describe(TravelMethod travelMethod) =>
+        travelMethod switch
+        {
+            TravelMethod.Walking => "You're traveling to your destination by walking.",
+            TravelMethod.Horseback => "You're traveling to your destination on horseback.",
+            _ => throw new NotImplementedException(),
+        };
 
-    public static string Describe(Character character, Destination destination, TravelMethod travelMethod)
-    {
-        throw new NotImplementedException("Please implement the (static) GameMaster.Describe(Character, Destination, TravelMethod) method");
-    }
-
-    public static string Describe(Character character, Destination destination)
-    {
-        throw new NotImplementedException("Please implement the (static) GameMaster.Describe(Character, Destination) method");
-    }
+    public static string Describe(Character character, Destination destination, TravelMethod travelMethod = TravelMethod.Walking) =>
+        $"{Describe(character)} {Describe(travelMethod)} {Describe(destination)}";
 }
 
 class Character
