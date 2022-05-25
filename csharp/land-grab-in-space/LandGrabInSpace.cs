@@ -66,6 +66,25 @@ public struct Plot : IEquatable<Plot>
     public static bool operator ==(Plot left, Plot right) => left.Equals(right);
 
     public static bool operator !=(Plot left, Plot right) => !(left == right);
+
+    public double LongestSideLength()
+    {
+        Span<double> sides = stackalloc[] { A+B, B+C, C+D, D+A };
+        return GetMax(sides);
+    }
+
+    private static double GetMax(Span<double> values)
+    {
+        double maxValue = default;
+        foreach (double v in values)
+        {
+            if (v > maxValue)
+            {
+                maxValue = v;
+            }
+        }
+        return maxValue;
+    }
 }
 
 
@@ -95,41 +114,18 @@ public class ClaimsHandler
     public Plot GetClaimWithLongestSide()
     {
         Plot claimWithLongestSide = default;
-        double longestSide = default;
+        double claimLongestSide = default;
 
         foreach (var plot in _claims)
         {
-            double plotLongestSide = GetLongestSideLength(plot);
-            if (plotLongestSide > longestSide)
+            double plotLongestSide = plot.LongestSideLength();
+            if (plotLongestSide > claimLongestSide)
             {
                 claimWithLongestSide = plot;
-                longestSide = plotLongestSide;
+                claimLongestSide = plotLongestSide;
             }
         }
 
         return claimWithLongestSide;
-    }
-
-    private static double GetLongestSideLength(Plot plot)
-    {
-        double sideAB = plot.A + plot.B;
-        double sideBC = plot.B + plot.C;
-        double sideCD = plot.C + plot.D;
-        double sideDA = plot.D + plot.A;
-        Span<double> sides = stackalloc[] { sideAB, sideBC, sideCD, sideDA };
-        return GetMax(sides);
-    }
-
-    private static double GetMax(Span<double> values)
-    {
-        double maxValue = default;
-        foreach (double v in values)
-        {
-            if (v > maxValue)
-            {
-                maxValue = v;
-            }
-        }
-        return maxValue;
     }
 }
