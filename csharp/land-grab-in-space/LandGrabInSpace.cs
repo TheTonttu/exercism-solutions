@@ -32,8 +32,8 @@ public struct Coord : IEquatable<Coord>
     /// <returns>Distance between given coordinates.</returns>
     public static double operator +(Coord left, Coord right)
     {
-        double a2 = Math.Pow(left.X - left.Y, 2.0);
-        double b2 = Math.Pow(right.X - right.Y, 2.0);
+        double a2 = Math.Pow(left.X - right.X, 2.0);
+        double b2 = Math.Pow(left.Y - right.Y, 2.0);
         return Math.Sqrt(a2 + b2);
     }
 }
