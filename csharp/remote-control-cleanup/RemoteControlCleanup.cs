@@ -1,79 +1,110 @@
+using System;
+
 public class RemoteControlCar
 {
+    private Speed _currentSpeed;
+
     public string CurrentSponsor { get; private set; }
+    public ITelemetry Telemetry { get; }
 
-    private Speed currentSpeed;
-
-    // TODO encapsulate the methods suffixed with "_Telemetry" in their own class
-    // dropping the suffix from the method name
-    public void Calibrate_Telementry()
+    public RemoteControlCar()
     {
-
-    }
-
-    public bool SelfTest_Telemetry()
-    {
-        return true;
-    }
-
-    public void ShowSponsor_Telemetry(string sponsorName)
-    {
-        SetSponsor(sponsorName);
-    }
-
-    public void SetSpeed_Telemetry(decimal amount, string unitsString)
-    {
-        SpeedUnits speedUnits = SpeedUnits.MetersPerSecond;
-        if (unitsString == "cps")
-        {
-            speedUnits = SpeedUnits.CentimetersPerSecond;
-        }
-
-        SetSpeed(new Speed(amount, speedUnits));
+        Telemetry = new InternalTelemetry(this);
     }
 
     public string GetSpeed()
     {
-        return currentSpeed.ToString();
+        return _currentSpeed.ToString();
     }
 
     private void SetSponsor(string sponsorName)
     {
         CurrentSponsor = sponsorName;
-
     }
 
     private void SetSpeed(Speed speed)
     {
-        currentSpeed = speed;
-    }
-}
-
-public enum SpeedUnits
-{
-    MetersPerSecond,
-    CentimetersPerSecond
-}
-
-public struct Speed
-{
-    public decimal Amount { get; }
-    public SpeedUnits SpeedUnits { get; }
-
-    public Speed(decimal amount, SpeedUnits speedUnits)
-    {
-        Amount = amount;
-        SpeedUnits = speedUnits;
+        _currentSpeed = speed;
     }
 
-    public override string ToString()
+    private class InternalTelemetry : ITelemetry
     {
-        string unitsString = "meters per second";
-        if (SpeedUnits == SpeedUnits.CentimetersPerSecond)
+        private readonly RemoteControlCar _car;
+
+        public InternalTelemetry(RemoteControlCar car)
         {
-            unitsString = "centimeters per second";
+            _car = car;
         }
 
-        return Amount + " " + unitsString;
+        public void Calibrate()
+        {
+            // TODO: Implement calibration.
+        }
+
+        public bool SelfTest()
+        {
+            return true;
+        }
+
+        public void ShowSponsor(string sponsorName)
+        {
+            _car.SetSponsor(sponsorName);
+        }
+
+        public void SetSpeed(decimal amount, string unitsString)
+        {
+            SpeedUnits speedUnits = ChooseSpeedUnits(unitsString);
+            _car.SetSpeed(new Speed(amount, speedUnits));
+        }
+
+        private static SpeedUnits ChooseSpeedUnits(string unitsString)
+        {
+            return unitsString switch
+            {
+                "cps" => SpeedUnits.CentimetersPerSecond,
+                _ => SpeedUnits.MetersPerSecond,
+            };
+        }
     }
+
+    private enum SpeedUnits
+    {
+        MetersPerSecond,
+        CentimetersPerSecond
+    }
+
+    private readonly struct Speed
+    {
+        public decimal Amount { get; }
+        public SpeedUnits SpeedUnits { get; }
+
+        public Speed(decimal amount, SpeedUnits speedUnits)
+        {
+            Amount = amount;
+            SpeedUnits = speedUnits;
+        }
+
+        public override string ToString()
+        {
+            return $"{Amount} {FormatUnits(SpeedUnits)}";
+        }
+
+        private static string FormatUnits(SpeedUnits speedUnits)
+        {
+            return speedUnits switch
+            {
+                SpeedUnits.CentimetersPerSecond => "centimeters per second",
+                SpeedUnits.MetersPerSecond => "meters per second",
+                _ => speedUnits.ToString()
+            };
+        }
+    }
+}
+
+public interface ITelemetry
+{
+    void Calibrate();
+    bool SelfTest();
+    void SetSpeed(decimal amount, string unitsString);
+    void ShowSponsor(string sponsorName);
 }

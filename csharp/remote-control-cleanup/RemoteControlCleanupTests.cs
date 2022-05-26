@@ -23,3 +23,21 @@ public class RemoteControlCleanupTests
         Assert.Equal(expected, car.GetSpeed());
     }
 }
+
+public class RemoteControlCleanupAccessTests
+{
+    public void SpeedUnitsInaccessible()
+    {
+        //var speedUnits = RemoteControlCar.SpeedUnits.MetersPerSecond; // Compilation error
+    }
+
+    public void SpeedInaccessible()
+    {
+        //var speed = RemoteControlCar.Speed; // Compilation error
+    }
+
+    public void TelemetryImplementationInaccessible()
+    {
+        //var telemetry = new RemoteControlCar.InternalTelemetry(...); // Compilation error
+    }
+}
