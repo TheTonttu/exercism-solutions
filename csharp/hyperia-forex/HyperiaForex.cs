@@ -1,7 +1,9 @@
+using System;
+
 public struct CurrencyAmount
 {
-    private decimal amount;
-    private string currency;
+    private readonly decimal amount;
+    private readonly string currency;
 
     public CurrencyAmount(decimal amount, string currency)
     {
@@ -9,11 +11,82 @@ public struct CurrencyAmount
         this.currency = currency;
     }
 
-    // TODO: implement equality operators
+    public override bool Equals(object obj) => 
+        obj is CurrencyAmount other &&
+        this == other;
 
-    // TODO: implement comparison operators
+    public override int GetHashCode() => HashCode.Combine(amount, currency);
 
-    // TODO: implement arithmetic operators
+    public static bool operator ==(CurrencyAmount left, CurrencyAmount right)
+    {
+        GuardCurrency(left, right);
+        return left.amount == right.amount
+            && left.currency == right.currency;
+    }
 
-    // TODO: implement type conversion operators
+    public static bool operator !=(CurrencyAmount left, CurrencyAmount right) => !(left == right);
+
+    public static bool operator <(CurrencyAmount left, CurrencyAmount right)
+    {
+        GuardCurrency(left, right);
+        return left.amount < right.amount;
+    }
+
+    public static bool operator >(CurrencyAmount left, CurrencyAmount right)
+    {
+        GuardCurrency(left, right);
+        return left.amount > right.amount;
+    }
+
+    public static bool operator <=(CurrencyAmount left, CurrencyAmount right)
+    {
+        GuardCurrency(left, right);
+        return left.amount <= right.amount;
+    }
+
+    public static bool operator >=(CurrencyAmount left, CurrencyAmount right)
+    {
+        GuardCurrency(left, right);
+        return left.amount >= right.amount;
+    }
+
+    public static CurrencyAmount operator +(CurrencyAmount left, CurrencyAmount right)
+    {
+        GuardCurrency(left, right);
+        return new(left.amount + right.amount, left.currency);
+    }
+
+    public static CurrencyAmount operator -(CurrencyAmount left, CurrencyAmount right)
+    {
+        GuardCurrency(left, right);
+        return new(left.amount - right.amount, left.currency);
+    }
+
+    public static CurrencyAmount operator *(CurrencyAmount left, CurrencyAmount right)
+    {
+        GuardCurrency(left, right);
+        return new(left.amount * right.amount, left.currency);
+    }
+
+    public static CurrencyAmount operator /(CurrencyAmount left, CurrencyAmount right)
+    {
+        GuardCurrency(left, right);
+        return new(left.amount / right.amount, left.currency);
+    }
+
+    public static CurrencyAmount operator *(decimal left, CurrencyAmount right) => new(left * right.amount, right.currency);
+    public static CurrencyAmount operator *(CurrencyAmount left, decimal right) => new(left.amount * right, left.currency);
+    public static CurrencyAmount operator /(decimal left, CurrencyAmount right) => new(left / right.amount, right.currency);
+    public static CurrencyAmount operator /(CurrencyAmount left, decimal right) => new(left.amount / right, left.currency);
+
+    public static explicit operator double(CurrencyAmount currencyAmount) => (double)currencyAmount.amount;
+    public static implicit operator decimal(CurrencyAmount currencyAmount) => currencyAmount.amount;
+
+    private static void GuardCurrency(CurrencyAmount left, CurrencyAmount right)
+    {
+        if (left.currency != right.currency)
+        {
+            throw new ArgumentException("Currencies are different.");
+        }
+    }
 }
