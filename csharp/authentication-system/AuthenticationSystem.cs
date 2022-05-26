@@ -24,8 +24,7 @@ public class Authenticator
 
     public Identity Admin { get; }
 
-    // Changing return type to IReadOnlyDictionary return type would convey intent better but that would be a breaking change.
-    public IDictionary<string, Identity> GetDevelopers()
+    public IReadOnlyDictionary<string, Identity> GetDevelopers()
     {
         return new ReadOnlyDictionary<string, Identity>(_developers);
     }

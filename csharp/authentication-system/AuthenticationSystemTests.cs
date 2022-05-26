@@ -58,10 +58,10 @@ public class AuthenticationSystemTests
     public void CannotReplaceDevelopers()
     {
         var authenticator = new Authenticator(new Identity());
-        var readOnlyDevelopers = authenticator.GetDevelopers() as IReadOnlyDictionary<string, Identity>;
+        IReadOnlyDictionary<string, Identity> readOnlyDevelopers = authenticator.GetDevelopers();
         (string originalDevKey, _) = readOnlyDevelopers.First();
 
-        IDictionary<string, Identity> modifiableDevelopers = authenticator.GetDevelopers();
+        var modifiableDevelopers = authenticator.GetDevelopers() as IDictionary<string, Identity>;
         var replacementDev = new Identity() { Email = "replaced", EyeColor = "yes" };
 
         Action failingDevReplaceAttempt = () => modifiableDevelopers[originalDevKey] = replacementDev;
