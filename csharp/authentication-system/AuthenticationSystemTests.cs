@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using Exercism.Tests;
+using System.Linq;
+using System.Reflection;
 
 public class AuthenticationSystemTests
 {
@@ -24,4 +26,56 @@ public class AuthenticationSystemTests
         bool?[] expected = { true, true, true };
         Assert.Equal(expected, actual);
     }
+
+    #region Extra tests
+
+    [Fact]
+    public void IdentityIsReadOnly()
+    {
+        bool allIdentityPropertySettersAreInitOnly = typeof(Identity)
+            .GetProperties()
+            .All(p => IsPropertySetterInitOnly(p));
+
+        Assert.True(allIdentityPropertySettersAreInitOnly);
+    }
+
+    [Fact]
+    public void CannotModifyAdmin()
+    {
+        var adminProperty = typeof(Authenticator).GetProperty(nameof(Authenticator.Admin));
+
+        bool canSetAdmin = adminProperty.CanWrite;
+        bool adminPropertyReturnTypeIsIdentity = adminProperty
+            .GetGetMethod()
+            // Identity is readonly => admin is readonly
+            .ReturnType == typeof(Identity);
+
+        Assert.False(canSetAdmin);
+        Assert.True(adminPropertyReturnTypeIsIdentity);
+    }
+
+    [Fact]
+    public void CannotReplaceDevelopers()
+    {
+        var authenticator = new Authenticator(new Identity());
+        var readOnlyDevelopers = authenticator.GetDevelopers() as IReadOnlyDictionary<string, Identity>;
+        (string originalDevKey, _) = readOnlyDevelopers.First();
+
+        IDictionary<string, Identity> modifiableDevelopers = authenticator.GetDevelopers();
+        var replacementDev = new Identity() { Email = "replaced", EyeColor = "yes" };
+
+        Action failingDevReplaceAttempt = () => modifiableDevelopers[originalDevKey] = replacementDev;
+        Assert.Throws<NotSupportedException>(failingDevReplaceAttempt);
+    }
+
+    private static bool IsPropertySetterInitOnly(PropertyInfo property)
+    {
+        if (!property.CanWrite) { return false; }
+
+        var setMethod = property.SetMethod;
+        var requiredCustomModifiers = setMethod.ReturnParameter.GetRequiredCustomModifiers();
+        return requiredCustomModifiers.Contains(typeof(System.Runtime.CompilerServices.IsExternalInit));
+    }
+
+    #endregion
 }
