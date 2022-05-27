@@ -15,10 +15,8 @@ public static class RotationalCipher
             : new char[text.Length];
         for (int i = 0; i < rotatedChars.Length; i++)
         {
-            char currChar = text[i];
-            rotatedChars[i] = RotateLetter(currChar, shiftKey);
+            rotatedChars[i] = RotateLetter(text[i], shiftKey);
         }
-
         return new string(rotatedChars);
     }
 
