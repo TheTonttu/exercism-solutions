@@ -38,7 +38,7 @@ public static class RotationalCipher
             return c;
         }
 
-        char rotatedChar = (char)(letterOffset + (c - letterOffset + shiftKey) % ShiftLimit);
-        return rotatedChar;
+        char rotatedLetter = (char)(letterOffset + (c - letterOffset + shiftKey) % ShiftLimit);
+        return rotatedLetter;
     }
 }
