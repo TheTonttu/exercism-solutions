@@ -66,13 +66,15 @@ public class RotationalCipherTests
     #region Extra tests
 
     [Theory]
-    [InlineData(-1)]
-    [InlineData(27)]
-    [InlineData(int.MinValue)]
-    [InlineData(int.MaxValue)]
-    public void Rotate_ShouldThrowArgumentOutRangeException_WhenShiftKeyParameterIsOutOfRange(int invalidShiftKey)
+    [InlineData("abc", "bcd", 27)]
+    [InlineData("abc", "cde", 28)]
+    [InlineData("abc", "bcd", -1)]
+    [InlineData("abc", "bcd", -27)]
+    [InlineData("abc", "cde", -28)]
+    public void Rotate_ShouldWork_WhenShiftKeyIsOutOfRange(string text, string expectedRotatedText, int shiftKey)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => RotationalCipher.Rotate("does not matter", invalidShiftKey));
+        string actualRotatedText = RotationalCipher.Rotate(text, shiftKey);
+        Assert.Equal(expectedRotatedText, actualRotatedText);
     }
 
     #endregion Extra tests
