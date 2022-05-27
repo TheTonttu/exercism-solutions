@@ -10,8 +10,11 @@ public static class RotationalCipher
         if (NoRotation(shiftKey)) { return text; }
         GuardShift(shiftKey);
 
-        Span<char> rotatedChars = new char[text.Length];
-        for (int i = 0; i < text.Length; i++)
+        const int stackallocCharLimit = 1024/sizeof(char);
+        Span<char> rotatedChars = text.Length <= stackallocCharLimit
+            ? stackalloc char[text.Length]
+            : new char[text.Length];
+        for (int i = 0; i < rotatedChars.Length; i++)
         {
             char currChar = text[i];
             rotatedChars[i] = RotateChar(currChar, shiftKey);
@@ -29,11 +32,13 @@ public static class RotationalCipher
         if (c is >= 'a' and <= 'z')
         {
             normalizedChar = c;
-        } else if (c is >= 'A' and <= 'Z')
+        }
+        else if (c is >= 'A' and <= 'Z')
         {
             normalizedChar = char.ToLowerInvariant(c);
             isUpper = true;
-        } else
+        }
+        else
         {
             return c;
         }
@@ -49,7 +54,7 @@ public static class RotationalCipher
             : rotatedChar;
     }
 
-    private static void GuardShift(int shiftKey, [CallerArgumentExpression("shiftKey")]string paramName = "")
+    private static void GuardShift(int shiftKey, [CallerArgumentExpression("shiftKey")] string paramName = "")
     {
         if (!IsShiftInRange(shiftKey))
         {
