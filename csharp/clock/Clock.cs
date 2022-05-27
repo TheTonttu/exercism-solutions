@@ -2,9 +2,9 @@ using System;
 
 public class Clock : IEquatable<Clock>
 {
+    // Would otherwise use record and TimeOnly but that does not seem like the point of the exercise. :-P
+
     private const int MinutesInHour = 60;
-    private const int HoursInDay = 24;
-    private const int MinutesInDay = HoursInDay * MinutesInHour;
 
     public int Hours { get; }
     public int Minutes { get; }
@@ -41,6 +41,9 @@ public class Clock : IEquatable<Clock>
 
     private static int TotalMinutesInDay(int hours, int minutes)
     {
+        const int HoursInDay = 24;
+        const int MinutesInDay = HoursInDay * MinutesInHour;
+
         int totalMinutesInDay = ((hours * MinutesInHour) + minutes) % MinutesInDay;
         return totalMinutesInDay < 0
             ? totalMinutesInDay + MinutesInDay
