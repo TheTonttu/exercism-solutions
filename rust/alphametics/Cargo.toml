@@ -3,6 +3,11 @@ edition = "2018"
 name = "alphametics"
 version = "1.3.0"
 
+# Run tests in release build so the 💩 code does not timeout when exercism.io runs tests.
+[profile.test]
+opt-level = 3
+debug = false
+
 [dependencies]
 itertools = "0.10.0"
 if_chain = "1.0.1"
