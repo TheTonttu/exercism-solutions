@@ -11,28 +11,7 @@ public static class TelemetryBuffer
     public static byte[] ToBuffer(long reading)
     {
         var buffer = new byte[9];
-        Type fittedType = DetermineFittedWriteType(reading);
-
-        if (fittedType == typeof(Int64))
-        {
-            WriteReading<Int64>(buffer, reading);
-        }
-        else if (fittedType == typeof(UInt32))
-        {
-            WriteReading<UInt32>(buffer, reading);
-        }
-        else if (fittedType == typeof(Int32))
-        {
-            WriteReading<Int32>(buffer, reading);
-        }
-        else if (fittedType == typeof(UInt16))
-        {
-            WriteReading<UInt16>(buffer, reading);
-        }
-        else
-        {
-            WriteReading<Int16>(buffer, reading);
-        }
+        WriteReading(buffer, reading);
         return buffer;
     }
 
@@ -45,42 +24,31 @@ public static class TelemetryBuffer
         return ComposeReading(readingData, isSigned);
     }
 
-    private static Type DetermineFittedWriteType(long reading) =>
-        reading switch
-        {
-            > UInt32.MaxValue or < Int32.MinValue => typeof(Int64),
-            > Int32.MaxValue => typeof(UInt32),
-            > UInt16.MaxValue or < Int16.MinValue => typeof(Int32),
-            > short.MaxValue or >= 0 => typeof(UInt16),
-            _ => typeof(Int16),
-        };
-
-    private static void WriteReading<T>(Span<byte> destination, long reading)
+    private static void WriteReading(Span<byte> destination, long reading)
     {
         ref byte prefixWriteLocation = ref destination[PrefixByteIndex];
         var dataWriteLocation = destination[ReadingDataStartIndex..];
-        Type t = typeof(T);
-        if (t == typeof(Int64))
+        if (reading is > UInt32.MaxValue or < Int32.MinValue)
         {
             prefixWriteLocation = SignedPrefixIdentifier - sizeof(Int64);
             BinaryPrimitives.WriteInt64LittleEndian(dataWriteLocation, reading);
         }
-        else if (t == typeof(UInt32))
+        else if (reading > Int32.MaxValue)
         {
             prefixWriteLocation = sizeof(UInt32);
             BinaryPrimitives.WriteUInt32LittleEndian(dataWriteLocation, (UInt32)reading);
         }
-        else if (t == typeof(Int32))
+        else if (reading is > UInt16.MaxValue or < Int16.MinValue)
         {
             prefixWriteLocation = SignedPrefixIdentifier - sizeof(Int32);
             BinaryPrimitives.WriteInt32LittleEndian(dataWriteLocation, (Int32)reading);
         }
-        else if (t == typeof(UInt16))
+        else if (reading is > Int16.MaxValue or >= 0)
         {
             prefixWriteLocation = sizeof(UInt16);
             BinaryPrimitives.WriteUInt16LittleEndian(dataWriteLocation, (UInt16)reading);
         }
-        else if (t == typeof(Int16))
+        else
         {
             prefixWriteLocation = SignedPrefixIdentifier - sizeof(Int16);
             BinaryPrimitives.WriteInt16LittleEndian(dataWriteLocation, (Int16)reading);
