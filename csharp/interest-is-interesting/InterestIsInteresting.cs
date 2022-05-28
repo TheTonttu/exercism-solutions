@@ -1,27 +1,16 @@
-using System;
-
 static class SavingsAccount
 {
-    public static float InterestRate(decimal balance)
-    {
-        return balance switch
+    public static float InterestRate(decimal balance) =>
+        balance switch
         {
             >= 5000 => 2.475f,
             >= 1000 => 1.621f,
             >= 0 => 0.5f,
-            < 0 => -3.213f,
+            < 0 => 3.213f,
         };
-    }
 
-    public static decimal Interest(decimal balance)
-    {
-        return balance * AbsoluteInterestPercentage(balance);
-    }
-
-    public static decimal AnnualBalanceUpdate(decimal balance)
-    {
-        return balance + Interest(balance);
-    }
+    public static decimal Interest(decimal balance) => balance * InterestRatePercentage(balance);
+    public static decimal AnnualBalanceUpdate(decimal balance) => balance + Interest(balance);
 
     public static int YearsBeforeDesiredBalance(decimal balance, decimal targetBalance)
     {
@@ -34,8 +23,5 @@ static class SavingsAccount
         return years;
     }
 
-    private static decimal AbsoluteInterestPercentage(decimal balance)
-    {
-        return (decimal)Math.Abs(InterestRate(balance) / 100.0f);
-    }
+    private static decimal InterestRatePercentage(decimal balance) => (decimal)(InterestRate(balance) / 100.0f);
 }
