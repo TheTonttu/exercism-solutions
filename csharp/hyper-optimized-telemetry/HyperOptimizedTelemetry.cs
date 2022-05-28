@@ -17,11 +17,10 @@ public static class TelemetryBuffer
 
     public static long FromBuffer(byte[] buffer)
     {
-        byte prefix = buffer[PrefixByteIndex];
-        (bool isSigned, byte byteCount) = ParsePrefix(prefix);
-        if (byteCount > MaxByteCount) { return default; }
-        var readingData = buffer.AsSpan(ReadingDataStartIndex, length: byteCount);
-        return ComposeReading(readingData, isSigned);
+        var prefix = (sbyte)buffer[PrefixByteIndex];
+        if (!IsValidPrefix(prefix)) { return default; }
+        var readingData = buffer.AsSpan(ReadingDataStartIndex..);
+        return ReadReading(readingData, prefix);
     }
 
     private static void WriteReading(Span<byte> destination, long reading)
@@ -57,26 +56,14 @@ public static class TelemetryBuffer
 
     private static byte SignedPrefix(byte unsignedPrefix) => (byte)(SignedPrefixIdentifier - unsignedPrefix);
 
-    private static long ComposeReading(ReadOnlySpan<byte> readingData, bool isSigned) =>
-        (isSigned, readingData.Length) switch
+    private static bool IsValidPrefix(sbyte prefix) => prefix is (<= MaxByteCount and >= (-MaxByteCount));
+
+    private static long ReadReading(ReadOnlySpan<byte> readingData, sbyte prefix) =>
+        prefix switch
         {
-            (true, sizeof(Int64)) => BinaryPrimitives.ReadInt64LittleEndian(readingData),
-            (true, sizeof(Int32)) => BinaryPrimitives.ReadInt32LittleEndian(readingData),
-            (true, sizeof(Int16)) => BinaryPrimitives.ReadInt16LittleEndian(readingData),
-            (false, sizeof(UInt32)) => BinaryPrimitives.ReadUInt32LittleEndian(readingData),
-            (false, sizeof(UInt16)) => BinaryPrimitives.ReadUInt16LittleEndian(readingData),
+            (-8) or 4 or 2 => BinaryPrimitives.ReadInt64LittleEndian(readingData),
+            (-4) => BinaryPrimitives.ReadInt32LittleEndian(readingData),
+            (-2) => BinaryPrimitives.ReadInt16LittleEndian(readingData),
             _ => 0
         };
-
-    private static (bool IsSigned, byte ByteCount) ParsePrefix(byte prefix)
-    {
-        bool isSigned = prefix > MaxByteCount;
-
-        byte byteCount =
-            (byte)(isSigned
-                ? SignedPrefixIdentifier - prefix
-                : prefix);
-
-        return (isSigned, byteCount);
-    }
 }
