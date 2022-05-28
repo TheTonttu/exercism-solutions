@@ -10,6 +10,19 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
         .filter(|element| element.chars().any(|c| c.is_alphabetic()))
         .collect();
 
+    if is_unsolvable(&words) {
+        return None;
+    }
+
+    let mut preassigned_designations: HashMap<char, u8> = HashMap::new();
+
+    let sum_word = words.last().unwrap();
+    let addends = &words[..words.len() - 1];
+    // If sum is longer than any of the addends then the first letter of the sum is 1 from carry.
+    if sum_word.len() > addends.iter().map(|w| w.len()).max().unwrap() {
+        preassigned_designations.insert(sum_word.chars().nth(0).unwrap(), 1);
+    }
+
     // Gather characters that cannot be zero because they are in front of a word.
     let non_zero_chars: HashSet<char> = words
         .iter()
@@ -46,10 +59,14 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             }
         }
 
-        // Skip permutation if any non zero char is designated as zero
         if char_digit_designations
             .iter()
-            .any(|(c, n)| *n == 0 && non_zero_chars.contains(c))
+            .any(|(c, n)| {
+                // Skip permutation if any non zero char is designated as zero
+                *n == 0 && non_zero_chars.contains(c)
+                // or preassigned designations do not match
+                || preassigned_designations.get(c).map_or(false, |dn| n != dn)
+            })
         {
             continue;
         }
@@ -73,6 +90,15 @@ pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
             return Some(char_digit_designations);
         }
     }
-
     None
+}
+
+fn is_unsolvable(words: &Vec<&str>) -> bool {
+    match &words[..] {
+        // A == B
+        [first, second] => first != second,
+        // AAA + BB == CC
+        [addends @ .., sum] => addends.iter().any(|w| w.len() > sum.len()),
+        _ => false,
+    }
 }
