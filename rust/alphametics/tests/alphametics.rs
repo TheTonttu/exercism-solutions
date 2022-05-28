@@ -24,6 +24,12 @@ fn test_leading_zero_solution_is_invalid() {
 }
 
 #[test]
+fn test_sum_must_be_wide_enough() {
+    let answer = alphametics::solve("ABC + DEF == GH");
+    assert_eq!(answer, None);
+}
+
+#[test]
 fn puzzle_with_two_digits_final_carry() {
     assert_alphametic_solution_eq(
         "A + A + A + A + A + A + A + A + A + A + A + B == BCC",
