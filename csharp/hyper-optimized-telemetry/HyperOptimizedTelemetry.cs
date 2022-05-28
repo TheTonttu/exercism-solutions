@@ -1,4 +1,5 @@
 using System;
+using System.Buffers.Binary;
 
 public static class TelemetryBuffer
 {
@@ -8,12 +9,29 @@ public static class TelemetryBuffer
 
     public static byte[] ToBuffer(long reading)
     {
-        (bool isSigned, byte[] readingBytes) = ParseSignAndBytes(reading);
-
         var buffer = new byte[9];
-        buffer[PrefixByteIndex] = ComposePrefix(isSigned, readingBytes.Length);
-        readingBytes.CopyTo(buffer, DataSectionStartIndex);
+        Type fittedType = DetermineFittedWriteType(reading);
 
+        if (fittedType == typeof(Int64))
+        {
+            WriteReading<Int64>(buffer, reading);
+        }
+        else if (fittedType == typeof(UInt32))
+        {
+            WriteReading<UInt32>(buffer, reading);
+        }
+        else if (fittedType == typeof(Int32))
+        {
+            WriteReading<Int32>(buffer, reading);
+        }
+        else if (fittedType == typeof(UInt16))
+        {
+            WriteReading<UInt16>(buffer, reading);
+        }
+        else
+        {
+            WriteReading<Int16>(buffer, reading);
+        }
         return buffer;
     }
 
@@ -25,20 +43,47 @@ public static class TelemetryBuffer
         return ComposeReading(buffer, isSigned, byteCount);
     }
 
-    private static (bool IsSigned, byte[] Bytes) ParseSignAndBytes(long reading) =>
-        reading switch
-        {
-            > UInt32.MaxValue or < Int32.MinValue => (true, BitConverter.GetBytes(reading)),
-            > Int32.MaxValue => (false, BitConverter.GetBytes(Convert.ToUInt32(reading))),
-            > UInt16.MaxValue or < Int16.MinValue => (true, BitConverter.GetBytes(Convert.ToInt32(reading))),
-            > Int16.MaxValue or >= 0 => (false, BitConverter.GetBytes(Convert.ToUInt16(reading))),
-            _ => (true, BitConverter.GetBytes(Convert.ToInt16(reading))),
-        };
+    private static Type DetermineFittedWriteType(long reading) =>
+    reading switch
+    {
+        > UInt32.MaxValue or < Int32.MinValue => typeof(Int64),
+        > Int32.MaxValue => typeof(UInt32),
+        > UInt16.MaxValue or < Int16.MinValue => typeof(Int32),
+        > short.MaxValue or >= 0 => typeof(UInt16),
+        _ => typeof(Int16),
+    };
 
-    private static byte ComposePrefix(bool isSigned, int length) =>
-        (byte)(isSigned
-            ? SignedPrefixIdentifier - length
-            : length);
+    private static void WriteReading<T>(Span<byte> destination, long reading)
+    {
+        ref byte prefixWriteLocation = ref destination[PrefixByteIndex];
+        var dataWriteLocation = destination[DataSectionStartIndex..];
+        Type t = typeof(T);
+        if (t == typeof(Int64))
+        {
+            prefixWriteLocation = SignedPrefixIdentifier - sizeof(Int64);
+            BinaryPrimitives.WriteInt64LittleEndian(dataWriteLocation, reading);
+        }
+        else if (t == typeof(UInt32))
+        {
+            prefixWriteLocation = sizeof(UInt32);
+            BinaryPrimitives.WriteUInt32LittleEndian(dataWriteLocation, (UInt32)reading);
+        }
+        else if (t == typeof(Int32))
+        {
+            prefixWriteLocation = SignedPrefixIdentifier - sizeof(Int32);
+            BinaryPrimitives.WriteInt32LittleEndian(dataWriteLocation, (Int32)reading);
+        }
+        else if (t == typeof(UInt16))
+        {
+            prefixWriteLocation = sizeof(UInt16);
+            BinaryPrimitives.WriteUInt16LittleEndian(dataWriteLocation, (UInt16)reading);
+        }
+        else if (t == typeof(Int16))
+        {
+            prefixWriteLocation = SignedPrefixIdentifier - sizeof(Int16);
+            BinaryPrimitives.WriteInt16LittleEndian(dataWriteLocation, (Int16)reading);
+        }
+    }
 
     private static long ComposeReading(byte[] buffer, bool isSigned, int byteCount) =>
         (isSigned, byteCount) switch
