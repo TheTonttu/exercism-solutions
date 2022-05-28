@@ -39,7 +39,6 @@ public static class TelemetryBuffer
     {
         byte prefix = buffer[PrefixByteIndex];
         (bool isSigned, byte byteCount) = ParsePrefix(prefix);
-
         return ComposeReading(buffer, isSigned, byteCount);
     }
 
@@ -88,17 +87,17 @@ public static class TelemetryBuffer
     private static long ComposeReading(byte[] buffer, bool isSigned, int byteCount) =>
         (isSigned, byteCount) switch
         {
-            (true, 8) => BitConverter.ToInt64(buffer, DataSectionStartIndex),
-            (true, 4) => BitConverter.ToInt32(buffer, DataSectionStartIndex),
-            (true, 2) => BitConverter.ToInt16(buffer, DataSectionStartIndex),
-            (false, 4) => BitConverter.ToUInt32(buffer, DataSectionStartIndex),
-            (false, 2) => BitConverter.ToUInt16(buffer, DataSectionStartIndex),
+            (true, sizeof(Int64)) => BitConverter.ToInt64(buffer, DataSectionStartIndex),
+            (true, sizeof(Int32)) => BitConverter.ToInt32(buffer, DataSectionStartIndex),
+            (true, sizeof(Int16)) => BitConverter.ToInt16(buffer, DataSectionStartIndex),
+            (false, sizeof(UInt32)) => BitConverter.ToUInt32(buffer, DataSectionStartIndex),
+            (false, sizeof(UInt16)) => BitConverter.ToUInt16(buffer, DataSectionStartIndex),
             _ => 0
         };
 
     private static (bool IsSigned, byte ByteCount) ParsePrefix(byte prefix)
     {
-        const int MaxByteCount = 8;
+        const int MaxByteCount = sizeof(Int64);
         bool isSigned = prefix > MaxByteCount;
 
         byte byteCount =
