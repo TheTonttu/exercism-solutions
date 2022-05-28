@@ -30,7 +30,7 @@ public static class TelemetryBuffer
         var dataWriteLocation = destination[ReadingDataStartIndex..];
         if (reading is > UInt32.MaxValue or < Int32.MinValue)
         {
-            prefixWriteLocation = SignedPrefixIdentifier - sizeof(Int64);
+            prefixWriteLocation = SignedPrefix(sizeof(Int64));
             BinaryPrimitives.WriteInt64LittleEndian(dataWriteLocation, reading);
         }
         else if (reading > Int32.MaxValue)
@@ -40,7 +40,7 @@ public static class TelemetryBuffer
         }
         else if (reading is > UInt16.MaxValue or < Int16.MinValue)
         {
-            prefixWriteLocation = SignedPrefixIdentifier - sizeof(Int32);
+            prefixWriteLocation = SignedPrefix(sizeof(Int32));
             BinaryPrimitives.WriteInt32LittleEndian(dataWriteLocation, (Int32)reading);
         }
         else if (reading is > Int16.MaxValue or >= 0)
@@ -50,10 +50,12 @@ public static class TelemetryBuffer
         }
         else
         {
-            prefixWriteLocation = SignedPrefixIdentifier - sizeof(Int16);
+            prefixWriteLocation = SignedPrefix(sizeof(Int16));
             BinaryPrimitives.WriteInt16LittleEndian(dataWriteLocation, (Int16)reading);
         }
     }
+
+    private static byte SignedPrefix(byte unsignedPrefix) => (byte)(SignedPrefixIdentifier - unsignedPrefix);
 
     private static long ComposeReading(ReadOnlySpan<byte> readingData, bool isSigned) =>
         (isSigned, readingData.Length) switch
