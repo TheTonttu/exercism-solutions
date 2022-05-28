@@ -31,7 +31,7 @@ public static class TelemetryBuffer
             > UInt32.MaxValue or < Int32.MinValue => (true, BitConverter.GetBytes(reading)),
             > Int32.MaxValue => (false, BitConverter.GetBytes(Convert.ToUInt32(reading))),
             > UInt16.MaxValue or < Int16.MinValue => (true, BitConverter.GetBytes(Convert.ToInt32(reading))),
-            > Int16.MaxValue => (false, BitConverter.GetBytes(Convert.ToUInt16(reading))),
+            > Int16.MaxValue or >= 0 => (false, BitConverter.GetBytes(Convert.ToUInt16(reading))),
             _ => (true, BitConverter.GetBytes(Convert.ToInt16(reading))),
         };
 
