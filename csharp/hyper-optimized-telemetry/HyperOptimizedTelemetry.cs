@@ -5,7 +5,8 @@ public static class TelemetryBuffer
 {
     private const int PrefixByteIndex = 0;
     private const short SignedPrefixIdentifier = 256;
-    private const int DataSectionStartIndex = 1;
+    private const int ReadingDataStartIndex = 1;
+    private const int MaxByteCount = sizeof(Int64);
 
     public static byte[] ToBuffer(long reading)
     {
@@ -39,23 +40,25 @@ public static class TelemetryBuffer
     {
         byte prefix = buffer[PrefixByteIndex];
         (bool isSigned, byte byteCount) = ParsePrefix(prefix);
-        return ComposeReading(buffer, isSigned, byteCount);
+        if (byteCount > MaxByteCount) { return default; }
+        var readingData = buffer.AsSpan(ReadingDataStartIndex, length: byteCount);
+        return ComposeReading(readingData, isSigned);
     }
 
     private static Type DetermineFittedWriteType(long reading) =>
-    reading switch
-    {
-        > UInt32.MaxValue or < Int32.MinValue => typeof(Int64),
-        > Int32.MaxValue => typeof(UInt32),
-        > UInt16.MaxValue or < Int16.MinValue => typeof(Int32),
-        > short.MaxValue or >= 0 => typeof(UInt16),
-        _ => typeof(Int16),
-    };
+        reading switch
+        {
+            > UInt32.MaxValue or < Int32.MinValue => typeof(Int64),
+            > Int32.MaxValue => typeof(UInt32),
+            > UInt16.MaxValue or < Int16.MinValue => typeof(Int32),
+            > short.MaxValue or >= 0 => typeof(UInt16),
+            _ => typeof(Int16),
+        };
 
     private static void WriteReading<T>(Span<byte> destination, long reading)
     {
         ref byte prefixWriteLocation = ref destination[PrefixByteIndex];
-        var dataWriteLocation = destination[DataSectionStartIndex..];
+        var dataWriteLocation = destination[ReadingDataStartIndex..];
         Type t = typeof(T);
         if (t == typeof(Int64))
         {
@@ -84,20 +87,19 @@ public static class TelemetryBuffer
         }
     }
 
-    private static long ComposeReading(byte[] buffer, bool isSigned, int byteCount) =>
-        (isSigned, byteCount) switch
+    private static long ComposeReading(ReadOnlySpan<byte> readingData, bool isSigned) =>
+        (isSigned, readingData.Length) switch
         {
-            (true, sizeof(Int64)) => BitConverter.ToInt64(buffer, DataSectionStartIndex),
-            (true, sizeof(Int32)) => BitConverter.ToInt32(buffer, DataSectionStartIndex),
-            (true, sizeof(Int16)) => BitConverter.ToInt16(buffer, DataSectionStartIndex),
-            (false, sizeof(UInt32)) => BitConverter.ToUInt32(buffer, DataSectionStartIndex),
-            (false, sizeof(UInt16)) => BitConverter.ToUInt16(buffer, DataSectionStartIndex),
+            (true, sizeof(Int64)) => BinaryPrimitives.ReadInt64LittleEndian(readingData),
+            (true, sizeof(Int32)) => BinaryPrimitives.ReadInt32LittleEndian(readingData),
+            (true, sizeof(Int16)) => BinaryPrimitives.ReadInt16LittleEndian(readingData),
+            (false, sizeof(UInt32)) => BinaryPrimitives.ReadUInt32LittleEndian(readingData),
+            (false, sizeof(UInt16)) => BinaryPrimitives.ReadUInt16LittleEndian(readingData),
             _ => 0
         };
 
     private static (bool IsSigned, byte ByteCount) ParsePrefix(byte prefix)
     {
-        const int MaxByteCount = sizeof(Int64);
         bool isSigned = prefix > MaxByteCount;
 
         byte byteCount =
