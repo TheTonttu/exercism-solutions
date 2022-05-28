@@ -16,8 +16,7 @@ class RemoteControlCar
         _batteryDrain = batteryDrain;
     }
 
-    public bool BatteryDrained() => _batteryLevel <= 0;
-
+    public bool BatteryDrained() => _batteryLevel < _batteryDrain;
     public int DistanceDriven() => _distanceDriven;
 
     public void Drive()
@@ -40,14 +39,12 @@ class RaceTrack
         _distance = distance;
     }
 
-    public bool CarCanFinish(RemoteControlCar car)
+    public bool TryFinishTrack(RemoteControlCar car)
     {
-        while (car.DistanceDriven() < _distance)
+        while (car.DistanceDriven() < _distance && !car.BatteryDrained())
         {
-            if (car.BatteryDrained()) { return false; }
-
             car.Drive();
         }
-        return true;
+        return car.DistanceDriven() >= _distance;
     }
 }
