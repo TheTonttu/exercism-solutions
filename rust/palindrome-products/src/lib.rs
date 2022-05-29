@@ -93,8 +93,5 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
         .take(3)
         .max();
 
-    match (min_palindrome, max_palindrome) {
-        (Some(min), Some(max)) => Some((min, max)),
-        _ => None,
-    }
+    min_palindrome.and_then(|min| max_palindrome.map(|max| (min, max)))
 }
