@@ -7,10 +7,8 @@ pub struct FactorPairGenerator {
 
 impl FactorPairGenerator {
     pub fn new(start: u64, end: u64) -> Self {
-        let step = if start > end { -1 } else { 1 };
-
         Self {
-            step,
+            step: if start > end { -1 } else { 1 },
             start,
             end,
             current: None,
@@ -24,7 +22,7 @@ impl Iterator for FactorPairGenerator {
     fn next(&mut self) -> Option<Self::Item> {
         match self.current {
             Some(pair) => match pair {
-                (a, b) if a == self.end && b == self.end => None,
+                end if end == (self.end, self.end) => None,
                 (a, b) if b == self.end => {
                     self.current = Some(((a as i128 + self.step) as u64, self.start));
                     self.current
