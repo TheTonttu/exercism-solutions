@@ -51,7 +51,7 @@ pub struct Palindrome(u64);
 impl Palindrome {
     /// Create a `Palindrome` only if `value` is in fact a palindrome when represented in base ten. Otherwise, `None`.
     pub fn new(value: u64) -> Option<Palindrome> {
-        if is_palindrome_number(value) {
+        if Self::is_palindrome(value) {
             Some(Self(value))
         } else {
             None
@@ -61,6 +61,17 @@ impl Palindrome {
     /// Get the value of this palindrome.
     pub fn into_inner(self) -> u64 {
         self.0
+    }
+
+    fn is_palindrome(number: u64) -> bool {
+        let mut reminder = number;
+        let mut reversed = 0;
+
+        while reminder != 0 {
+            reversed = reversed * 10 + reminder % 10;
+            reminder /= 10;
+        }
+        number == reversed
     }
 }
 
@@ -87,15 +98,4 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
         (Some(min), Some(max)) => Some((min, max)),
         _ => None,
     }
-}
-
-fn is_palindrome_number(number: u64) -> bool {
-    let mut reminder = number;
-    let mut reversed = 0;
-
-    while reminder != 0 {
-        reversed = reversed * 10 + reminder % 10;
-        reminder /= 10;
-    }
-    number == reversed
 }
