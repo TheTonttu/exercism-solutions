@@ -14,29 +14,30 @@ impl FactorPairGenerator {
             current: None,
         }
     }
+
+    fn next_pair(&self) -> Option<(u64, u64)> {
+        match self.current {
+            Some(pair) => match pair {
+                end if end == (self.end, self.end) => None,
+                (a, b) if b == self.end => Some(((a as i128 + self.step) as u64, self.start)),
+                (a, b) => Some((a, (b as i128 + self.step) as u64)),
+            },
+            // Init
+            None => Some((self.start, self.start)),
+        }
+    }
 }
 
 impl Iterator for FactorPairGenerator {
     type Item = (u64, u64);
 
     fn next(&mut self) -> Option<Self::Item> {
-        match self.current {
-            Some(pair) => match pair {
-                end if end == (self.end, self.end) => None,
-                (a, b) if b == self.end => {
-                    self.current = Some(((a as i128 + self.step) as u64, self.start));
-                    self.current
-                }
-                (a, b) => {
-                    self.current = Some((a, (b as i128 + self.step) as u64));
-                    self.current
-                }
-            },
-            // Init
-            None => {
-                self.current = Some((self.start, self.start));
+        match self.next_pair() {
+            Some(pair) => {
+                self.current.replace(pair);
                 self.current
             }
+            _ => None,
         }
     }
 }
@@ -81,11 +82,9 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
     }
 
     let mut min_gen = FactorPairGenerator::new(min, max);
-
     let min_palindrome = min_gen.find_map(|(a, b)| Palindrome::new(a * b));
 
     let max_gen = FactorPairGenerator::new(max, min);
-
     let max_palindrome = max_gen
         .filter_map(|(a, b)| Palindrome::new(a * b))
         // HACK: max -> min palindromic products are not generated in largest first order so collect couple values first and then take the largest from them.
