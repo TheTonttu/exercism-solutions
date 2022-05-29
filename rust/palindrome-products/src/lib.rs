@@ -41,22 +41,26 @@ impl Iterator for FactorPairGenerator {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Palindrome {
-    value: u64,
-}
+/// `Palindrome` is a newtype which only exists when the contained value is a palindrome number in base ten.
+///
+/// A struct with a single field which is used to constrain behavior like this is called a "newtype", and its use is
+/// often referred to as the "newtype pattern". This is a fairly common pattern in Rust.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Palindrome(u64);
 
 impl Palindrome {
-    pub fn new(a: u64, b: u64) -> Palindrome {
-        Self { value: a * b }
+    /// Create a `Palindrome` only if `value` is in fact a palindrome when represented in base ten. Otherwise, `None`.
+    pub fn new(value: u64) -> Option<Palindrome> {
+        if is_palindrome_number(value) {
+            Some(Self(value))
+        } else {
+            None
+        }
     }
 
-    pub fn value(&self) -> u64 {
-        self.value
-    }
-
-    pub fn insert(&mut self, a: u64, b: u64) {
-        self.value = a * b;
+    /// Get the value of this palindrome.
+    pub fn into_inner(self) -> u64 {
+        self.0
     }
 }
 
@@ -68,12 +72,12 @@ pub fn palindrome_products(min: u64, max: u64) -> Option<(Palindrome, Palindrome
     let mut min_gen = FactorPairGenerator::new(min, max);
 
     let min_pal =
-        min_gen.find_map(|(a, b)| is_palindrome_number(a * b).then(|| Palindrome::new(a, b)));
+        min_gen.find_map(|(a, b)| Palindrome::new(a * b));
 
     let max_gen = FactorPairGenerator::new(max, min);
 
     let max_pal = max_gen
-        .filter_map(|(a, b)| is_palindrome_number(a * b).then(|| Palindrome::new(a, b)))
+        .filter_map(|(a, b)| Palindrome::new(a * b))
         // HACK: max -> min palindromic products are not generated in largest first order so collect couple values first and then take the largest from them.
         // Collecting 3 is enough to pass the unit tests but might need to increase the number for other scenarios.
         .take(3)
@@ -93,6 +97,5 @@ fn is_palindrome_number(number: u64) -> bool {
         reversed = reversed * 10 + reminder % 10;
         reminder /= 10;
     }
-
     number == reversed
 }
