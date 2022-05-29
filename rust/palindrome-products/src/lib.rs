@@ -23,15 +23,17 @@ impl Iterator for FactorPairGenerator {
 
     fn next(&mut self) -> Option<Self::Item> {
         match self.current {
-            Some((a, b)) if a == self.end && b == self.end => None,
-            Some((a, b)) if b == self.end => {
-                self.current = Some(((a as i128 + self.step) as u64, self.start));
-                self.current
-            }
-            Some((a, b)) => {
-                self.current = Some((a, (b as i128 + self.step) as u64));
-                self.current
-            }
+            Some(pair) => match pair {
+                (a, b) if a == self.end && b == self.end => None,
+                (a, b) if b == self.end => {
+                    self.current = Some(((a as i128 + self.step) as u64, self.start));
+                    self.current
+                }
+                (a, b) => {
+                    self.current = Some((a, (b as i128 + self.step) as u64));
+                    self.current
+                }
+            },
             // Init
             None => {
                 self.current = Some((self.start, self.start));
