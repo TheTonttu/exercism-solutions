@@ -26,6 +26,17 @@ public static class Bob
     }
 
     private static bool Question(string statement) => statement.AsSpan().Trim().EndsWith("?");
-    private static bool Yelling(string statement) => statement.Any(c => char.IsUpper(c)) && statement.All(c => !char.IsLetter(c) || char.IsUpper(c));
     private static bool Blank(string statement) => statement is not null && string.IsNullOrWhiteSpace(statement);
+
+    private static bool Yelling(string statement)
+    {
+        bool hasUpperLetters = false;
+        foreach (var c in statement)
+        {
+            if (!char.IsLetter(c)) { continue; }
+            if (char.IsLower(c)) { return false; }
+            hasUpperLetters = true;
+        }
+        return hasUpperLetters;
+    }
 }
