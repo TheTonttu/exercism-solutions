@@ -1,34 +1,35 @@
 using System;
-using System.Linq;
 
 public static class Bob
 {
     public static string Response(string statement)
     {
-        if (Question(statement))
+        var trimmedStatement = statement.AsSpan().Trim();
+
+        if (Blank(trimmedStatement))
         {
-            return Yelling(statement)
+            return "Fine. Be that way!";
+        }
+
+        if (Question(trimmedStatement))
+        {
+            return Yelling(trimmedStatement)
                 ? "Calm down, I know what I'm doing!"
                 : "Sure.";
         }
 
-        if (Yelling(statement))
+        if (Yelling(trimmedStatement))
         {
             return "Whoa, chill out!";
-        }
-
-        if (Blank(statement))
-        {
-            return "Fine. Be that way!";
         }
 
         return "Whatever.";
     }
 
-    private static bool Question(string statement) => statement.AsSpan().Trim().EndsWith("?");
-    private static bool Blank(string statement) => statement is not null && string.IsNullOrWhiteSpace(statement);
+    private static bool Blank(ReadOnlySpan<char> statement) => statement.IsEmpty;
+    private static bool Question(ReadOnlySpan<char> statement) => statement.EndsWith("?");
 
-    private static bool Yelling(string statement)
+    private static bool Yelling(ReadOnlySpan<char> statement)
     {
         bool hasUpperLetters = false;
         foreach (var c in statement)

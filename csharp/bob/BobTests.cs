@@ -151,4 +151,14 @@ public class BobTests
     {
         Assert.Equal("Whatever.", Bob.Response("This is a statement ending with whitespace      "));
     }
+
+    #region Extra tests
+
+    [Fact]
+    public void Response_ShouldBeNullSafe()
+    {
+        Assert.Equal("Fine. Be that way!", Bob.Response(null));
+    }
+
+    #endregion Extra tests
 }
