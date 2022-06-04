@@ -20,17 +20,17 @@ public class SpiralMatrix
         {
             spiral[position.X, position.Y] = value++;
 
-            var nextMove = position.Move(direction);
+            var nextPos = position.Move(direction);
             while (
                 // Overboard
-                (nextMove.X < 0 || nextMove.X >= width || nextMove.Y < 0 || nextMove.Y >= height)
+                (nextPos.X < 0 || nextPos.X >= width || nextPos.Y < 0 || nextPos.Y >= height)
                 // Already assigned
-                || spiral[nextMove.X, nextMove.Y] != 0)
+                || spiral[nextPos.X, nextPos.Y] != 0)
             {
                 direction = direction.TurnRight();
-                nextMove = position.Move(direction);
+                nextPos = position.Move(direction);
             }
-            position = nextMove;
+            position = nextPos;
         }
         var lastPosition = position;
         int lastValue = value;
@@ -49,15 +49,18 @@ internal static class MovementTupleExtensions
         return (x + dY, y + dX);
     }
 
-    public static (sbyte DX, sbyte DY) TurnRight(this (sbyte, sbyte) direction)
-    { 
-        return direction switch
+    private static readonly (sbyte, sbyte) North = (0, -1);
+    private static readonly (sbyte, sbyte) East = (1, 0);
+    private static readonly (sbyte, sbyte) South = (0, 1);
+    private static readonly (sbyte, sbyte) West = (-1, 0);
+
+    public static (sbyte DX, sbyte DY) TurnRight(this (sbyte, sbyte) direction) =>
+        direction switch
         {
-            (1, 0) => (0, 1),
-            (0, 1) => (-1, 0),
-            (-1, 0) => (0, -1),
-            (0, -1) => (1, 0),
-            _ => throw new NotSupportedException($"Direction {direction} is not supported.")
+            var n when n == North => East,
+            var e when e == East => South,
+            var s when s == South => West,
+            var w when w == West => North,
+            _ => throw new NotSupportedException($"Direction {direction} is not supported."),
         };
-    }
 }
