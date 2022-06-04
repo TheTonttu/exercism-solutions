@@ -7,17 +7,10 @@ public static class Tournament
 {
     public static void Tally(Stream inStream, Stream outStream)
     {
-        var statistics = ReadStatistics(inStream);
-        WriteSummary(outStream, statistics);
-    }
-
-    private static void WriteSummary(Stream outStream, TournamentStatistics statistics)
-    {
-        var outcomeReport = new OutcomeReport(statistics);
+        var statistics = TournamentStatistics.ReadFrom(inStream);
+        var outcomeReport = OutcomeReport.BasedOn(statistics);
         outcomeReport.WriteTo(outStream);
     }
-
-    private static TournamentStatistics ReadStatistics(Stream inStream) => TournamentStatistics.ReadFrom(inStream);
 }
 
 internal enum MatchResult
@@ -61,10 +54,18 @@ internal class TournamentMatch
 
 internal class TournamentStatistics
 {
-
     private readonly Dictionary<string, Team> _teams = new();
 
     internal TournamentStatistics() { }
+
+    public IReadOnlyList<TeamStatistics> StatisticsPerTeam() =>
+        _teams
+            .Values
+            .Select(t => t.GetStatistics())
+            .OrderByDescending(ts => ts.Points)
+            .ThenBy(ts => ts.Name)
+            .ToList()
+            .AsReadOnly();
 
     internal void Record(TournamentMatch match)
     {
@@ -82,15 +83,6 @@ internal class TournamentStatistics
             default: throw new NotSupportedException($"Unsupported result: {match.Result}");
         }
     }
-
-    public IReadOnlyList<TeamStatistics> StatisticsPerTeam() =>
-        _teams
-            .Values
-            .Select(t => t.GetStatistics())
-            .OrderByDescending(ts => ts.Points)
-            .ThenBy(ts => ts.Name)
-            .ToList()
-            .AsReadOnly();
 
     private void Win(string homeTeamName, string visitingTeamName)
     {
@@ -195,7 +187,7 @@ internal class OutcomeReport
 
     private readonly TournamentStatistics _statistics;
 
-    public OutcomeReport(TournamentStatistics statistics)
+    private OutcomeReport(TournamentStatistics statistics)
     {
         _statistics = statistics;
     }
@@ -212,4 +204,6 @@ internal class OutcomeReport
             writer.Write(formattedLine);
         }
     }
+
+    public static OutcomeReport BasedOn(TournamentStatistics statistics) => new(statistics);
 }
