@@ -8,29 +8,21 @@ public static class MatchingBrackets
 
         foreach (char c in input)
         {
+            if (c == '}' && !HasMatchingOpening('{')) { return false; }
+            if (c == ')' && !HasMatchingOpening('(')) { return false; }
+            if (c == ']' && !HasMatchingOpening('[')) { return false; }
+
             if (c == '{')
             {
                 openingBrackets.Push(c);
-            }
-            else if (c == '}' && !HasMatchingOpening('{'))
-            {
-                return false;
             }
             else if (c == '(')
             {
                 openingBrackets.Push(c);
             }
-            else if (c == ')' && !HasMatchingOpening('('))
-            {
-                return false;
-            }
             else if (c == '[')
             {
                 openingBrackets.Push(c);
-            }
-            else if (c == ']' && !HasMatchingOpening('['))
-            {
-                return false;
             }
         }
         return openingBrackets.Count == 0;
