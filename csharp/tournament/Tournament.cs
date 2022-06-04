@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 public static class Tournament
 {
@@ -16,15 +17,8 @@ public static class Tournament
 
     private static void WriteSummary(Stream outStream, TournamentStatistics statistics)
     {
-        using var writer = new StreamWriter(outStream, leaveOpen: true);
-
-        writer.Write(Header);
-        foreach (var teamStats in statistics.GetStatistics())
-        {
-            writer.Write('\n');
-            string formattedLine = string.Format(OutputLineTemplate, teamStats.Name, teamStats.Plays, teamStats.Wins, teamStats.Draws, teamStats.Losses, teamStats.Points);
-            writer.Write(formattedLine);
-        }
+        var outcomeReport = new OutcomeReport(statistics);
+        outcomeReport.WriteTo(outStream);
     }
 
     private static TournamentStatistics ReadStatistics(Stream inStream)
@@ -104,7 +98,7 @@ internal class TournamentStatistics
         }
     }
 
-    public IReadOnlyList<TeamStatistics> GetStatistics() =>
+    public IReadOnlyList<TeamStatistics> StatisticsPerTeam() =>
         _teams
             .Values
             .Select(t => t.GetStatistics())
@@ -192,4 +186,30 @@ internal class Team
     }
 
     public TeamStatistics GetStatistics() => new(Name, _plays, _wins, _losses, _draws, _points);
+}
+
+internal class OutcomeReport
+{
+    private static readonly string OutputLineTemplate = "{0,-30} | {1,2} | {2,2} | {3,2} | {4,2} | {5,2}";
+    private static readonly string Header = string.Format(OutputLineTemplate, "Team", "MP", "W", "D", "L", "P");
+
+    private readonly TournamentStatistics _statistics;
+
+    public OutcomeReport(TournamentStatistics statistics)
+    {
+        _statistics = statistics;
+    }
+
+    public void WriteTo(Stream output)
+    {
+        using var writer = new StreamWriter(output, leaveOpen: true);
+
+        writer.Write(Header);
+        foreach (var teamStats in _statistics.StatisticsPerTeam())
+        {
+            writer.Write('\n');
+            string formattedLine = string.Format(OutputLineTemplate, teamStats.Name, teamStats.Plays, teamStats.Wins, teamStats.Draws, teamStats.Losses, teamStats.Points);
+            writer.Write(formattedLine);
+        }
+    }
 }
