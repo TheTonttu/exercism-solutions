@@ -86,30 +86,26 @@ internal class TournamentStatistics
 
     private void Win(string homeTeamName, string visitingTeamName)
     {
-        var homeTeam = GetTeam(homeTeamName);
-        homeTeam.Win();
-
-        var visitingTeam = GetTeam(visitingTeamName);
-        visitingTeam.Loss();
+        var (home, visiting) = GetMatchTeams(homeTeamName, visitingTeamName);
+        home.Win();
+        visiting.Loss();
     }
 
     private void Loss(string homeTeamName, string visitingTeamName)
     {
-        var homeTeam = GetTeam(homeTeamName);
-        homeTeam.Loss();
-
-        var visitingTeam = GetTeam(visitingTeamName);
-        visitingTeam.Win();
+        var (home, visiting) = GetMatchTeams(homeTeamName, visitingTeamName);
+        home.Loss();
+        visiting.Win();
     }
 
     private void Draw(string homeTeamName, string visitingTeamName)
     {
-        var homeTeam = GetTeam(homeTeamName);
-        homeTeam.Draw();
-
-        var visitingTeam = GetTeam(visitingTeamName);
-        visitingTeam.Draw();
+        var (home, visiting) = GetMatchTeams(homeTeamName, visitingTeamName);
+        home.Draw();
+        visiting.Draw();
     }
+
+    private (Team Home, Team Visiting) GetMatchTeams(string homeTeamName, string visitingTeamName) => (GetTeam(homeTeamName), GetTeam(visitingTeamName));
 
     private Team GetTeam(string teamName)
     {
