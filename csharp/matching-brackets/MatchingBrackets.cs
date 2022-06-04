@@ -12,34 +12,25 @@ public static class MatchingBrackets
             {
                 openingBrackets.Push(c);
             }
-            else if (c == '}')
+            else if (c == '}' && !HasMatchingOpening('{'))
             {
-                if (!HasMatchingOpening('{'))
-                {
-                    return false;
-                }
+                return false;
             }
             else if (c == '(')
             {
                 openingBrackets.Push(c);
             }
-            else if (c == ')')
+            else if (c == ')' && !HasMatchingOpening('('))
             {
-                if (!HasMatchingOpening('('))
-                {
-                    return false;
-                }
+                return false;
             }
             else if (c == '[')
             {
                 openingBrackets.Push(c);
             }
-            else if (c == ']')
+            else if (c == ']' && !HasMatchingOpening('['))
             {
-                if (!HasMatchingOpening('['))
-                {
-                    return false;
-                }
+                return false;
             }
         }
         return openingBrackets.Count == 0;
