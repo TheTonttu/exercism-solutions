@@ -38,16 +38,15 @@ public static class Tournament
             while ((matchData = reader.ReadLine()) != null)
             {
                 var match = TournamentMatch.FromData(matchData);
-
                 switch (match.Result)
                 {
-                    case "win":
+                    case MatchResult.Win:
                         statistics.Win(match.HomeTeamName, match.VisitingTeamName);
                         break;
-                    case "loss":
+                    case MatchResult.Loss:
                         statistics.Loss(match.HomeTeamName, match.VisitingTeamName);
                         break;
-                    case "draw":
+                    case MatchResult.Draw:
                         statistics.Draw(match.HomeTeamName, match.VisitingTeamName);
                         break;
                     default: throw new NotSupportedException($"Unsupported result: {match.Result}");
@@ -59,13 +58,20 @@ public static class Tournament
     }
 }
 
+internal enum MatchResult
+{
+    Win,
+    Loss,
+    Draw
+}
+
 internal class TournamentMatch
 {
     public string HomeTeamName { get; }
     public string VisitingTeamName { get; }
-    public string Result { get; }
+    public MatchResult Result { get; }
 
-    private TournamentMatch(string homeTeamName, string visitingTeamName, string result)
+    private TournamentMatch(string homeTeamName, string visitingTeamName, MatchResult result)
     {
         HomeTeamName = homeTeamName;
         VisitingTeamName = visitingTeamName;
@@ -84,9 +90,9 @@ internal class TournamentMatch
         string visitingTeam = dataSpan.Slice(visitingTeamStartIndex, visitingTeamNameLength).ToString();
 
         int resultStartIndex = resultSeparatorIndex + 1;
-        string result = dataSpan[resultStartIndex..].ToString();
+        var result = dataSpan[resultStartIndex..];
 
-        return new(homeTeam, visitingTeam, result);
+        return new(homeTeam, visitingTeam, Enum.Parse<MatchResult>(result, ignoreCase: true));
     }
 }
 
