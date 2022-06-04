@@ -8,9 +8,7 @@ public static class MatchingBrackets
 
         foreach (char c in input)
         {
-            if (c == '}' && !HasMatchingOpening('{')) { return false; }
-            if (c == ')' && !HasMatchingOpening('(')) { return false; }
-            if (c == ']' && !HasMatchingOpening('[')) { return false; }
+            if (IsClosingWithoutMatchingOpening(c)) { return false; }
 
             if (c == '{')
             {
@@ -26,6 +24,11 @@ public static class MatchingBrackets
             }
         }
         return openingBrackets.Count == 0;
+
+        bool IsClosingWithoutMatchingOpening(char c) =>
+            c == '}' && !HasMatchingOpening('{') ||
+            c == ')' && !HasMatchingOpening('(') ||
+            c == ']' && !HasMatchingOpening('[');
 
         bool HasMatchingOpening(char matchingOpen) => openingBrackets.TryPop(out char opening) && opening == matchingOpen;
     }
