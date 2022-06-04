@@ -1,46 +1,48 @@
 using System;
+using System.Collections.Generic;
 
 public static class MatchingBrackets
 {
     public static bool IsPaired(string input)
     {
-        // {}
-        int braceBalance = 0;
-        // ()
-        int parenthesisBalance = 0;
-        // []
-        int bracketBalance = 0;
+        var openBrackets = new Stack<char>();
 
         foreach (char c in input)
         {
             if (c == '{')
             {
-                braceBalance++;
+                openBrackets.Push(c);
             }
             else if (c == '}')
             {
-                braceBalance--;
+                if (!openBrackets.TryPop(out char open) || open != '{')
+                {
+                    return false;
+                }
             }
             else if (c == '(')
             {
-                parenthesisBalance++;
+                openBrackets.Push(c);
             }
             else if (c == ')')
             {
-                parenthesisBalance--;
+                if (!openBrackets.TryPop(out char open) || open != '(')
+                {
+                    return false;
+                }
             }
             else if (c == '[')
             {
-                bracketBalance++;
+                openBrackets.Push(c);
             }
             else if (c == ']')
             {
-                bracketBalance--;
+                if (!openBrackets.TryPop(out char open) || open != '[')
+                {
+                    return false;
+                }
             }
         }
-
-        return braceBalance == 0
-            && parenthesisBalance == 0
-            && bracketBalance == 0;
+        return openBrackets.Count == 0;
     }
 }
