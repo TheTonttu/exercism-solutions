@@ -14,7 +14,7 @@ public class SpiralMatrix
 
         int valueLimit = size*size;
         int value = 1;
-        var direction = (DX: 1, DY: 0);
+        (sbyte DX, sbyte DY) direction = (1, 0);
         var position = (X: 0, Y: 0);
         while (value < valueLimit)
         {
@@ -42,15 +42,15 @@ public class SpiralMatrix
 
 internal static class MovementTupleExtensions
 {
-    public static (int X, int Y) Move(this (int, int) position, (int, int) direction)
+    public static (int X, int Y) Move(this (int, int) position, (sbyte, sbyte) direction)
     {
-        (int x, int y) = position;
-        (int dX, int dY) = direction;
+        var (x, y) = position;
+        var (dX, dY) = direction;
         return (x + dY, y + dX);
     }
 
-    public static (int DX, int DY) TurnRight(this (int, int) direction)
-    {
+    public static (sbyte DX, sbyte DY) TurnRight(this (sbyte, sbyte) direction)
+    { 
         return direction switch
         {
             (1, 0) => (0, 1),
