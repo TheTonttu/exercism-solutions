@@ -34,38 +34,59 @@ public static class Tournament
 
         using (var reader = new StreamReader(inStream, leaveOpen: true))
         {
-            string gameData;
-            while ((gameData = reader.ReadLine()) != null)
+            string matchData;
+            while ((matchData = reader.ReadLine()) != null)
             {
-                var dataSpan = gameData.AsSpan();
-                int teamNamesSeparatorIndex = dataSpan.IndexOf(';');
-                string homeTeam = dataSpan.Slice(0, teamNamesSeparatorIndex).ToString();
+                var match = TournamentMatch.FromData(matchData);
 
-                int resultSeparatorIndex = dataSpan.LastIndexOf(';');
-                int visitingTeamStartIndex = teamNamesSeparatorIndex + 1;
-                int visitingTeamNameLength = resultSeparatorIndex - (visitingTeamStartIndex);
-                string visitingTeam = dataSpan.Slice(visitingTeamStartIndex, visitingTeamNameLength).ToString();
-
-                int resultStartIndex = resultSeparatorIndex + 1;
-                string result = dataSpan.Slice(resultStartIndex).ToString();
-
-                switch (result)
+                switch (match.Result)
                 {
                     case "win":
-                        statistics.Win(homeTeam, visitingTeam);
+                        statistics.Win(match.HomeTeamName, match.VisitingTeamName);
                         break;
                     case "loss":
-                        statistics.Loss(homeTeam, visitingTeam);
+                        statistics.Loss(match.HomeTeamName, match.VisitingTeamName);
                         break;
                     case "draw":
-                        statistics.Draw(homeTeam, visitingTeam);
+                        statistics.Draw(match.HomeTeamName, match.VisitingTeamName);
                         break;
-                    default: throw new NotSupportedException($"Unsupported result: {result}");
+                    default: throw new NotSupportedException($"Unsupported result: {match.Result}");
                 }
             }
         }
 
         return statistics;
+    }
+}
+
+internal class TournamentMatch
+{
+    public string HomeTeamName { get; }
+    public string VisitingTeamName { get; }
+    public string Result { get; }
+
+    private TournamentMatch(string homeTeamName, string visitingTeamName, string result)
+    {
+        HomeTeamName = homeTeamName;
+        VisitingTeamName = visitingTeamName;
+        Result = result;
+    }
+
+    public static TournamentMatch FromData(string matchData)
+    {
+        var dataSpan = matchData.AsSpan();
+        int teamNamesSeparatorIndex = dataSpan.IndexOf(';');
+        string homeTeam = dataSpan[..teamNamesSeparatorIndex].ToString();
+
+        int resultSeparatorIndex = dataSpan.LastIndexOf(';');
+        int visitingTeamStartIndex = teamNamesSeparatorIndex + 1;
+        int visitingTeamNameLength = resultSeparatorIndex - (visitingTeamStartIndex);
+        string visitingTeam = dataSpan.Slice(visitingTeamStartIndex, visitingTeamNameLength).ToString();
+
+        int resultStartIndex = resultSeparatorIndex + 1;
+        string result = dataSpan[resultStartIndex..].ToString();
+
+        return new(homeTeam, visitingTeam, result);
     }
 }
 
