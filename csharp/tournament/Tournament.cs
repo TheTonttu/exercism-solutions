@@ -2,13 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 public static class Tournament
 {
-    private static readonly string OutputLineTemplate = "{0,-30} | {1,2} | {2,2} | {3,2} | {4,2} | {5,2}";
-    private static readonly string Header = string.Format(OutputLineTemplate, "Team", "MP", "W", "D", "L", "P");
-
     public static void Tally(Stream inStream, Stream outStream)
     {
         var statistics = ReadStatistics(inStream);
@@ -21,20 +17,7 @@ public static class Tournament
         outcomeReport.WriteTo(outStream);
     }
 
-    private static TournamentStatistics ReadStatistics(Stream inStream)
-    {
-        using var reader = new StreamReader(inStream, leaveOpen: true);
-
-        var statistics = new TournamentStatistics();
-        string rawMatchData;
-        while ((rawMatchData = reader.ReadLine()) != null)
-        {
-            var match = TournamentMatch.FromRawData(rawMatchData);
-            statistics.Record(match);
-        }
-
-        return statistics;
-    }
+    private static TournamentStatistics ReadStatistics(Stream inStream) => TournamentStatistics.ReadFrom(inStream);
 }
 
 internal enum MatchResult
@@ -81,7 +64,9 @@ internal class TournamentStatistics
 
     private readonly Dictionary<string, Team> _teams = new();
 
-    public void Record(TournamentMatch match)
+    internal TournamentStatistics() { }
+
+    internal void Record(TournamentMatch match)
     {
         switch (match.Result)
         {
@@ -142,6 +127,21 @@ internal class TournamentStatistics
             _teams.Add(teamName, team);
         }
         return team;
+    }
+
+    public static TournamentStatistics ReadFrom(Stream inStream)
+    {
+        using var reader = new StreamReader(inStream, leaveOpen: true);
+
+        var statistics = new TournamentStatistics();
+        string rawMatchData;
+        while ((rawMatchData = reader.ReadLine()) != null)
+        {
+            var match = TournamentMatch.FromRawData(rawMatchData);
+            statistics.Record(match);
+        }
+
+        return statistics;
     }
 }
 
