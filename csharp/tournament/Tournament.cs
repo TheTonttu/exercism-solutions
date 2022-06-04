@@ -16,42 +16,27 @@ public static class Tournament
 
     private static void WriteSummary(Stream outStream, TournamentStatistics statistics)
     {
-        using (var writer = new StreamWriter(outStream, leaveOpen: true))
+        using var writer = new StreamWriter(outStream, leaveOpen: true);
+
+        writer.Write(Header);
+        foreach (var teamStats in statistics.GetStatistics())
         {
-            writer.Write(Header);
-            foreach (var teamStats in statistics.GetStatistics())
-            {
-                writer.Write('\n');
-                string formattedLine = string.Format(OutputLineTemplate, teamStats.Name, teamStats.Plays, teamStats.Wins, teamStats.Draws, teamStats.Losses, teamStats.Points);
-                writer.Write(formattedLine);
-            }
+            writer.Write('\n');
+            string formattedLine = string.Format(OutputLineTemplate, teamStats.Name, teamStats.Plays, teamStats.Wins, teamStats.Draws, teamStats.Losses, teamStats.Points);
+            writer.Write(formattedLine);
         }
     }
 
     private static TournamentStatistics ReadStatistics(Stream inStream)
     {
-        var statistics = new TournamentStatistics();
+        using var reader = new StreamReader(inStream, leaveOpen: true);
 
-        using (var reader = new StreamReader(inStream, leaveOpen: true))
+        var statistics = new TournamentStatistics();
+        string rawMatchData;
+        while ((rawMatchData = reader.ReadLine()) != null)
         {
-            string matchData;
-            while ((matchData = reader.ReadLine()) != null)
-            {
-                var match = TournamentMatch.FromData(matchData);
-                switch (match.Result)
-                {
-                    case MatchResult.Win:
-                        statistics.Win(match.HomeTeamName, match.VisitingTeamName);
-                        break;
-                    case MatchResult.Loss:
-                        statistics.Loss(match.HomeTeamName, match.VisitingTeamName);
-                        break;
-                    case MatchResult.Draw:
-                        statistics.Draw(match.HomeTeamName, match.VisitingTeamName);
-                        break;
-                    default: throw new NotSupportedException($"Unsupported result: {match.Result}");
-                }
-            }
+            var match = TournamentMatch.FromRawData(rawMatchData);
+            statistics.Record(match);
         }
 
         return statistics;
@@ -78,9 +63,9 @@ internal class TournamentMatch
         Result = result;
     }
 
-    public static TournamentMatch FromData(string matchData)
+    public static TournamentMatch FromRawData(string rawMatchData)
     {
-        var dataSpan = matchData.AsSpan();
+        var dataSpan = rawMatchData.AsSpan();
         int teamNamesSeparatorIndex = dataSpan.IndexOf(';');
         string homeTeam = dataSpan[..teamNamesSeparatorIndex].ToString();
 
@@ -90,9 +75,10 @@ internal class TournamentMatch
         string visitingTeam = dataSpan.Slice(visitingTeamStartIndex, visitingTeamNameLength).ToString();
 
         int resultStartIndex = resultSeparatorIndex + 1;
-        var result = dataSpan[resultStartIndex..];
+        var rawResult = dataSpan[resultStartIndex..];
+        var parsedResult = Enum.Parse<MatchResult>(rawResult, ignoreCase: true);
 
-        return new(homeTeam, visitingTeam, Enum.Parse<MatchResult>(result, ignoreCase: true));
+        return new(homeTeam, visitingTeam, parsedResult);
     }
 }
 
@@ -101,7 +87,33 @@ internal class TournamentStatistics
 
     private readonly Dictionary<string, Team> _teams = new();
 
-    public void Win(string homeTeamName, string visitingTeamName)
+    public void Record(TournamentMatch match)
+    {
+        switch (match.Result)
+        {
+            case MatchResult.Win:
+                Win(match.HomeTeamName, match.VisitingTeamName);
+                break;
+            case MatchResult.Loss:
+                Loss(match.HomeTeamName, match.VisitingTeamName);
+                break;
+            case MatchResult.Draw:
+                Draw(match.HomeTeamName, match.VisitingTeamName);
+                break;
+            default: throw new NotSupportedException($"Unsupported result: {match.Result}");
+        }
+    }
+
+    public IReadOnlyList<TeamStatistics> GetStatistics() =>
+        _teams
+            .Values
+            .Select(t => t.GetStatistics())
+            .OrderByDescending(ts => ts.Points)
+            .ThenBy(ts => ts.Name)
+            .ToList()
+            .AsReadOnly();
+
+    private void Win(string homeTeamName, string visitingTeamName)
     {
         var homeTeam = GetTeam(homeTeamName);
         homeTeam.Win();
@@ -110,7 +122,7 @@ internal class TournamentStatistics
         visitingTeam.Loss();
     }
 
-    public void Loss(string homeTeamName, string visitingTeamName)
+    private void Loss(string homeTeamName, string visitingTeamName)
     {
         var homeTeam = GetTeam(homeTeamName);
         homeTeam.Loss();
@@ -119,7 +131,7 @@ internal class TournamentStatistics
         visitingTeam.Win();
     }
 
-    public void Draw(string homeTeamName, string visitingTeamName)
+    private void Draw(string homeTeamName, string visitingTeamName)
     {
         var homeTeam = GetTeam(homeTeamName);
         homeTeam.Draw();
@@ -137,16 +149,9 @@ internal class TournamentStatistics
         }
         return team;
     }
-
-    public IReadOnlyList<TeamStatistics> GetStatistics() =>
-        _teams
-            .Values
-            .Select(t => t.GetStatistics())
-            .OrderByDescending(ts => ts.Points)
-            .ThenBy(ts => ts.Name)
-            .ToList()
-            .AsReadOnly();
 }
+
+internal record TeamStatistics(string Name, int Plays, int Wins, int Losses, int Draws, int Points);
 
 internal class Team
 {
@@ -186,10 +191,5 @@ internal class Team
         _points += DrawPoints;
     }
 
-    public TeamStatistics GetStatistics()
-    {
-        return new TeamStatistics(Name, _plays, _wins, _losses, _draws, _points);
-    }
+    public TeamStatistics GetStatistics() => new(Name, _plays, _wins, _losses, _draws, _points);
 }
-
-internal record TeamStatistics(string Name, int Plays, int Wins, int Losses, int Draws, int Points);
