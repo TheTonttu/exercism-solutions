@@ -4,6 +4,8 @@ public static class MatchingBrackets
 {
     public static bool IsPaired(string input)
     {
+        if (string.IsNullOrEmpty(input)) { return true; }
+
         var openingBrackets = new Stack<char>();
         foreach (char c in input)
         {

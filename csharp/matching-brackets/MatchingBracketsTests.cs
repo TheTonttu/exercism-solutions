@@ -120,4 +120,14 @@ public class MatchingBracketsTests
         var value = "\\left(\\begin{array}{cc} \\frac{1}{3} & x\\\\ \\mathrm{e}^{x} &... x^2 \\end{array}\\right)";
         Assert.True(MatchingBrackets.IsPaired(value));
     }
+
+    #region Extra tests
+
+    [Fact]
+    public void IsPaired_ShouldBeNullSafe()
+    {
+        Assert.True(MatchingBrackets.IsPaired(null));
+    }
+
+    #endregion Extra tests
 }
