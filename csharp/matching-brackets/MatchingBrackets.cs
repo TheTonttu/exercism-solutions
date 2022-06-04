@@ -10,20 +10,14 @@ public static class MatchingBrackets
         {
             if (IsClosingWithoutMatchingOpening(c)) { return false; }
 
-            if (c == '{')
-            {
-                openingBrackets.Push(c);
-            }
-            else if (c == '(')
-            {
-                openingBrackets.Push(c);
-            }
-            else if (c == '[')
+            if (IsOpening(c))
             {
                 openingBrackets.Push(c);
             }
         }
         return openingBrackets.Count == 0;
+
+        bool IsOpening(char c) => c is '{' or '(' or '[';
 
         bool IsClosingWithoutMatchingOpening(char c) =>
             c == '}' && !HasMatchingOpening('{') ||
