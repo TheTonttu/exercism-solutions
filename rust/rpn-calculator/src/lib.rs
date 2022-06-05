@@ -18,12 +18,12 @@ pub fn evaluate(inputs: &[CalculatorInput]) -> Option<i32> {
             continue;
         }
 
-        let result = match input {
-            Add => calculate(&mut values, |a, b| b + a),
-            Subtract => calculate(&mut values, |a, b| b - a),
-            Multiply => calculate(&mut values, |a, b| b * a),
-            Divide => calculate(&mut values, |a, b| b / a),
-            _ => return None,
+        let value_pair = values.pop().and_then(|a| values.pop().map(|b| (b, a)));
+        let result = if let Some((a, b)) = value_pair {
+            let operator = input;
+            calculate(operator, &a, &b)
+        } else {
+            None
         };
 
         if let Some(n) = result {
@@ -40,9 +40,12 @@ pub fn evaluate(inputs: &[CalculatorInput]) -> Option<i32> {
     }
 }
 
-fn calculate<T>(values: &mut Vec<i32>, op: T) -> Option<i32>
-where
-    T: Fn(i32, i32) -> i32,
-{
-    values.pop().and_then(|a| values.pop().map(|b| op(a, b)))
+fn calculate(input: &CalculatorInput, a: &i32, b: &i32) -> Option<i32> {
+    match input {
+        Add => Some(a + b),
+        Subtract => Some(a - b),
+        Multiply => Some(a * b),
+        Divide => Some(a / b),
+        _ => None,
+    }
 }
