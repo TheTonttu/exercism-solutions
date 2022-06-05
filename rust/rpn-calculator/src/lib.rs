@@ -1,3 +1,5 @@
+use CalculatorInput::*;
+
 #[derive(Debug)]
 pub enum CalculatorInput {
     Add,
@@ -11,16 +13,16 @@ pub fn evaluate(inputs: &[CalculatorInput]) -> Option<i32> {
     let mut values = Vec::new();
 
     for input in inputs {
-        if let CalculatorInput::Value(n) = input {
+        if let Value(n) = input {
             values.push(*n);
             continue;
         }
 
         let result = match input {
-            CalculatorInput::Add => calculate(&mut values, |a, b| b + a),
-            CalculatorInput::Subtract => calculate(&mut values, |a, b| b - a),
-            CalculatorInput::Multiply => calculate(&mut values, |a, b| b * a),
-            CalculatorInput::Divide => calculate(&mut values, |a, b| b / a),
+            Add => calculate(&mut values, |a, b| b + a),
+            Subtract => calculate(&mut values, |a, b| b - a),
+            Multiply => calculate(&mut values, |a, b| b * a),
+            Divide => calculate(&mut values, |a, b| b / a),
             _ => return None,
         };
 
