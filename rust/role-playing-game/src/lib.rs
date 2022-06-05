@@ -14,16 +14,16 @@ impl Player {
     }
 
     pub fn cast_spell(&mut self, mana_cost: u32) -> u32 {
-        if let Some(ref mut mana) = self.mana {
-            if *mana >= mana_cost {
+        match self.mana {
+            Some(ref mut mana) if *mana >= mana_cost => {
                 *mana -= mana_cost;
                 mana_cost * 2
-            } else {
+            }
+            Some(_) => 0,
+            None => {
+                self.health = self.health.saturating_sub(mana_cost);
                 0
             }
-        } else {
-            self.health = self.health.saturating_sub(mana_cost);
-            0
         }
     }
 }
