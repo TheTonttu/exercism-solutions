@@ -18,7 +18,7 @@ impl From<u64> for Duration {
 }
 
 pub trait Planet {
-    /// Planet year length related to earth's ~365.25 day years.
+    /// Planet year length related to earth's ~365.25 day year.
     const YEAR_LENGTH: f64;
     /// Multiplier based on `YEAR_LENGTH`. Should not be overridden.
     const YEAR_MULTIPLIER: f64 = 1.0 / Self::YEAR_LENGTH;
@@ -30,20 +30,13 @@ pub trait Planet {
 
 macro_rules! planet {
     ($planet_id:ident, $year_length:literal) => {
+        pub struct $planet_id;
+
         impl Planet for $planet_id {
             const YEAR_LENGTH: f64 = $year_length;
         }
     };
 }
-
-pub struct Mercury;
-pub struct Venus;
-pub struct Earth;
-pub struct Mars;
-pub struct Jupiter;
-pub struct Saturn;
-pub struct Uranus;
-pub struct Neptune;
 
 planet!(Mercury, 0.2408467);
 planet!(Venus, 0.61519726);
