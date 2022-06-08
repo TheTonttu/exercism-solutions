@@ -19,24 +19,8 @@ pub fn sublist<T: PartialEq>(first_list: &[T], second_list: &[T]) -> Comparison 
 }
 
 fn is_sublist<T: PartialEq>(sublist: &[T], superlist: &[T]) -> bool {
-    if sublist.is_empty() {
-        return true;
-    }
-
-    if let Some(expected_start_value) = sublist.first() {
-        for (start_index, start_value) in superlist.iter().enumerate() {
-            let remaining_length = superlist.len() - start_index;
-            if remaining_length < sublist.len() {
-                return false;
-            }
-            if start_value == expected_start_value {
-                let stop_index = start_index + sublist.len();
-                let candidate_slice = &superlist[start_index..stop_index];
-                if sublist == candidate_slice {
-                    return true;
-                }
-            }
-        }
-    }
-    false
+    sublist.is_empty()
+        || superlist
+        .windows(sublist.len())
+        .any(|slice| slice == sublist)
 }
