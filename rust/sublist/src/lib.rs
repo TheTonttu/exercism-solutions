@@ -6,16 +6,12 @@ pub enum Comparison {
     Unequal,
 }
 
-pub fn sublist<T: PartialEq>(_first_list: &[T], _second_list: &[T]) -> Comparison {
-    if _first_list.len() == _second_list.len() && _first_list == _second_list {
+pub fn sublist<T: PartialEq>(first_list: &[T], second_list: &[T]) -> Comparison {
+    if first_list.len() == second_list.len() && first_list == second_list {
         Comparison::Equal
-    } else if _first_list.len() < _second_list.len()
-        && (_first_list.is_empty() || is_sublist(_first_list, _second_list))
-    {
+    } else if first_list.len() < second_list.len() && is_sublist(first_list, second_list) {
         Comparison::Sublist
-    } else if _first_list.len() > _second_list.len()
-        && (_second_list.is_empty() || is_sublist(_second_list, _first_list))
-    {
+    } else if first_list.len() > second_list.len() && is_sublist(second_list, first_list) {
         Comparison::Superlist
     } else {
         Comparison::Unequal
@@ -23,6 +19,10 @@ pub fn sublist<T: PartialEq>(_first_list: &[T], _second_list: &[T]) -> Compariso
 }
 
 fn is_sublist<T: PartialEq>(sublist: &[T], superlist: &[T]) -> bool {
+    if sublist.is_empty() {
+        return true;
+    }
+
     if let Some(expected_start_value) = sublist.first() {
         for (start_index, start_value) in superlist.iter().enumerate() {
             let remaining_length = superlist.len() - start_index;
