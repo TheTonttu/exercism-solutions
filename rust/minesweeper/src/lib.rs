@@ -1,29 +1,21 @@
+const MINE: char = '*';
+
 pub fn annotate(minefield: &[&str]) -> Vec<String> {
     let height = minefield.len();
-    let width = if let Some(row) = minefield.first() {
-        row.len()
-    } else {
-        return vec![];
-    };
+    let width = minefield.first().map_or(0, |row| row.len());
 
     let mut annotated_minefield = vec![vec![' '; width]; height];
+    for (x, y, cell_content) in cells(minefield) {
+        if cell_content == MINE {
+            annotated_minefield[y][x] = MINE;
+        } else {
+            let surrounding_mines_count = neighbors(x, y, width, height)
+                .map(|(nx, ny)| minefield[ny].chars().nth(nx))
+                .filter(|c| *c == Some(MINE))
+                .count();
 
-    for (y, row) in minefield.iter().enumerate() {
-        for (x, element) in row.chars().enumerate() {
-            if element == '*' {
-                annotated_minefield[y][x] = '*';
-            } else {
-                let surrounding_mines_count = neighbors(x, y, width, height)
-                    .map(|(nx, ny)| minefield[ny].chars().nth(nx))
-                    .filter(|c| *c == Some('*'))
-                    .count();
-
-                let annotation = if surrounding_mines_count == 0 {
-                    ' '
-                } else {
-                    char::from_digit(surrounding_mines_count as u32, 10).unwrap()
-                };
-
+            if surrounding_mines_count > 0 {
+                let annotation = char::from_digit(surrounding_mines_count as u32, 10).unwrap();
                 annotated_minefield[y][x] = annotation;
             }
         }
@@ -33,6 +25,14 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
         .iter()
         .map(|row| row.iter().collect::<String>())
         .collect()
+}
+
+fn cells<'a>(minefield: &'a [&'a str]) -> impl Iterator<Item = (usize, usize, char)> + 'a {
+    minefield.iter().enumerate().flat_map(move |(y, row)| {
+        row.chars()
+            .enumerate()
+            .map(move |(x, cell_content)| (x, y, cell_content))
+    })
 }
 
 fn neighbors(
