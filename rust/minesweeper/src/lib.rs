@@ -11,8 +11,9 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
         } else {
             let surrounding_mines_count = neighboring_mine_count(x, y, minefield);
             if surrounding_mines_count > 0 {
-                let annotation = char::from_digit(surrounding_mines_count as u32, 10).unwrap();
-                annotated_minefield[y][x] = annotation;
+                let mine_count_annotation =
+                    char::from_digit(surrounding_mines_count as u32, 10).unwrap();
+                annotated_minefield[y][x] = mine_count_annotation;
             }
         }
     }
