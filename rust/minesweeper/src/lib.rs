@@ -9,11 +9,7 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
         if cell_content == MINE {
             annotated_minefield[y][x] = MINE;
         } else {
-            let surrounding_mines_count = neighbors(x, y, width, height)
-                .map(|(nx, ny)| minefield[ny].chars().nth(nx))
-                .filter(|c| *c == Some(MINE))
-                .count();
-
+            let surrounding_mines_count = neighboring_mine_count(x, y, minefield);
             if surrounding_mines_count > 0 {
                 let annotation = char::from_digit(surrounding_mines_count as u32, 10).unwrap();
                 annotated_minefield[y][x] = annotation;
@@ -35,7 +31,25 @@ fn cells<'a>(minefield: &'a [&'a str]) -> impl Iterator<Item = (usize, usize, ch
     })
 }
 
-fn neighbors(
+fn neighboring_mine_count<'a>(x: usize, y: usize, minefield: &'a [&'a str]) -> usize {
+    neighbors(x, y, minefield)
+        .filter(|(_nx, _ny, cell_content)| *cell_content == MINE)
+        .count()
+}
+
+fn neighbors<'a>(
+    x: usize,
+    y: usize,
+    minefield: &'a [&'a str],
+) -> impl Iterator<Item = (usize, usize, char)> + 'a {
+    let height = minefield.len();
+    let width = minefield.first().map_or(0, |row| row.len());
+
+    neighbor_positions(x, y, width, height)
+        .map(|(nx, ny)| (nx, ny, minefield[ny].chars().nth(nx).unwrap()))
+}
+
+fn neighbor_positions(
     x: usize,
     y: usize,
     width: usize,
