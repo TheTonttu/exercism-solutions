@@ -1,5 +1,4 @@
 pub fn annotate(minefield: &[&str]) -> Vec<String> {
-
     let height = minefield.len();
     let width = if let Some(row) = minefield.first() {
         row.len()
@@ -14,9 +13,7 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
             if element == '*' {
                 annotated_minefield[y][x] = '*';
             } else {
-                let surrounding_mines_count = (x.max(1) - 1..=(x + 1).min(width - 1))
-                    .flat_map(|nx| (y.max(1) - 1..=(y + 1).min(height - 1)).map(move |y| (nx, y)))
-                    .filter(|&pos| pos != (x, y))
+                let surrounding_mines_count = neighbors(x, y, width, height)
                     .map(|(nx, ny)| minefield[ny].chars().nth(nx))
                     .filter(|c| *c == Some('*'))
                     .count();
@@ -36,4 +33,15 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
         .iter()
         .map(|row| row.iter().collect::<String>())
         .collect()
+}
+
+fn neighbors(
+    x: usize,
+    y: usize,
+    width: usize,
+    height: usize,
+) -> impl Iterator<Item = (usize, usize)> {
+    (x.max(1) - 1..=(x + 1).min(width - 1))
+        .flat_map(move |nx| (y.max(1) - 1..=(y + 1).min(height - 1)).map(move |y| (nx, y)))
+        .filter(move |&pos| pos != (x, y))
 }
