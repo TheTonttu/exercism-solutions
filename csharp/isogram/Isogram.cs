@@ -4,28 +4,48 @@ public static class Isogram
 {
     public static bool IsIsogram(string word)
     {
-        int bitField = 0;
+        var bitField = new BitField();
         foreach (char letter in word)
         {
             if (letter is >= 'a' and <= 'z')
             {
-                if ((bitField & 1 << (letter - 'a')) != 0)
+                int letterBitPosition = letter - 'a';
+                if (bitField.IsSet(letterBitPosition))
                 {
                     return false;
                 }
-
-                bitField |= 1 << (letter - 'a');
+                bitField.Set(letterBitPosition);
             }
             else if (letter is >= 'A' and <= 'Z')
             {
-                if ((bitField & 1 << (letter - 'A')) != 0)
+                int letterBitPosition = letter - 'A';
+                if (bitField.IsSet(letterBitPosition))
                 {
                     return false;
                 }
-
-                bitField |= 1 << (letter - 'A');
+                bitField.Set(letterBitPosition);
             }
         }
         return true;
+    }
+
+    private ref struct BitField
+    {
+        public int bits;
+
+        public BitField()
+        {
+            bits = 0;
+        }
+
+        public bool IsSet(in int position)
+        {
+            return (bits & 1 << position) != 0;
+        }
+
+        public void Set(in int position)
+        {
+            bits |= 1 << position;
+        }
     }
 }
