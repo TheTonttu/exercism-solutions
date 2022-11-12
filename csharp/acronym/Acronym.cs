@@ -4,6 +4,11 @@ public static class Acronym
 {
     public static string Abbreviate(string phrase)
     {
+        if (string.IsNullOrEmpty(phrase))
+        {
+            return string.Empty;
+        }
+
         var acronymBuilder = new StringBuilder();
 
         bool pickNextLetter = true;
