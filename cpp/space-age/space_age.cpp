@@ -22,7 +22,7 @@ namespace space_age {
 	double space_age::on_jupiter() const
 	{
 		constexpr double orbital_period{ 11.862615 };
-		constexpr double seconds_in_year { seconds_in_earth_year * orbital_period };
+		constexpr double seconds_in_year{ seconds_in_earth_year * orbital_period };
 		return m_age_in_seconds / seconds_in_year;
 	}
 

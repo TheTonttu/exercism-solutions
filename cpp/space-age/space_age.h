@@ -4,7 +4,7 @@
 #include <cstdint>
 
 namespace space_age {
-	struct space_age {
+	class space_age {
 	public:
 		space_age(int64_t seconds);
 
