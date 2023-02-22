@@ -1,12 +1,15 @@
 module LuciansLusciousLasagna
 
-let expectedMinutesInOven = 40
+type NumberOfLayers = int
+type Minutes = int
 
-let remainingMinutesInOven minutesInOven = expectedMinutesInOven - minutesInOven
+let expectedMinutesInOven : Minutes = 40
 
-let preparationTimeInMinutes numberOfLayers =
-    let minutesPerLayer = 2
-    minutesPerLayer * numberOfLayers
+let remainingMinutesInOven timeInOven = expectedMinutesInOven - timeInOven
 
-let elapsedTimeInMinutes numberOfLayers minutesInOven =
-    preparationTimeInMinutes numberOfLayers + minutesInOven
+let preparationTimeInMinutes (layers: NumberOfLayers) : Minutes =
+    let prepTimePerLayer : Minutes = 2
+    prepTimePerLayer * layers
+
+let elapsedTimeInMinutes (layers: NumberOfLayers) (timeInOven: Minutes) : Minutes =
+    preparationTimeInMinutes layers + timeInOven
