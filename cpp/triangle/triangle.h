@@ -5,7 +5,7 @@ namespace triangle {
 	/// <summary>
 	/// Triangle flavors.
 	/// </summary>
-	enum flavor {
+	enum class flavor {
 		/// <summary>
 		/// Triangle has all three sides the same length.
 		/// </summary>

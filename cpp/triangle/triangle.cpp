@@ -1,9 +1,9 @@
 #include "triangle.h"
 #include <stdexcept>
 
-using namespace std;
-
 namespace triangle {
+	using namespace std;
+
 	flavor kind(float a, float b, float c)
 	{
 		// All sides have to be of length > 0.
