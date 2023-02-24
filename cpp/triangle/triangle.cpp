@@ -15,7 +15,7 @@ namespace triangle {
 		if (!(a + b >= c) ||
 			!(a + c >= b) ||
 			!(b + c >= a)) {
-			throw domain_error("Irregular length of sides.");
+			throw domain_error("Triangle inequality violation.");
 		}
 
 		if (a == b && a == c && b == c) {
