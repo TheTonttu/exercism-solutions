@@ -12,9 +12,9 @@ namespace triangle {
 		}
 
 		// Sum of the lengths of any two sides must be greater than or equal to the length of the third side.
-		if (!(a + b >= c) ||
-			!(a + c >= b) ||
-			!(b + c >= a)) {
+		if (a + b < c ||
+			a + c < b ||
+			b + c < a) {
 			throw domain_error("Triangle inequality violation.");
 		}
 
