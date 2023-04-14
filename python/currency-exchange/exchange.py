@@ -1,3 +1,8 @@
+"""
+Currency exchange
+"""
+
+
 def exchange_money(budget: float, exchange_rate: float) -> float:
     """
     :param budget: float - amount of money you are planning to exchange.
