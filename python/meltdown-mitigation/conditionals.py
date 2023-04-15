@@ -1,7 +1,7 @@
 """Functions to prevent a nuclear meltdown."""
 
 
-def is_criticality_balanced(temperature, neutrons_emitted):
+def is_criticality_balanced(temperature: float, neutrons_emitted: float) -> bool:
     """Verify criticality is balanced.
 
     :param temperature: int or float - temperature value in kelvin.
@@ -14,10 +14,12 @@ def is_criticality_balanced(temperature, neutrons_emitted):
     - The product of temperature and neutrons emitted per second is less than 500000.
     """
 
-    pass
+    return temperature < 800 \
+        and neutrons_emitted > 500 \
+        and temperature * neutrons_emitted < 500_000
 
 
-def reactor_efficiency(voltage, current, theoretical_max_power):
+def reactor_efficiency(voltage: float, current: float, theoretical_max_power: float) -> str:
     """Assess reactor efficiency zone.
 
     :param voltage: int or float - voltage value.
@@ -37,10 +39,19 @@ def reactor_efficiency(voltage, current, theoretical_max_power):
     where generated power = voltage * current
     """
 
-    pass
+    generated_power = voltage * current
+    efficiency_percentage = generated_power / theoretical_max_power
+    
+    if efficiency_percentage >= .8:
+        return 'green'
+    if efficiency_percentage >= .6:
+        return 'orange'
+    if efficiency_percentage >= .3:
+        return 'red'
+    return 'black'
 
 
-def fail_safe(temperature, neutrons_produced_per_second, threshold):
+def fail_safe(temperature: float, neutrons_produced_per_second: float, threshold: float) -> str:
     """Assess and return status code for the reactor.
 
     :param temperature: int or float - value of the temperature in kelvin.
@@ -53,4 +64,10 @@ def fail_safe(temperature, neutrons_produced_per_second, threshold):
     3. 'DANGER' -> `temperature * neutrons per second` is not in the above-stated ranges
     """
 
-    pass
+    criticality_percentage = temperature * neutrons_produced_per_second / threshold
+
+    if criticality_percentage > 1.1:
+        return 'DANGER'
+    if criticality_percentage < .9:
+        return 'LOW'
+    return 'NORMAL'
