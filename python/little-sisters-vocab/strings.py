@@ -1,17 +1,17 @@
 """Functions for creating, transforming, and adding prefixes to strings."""
 
 
-def add_prefix_un(word):
+def add_prefix_un(word: str) -> str:
     """Take the given word and add the 'un' prefix.
 
     :param word: str - containing the root word.
     :return: str - of root word prepended with 'un'.
     """
 
-    pass
+    return 'un' + word
 
 
-def make_word_groups(vocab_words):
+def make_word_groups(vocab_words: list[str]) -> str:
     """Transform a list containing a prefix and words into a string with the prefix followed by the words with prefix prepended.
 
     :param vocab_words: list - of vocabulary words with prefix in first index.
@@ -26,10 +26,12 @@ def make_word_groups(vocab_words):
     produces the following string: 'en :: enclose :: enjoy :: enlighten'.
     """
 
-    pass
+    prefix = vocab_words[0]
+    prefixed_words = [prefix + word for word in vocab_words[1:]]
+    return ' :: '.join([prefix] + prefixed_words)
 
 
-def remove_suffix_ness(word):
+def remove_suffix_ness(word: str) -> str:
     """Remove the suffix from the word while keeping spelling in mind.
 
     :param word: str - of word to remove suffix from.
@@ -38,10 +40,19 @@ def remove_suffix_ness(word):
     For example: "heaviness" becomes "heavy", but "sadness" becomes "sad".
     """
 
-    pass
+    if not word.endswith('ness'):
+        return word
+
+    root_word = word[:-4]
+
+    # restore root word ending
+    if root_word.endswith('i'):
+        root_word = root_word[:-1] + 'y'
+
+    return root_word
 
 
-def adjective_to_verb(sentence, index):
+def adjective_to_verb(sentence: str, index: int) -> str:
     """Change the adjective within the sentence to a verb.
 
     :param sentence: str - that uses the word in sentence.
@@ -51,4 +62,10 @@ def adjective_to_verb(sentence, index):
     For example, ("It got dark as the sun set", 2) becomes "darken".
     """
 
-    pass
+    adjective = sentence.split(' ')[index]
+    # deal with end of sentence
+    if adjective.endswith('.'):
+        adjective = adjective[:-1]
+
+    verb = adjective + 'en'
+    return verb
