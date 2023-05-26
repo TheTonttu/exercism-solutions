@@ -102,13 +102,15 @@ namespace ReverseStringBenchmarks
 
         public IEnumerable<object> Inputs()
         {
-            yield return "abc";
-            yield return "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eu massa felis. In sed pretium ipsum.";
-            // 256 within stackalloc
-            yield return "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eu massa felis. In sed pretium ipsum. In fermentum ex odio, eu auctor elit placerat quis. Donec consequat orci eget leo volutpat pharetra. Nam pellentesque cursus ligula at interdum. Donec a";
-            // 257 over stackalloc
-            yield return "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eu massa felis. In sed pretium ipsum. In fermentum ex odio, eu auctor elit placerat quis. Donec consequat orci eget leo volutpat pharetra. Nam pellentesque cursus ligula at interdum. Donec ac";
-            yield return "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eu massa felis. In sed pretium ipsum. In fermentum ex odio, eu auctor elit placerat quis. Donec consequat orci eget leo volutpat pharetra. Nam pellentesque cursus ligula at interdum. Donec ac dapibus quam. Integer tristique risus velit, in bibendum dolor placerat in.";
+            const string source = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eu massa felis. In sed pretium ipsum. In fermentum ex odio, eu auctor elit placerat quis. Donec consequat orci eget leo volutpat pharetra. Nam pellentesque cursus ligula at interdum. Donec ac dapibus quam. Integer tristique risus velit, in bibendum dolor placerat in.";
+
+            yield return source[..3];
+            yield return source[..128];
+            // within stackalloc
+            yield return source[..256];
+            // over stackalloc
+            yield return source[..257];
+            yield return source;
         }
     }
 }
