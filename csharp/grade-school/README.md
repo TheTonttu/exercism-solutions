@@ -1,7 +1,11 @@
 # Grade School
 
-Given students' names along with the grade that they are in, create a roster
-for the school.
+Welcome to Grade School on Exercism's C# Track.
+If you need help running the tests or submitting your code, check out `HELP.md`.
+
+## Instructions
+
+Given students' names along with the grade that they are in, create a roster for the school.
 
 In the end, you should be able to:
 
@@ -11,44 +15,33 @@ In the end, you should be able to:
 - Get a list of all students enrolled in a grade
   - "Which students are in grade 2?"
   - "We've only got Jim just now."
-- Get a sorted list of all students in all grades.  Grades should sort
-  as 1, 2, 3, etc., and students within a grade should be sorted
-  alphabetically by name.
+- Get a sorted list of all students in all grades.
+  Grades should sort as 1, 2, 3, etc., and students within a grade should be sorted alphabetically by name.
   - "Who all is enrolled in school right now?"
-  - "Grade 1: Anna, Barb, and Charlie. Grade 2: Alex, Peter, and Zoe.
-    Grade 3…"
+  - "Let me think.
+    We have Anna, Barb, and Charlie in grade 1, Alex, Peter, and Zoe in grade 2 and Jim in grade 5.
+    So the answer is: Anna, Barb, Charlie, Alex, Peter, Zoe and Jim"
 
-Note that all our students only have one name.  (It's a small town, what
-do you want?)
-
-## For bonus points
-
-Did you get the tests passing and the code clean? If you want to, these
-are some additional things you could try:
-
-- If you're working in a language with mutable data structures and your
-  implementation allows outside code to mutate the school's internal DB
-  directly, see if you can prevent this. Feel free to introduce additional
-  tests.
-
-Then please share your thoughts in a comment on the submission. Did this
-experiment make the code better? Worse? Did you learn anything from it?
-
-## Running the tests
-
-To run the tests, run the command `dotnet test` from within the exercise directory.
-
-Initially, only the first test will be enabled. This is to encourage you to solve the exercise one step at a time.
-Once you get the first test passing, remove the `Skip` property from the next test and work on getting that test passing.
-Once none of the tests are skipped and they are all passing, you can submit your solution 
-using `exercism submit GradeSchool.cs`
-
-## Further information
-
-For more detailed information about the C# track, including how to get help if
-you're having trouble, please visit the exercism.io [C# language page](http://exercism.io/languages/csharp/resources).
+Note that all our students only have one name (It's a small town, what do you want?) and each student cannot be added more than once to a grade or the roster.
+In fact, when a test attempts to add the same student more than once, your implementation should indicate that this is incorrect.
 
 ## Source
 
-A pairing session with Phil Battos at gSchool [http://gschool.it](http://gschool.it)
+### Created by
 
+- @bressain
+
+### Contributed to by
+
+- @ErikSchierboom
+- @j2jensen
+- @jwood803
+- @kytrinyx
+- @MahrWe
+- @robkeim
+- @RoelofWobben
+- @wolf99
+
+### Based on
+
+A pairing session with Phil Battos at gSchool
