@@ -1,12 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Order;
-using BenchmarkDotNet.Running;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ReverseStringBenchmarks
 {
@@ -80,7 +78,7 @@ namespace ReverseStringBenchmarks
         [ArgumentsSource(nameof(Inputs))]
         public string CopyToSpanOrRentedArrayReverse(string input)
         {
-            char[]? rentedArray = null;
+            char[] rentedArray = null;
             try
             {
                 Span<char> buffer = input.Length > 256
