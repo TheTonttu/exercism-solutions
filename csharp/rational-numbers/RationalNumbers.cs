@@ -19,60 +19,55 @@ public readonly record struct RationalNumber
             denominator = -denominator;
         }
 
-        Numerator = numerator;
-        Denominator = denominator;
+        (Numerator, Denominator) = Reduce(numerator, denominator);
     }
 
     public static RationalNumber operator +(RationalNumber r1, RationalNumber r2)
     {
         int numerator = r1.Numerator * r2.Denominator + r2.Numerator * r1.Denominator;
         int denominator = r1.Denominator * r2.Denominator;
-        var add = new RationalNumber(numerator, denominator);
-        return add.Reduce();
+        return new(numerator, denominator);
     }
 
     public static RationalNumber operator -(RationalNumber r1, RationalNumber r2)
     {
-        int numerator = r1.Numerator * r2.Denominator - r2.Numerator * r1.Denominator; ;
+        int numerator = r1.Numerator * r2.Denominator - r2.Numerator * r1.Denominator;
         int denominator = r1.Denominator * r2.Denominator;
-        var sub = new RationalNumber(numerator, denominator);
-        return sub.Reduce();
+        return new(numerator, denominator);
     }
 
-    public static RationalNumber operator *(RationalNumber r1, RationalNumber r2)
-    {
-        var multi = new RationalNumber(r1.Numerator * r2.Numerator, r1.Denominator * r2.Denominator);
-        return multi.Reduce();
-    }
+    public static RationalNumber operator *(RationalNumber r1, RationalNumber r2) =>
+        new(r1.Numerator * r2.Numerator, r1.Denominator * r2.Denominator);
 
     public static RationalNumber operator /(RationalNumber r1, RationalNumber r2) =>
         new(r1.Numerator * r2.Denominator, r2.Numerator * r1.Denominator);
 
-    public RationalNumber Abs() {
-        var abs = new RationalNumber(Math.Abs(Numerator), Math.Abs(Denominator));
-        return abs.Reduce();
-    }
+    public RationalNumber Abs() => new(Math.Abs(Numerator), Math.Abs(Denominator));
 
-    public RationalNumber Reduce()
-    {
-        int gcd = GreatestCommonDivisor(Numerator, Denominator);
-        return new(Numerator / gcd, Denominator / gcd);
-    }
+    public RationalNumber Reduce() => Reduce(Numerator, Denominator);
 
     public RationalNumber Exprational(int power)
     {
         if (power >= 0)
         {
-            return new RationalNumber((int)Math.Pow(Numerator, power), (int)Math.Pow(Denominator, power));
+            return new((int)Math.Pow(Numerator, power), (int)Math.Pow(Denominator, power));
         }
 
         power = Math.Abs(power);
-        return new RationalNumber((int)Math.Pow(Denominator, power), (int)Math.Pow(Numerator, power));
+        return new((int)Math.Pow(Denominator, power), (int)Math.Pow(Numerator, power));
     }
 
     public double Expreal(int baseNumber) => Math.Pow(baseNumber, (double)Numerator / Denominator);
 
-    private int GreatestCommonDivisor(int a, int b)
+    private static (int Numerator, int Denominator) Reduce(int numerator, int denominator)
+    {
+        int gcd = GreatestCommonDivisor(numerator, denominator);
+        return gcd == 0
+            ? (numerator, denominator)
+            : (numerator / gcd, denominator / gcd);
+    }
+
+    private static int GreatestCommonDivisor(int a, int b)
     {
         a = Math.Abs(a);
         b = Math.Abs(b);
@@ -91,4 +86,7 @@ public readonly record struct RationalNumber
 
         return a == 0 ? b : a;
     }
+
+    public static implicit operator RationalNumber((int Numerator, int Denominator) t) =>
+        new(t.Numerator, t.Denominator);
 }
