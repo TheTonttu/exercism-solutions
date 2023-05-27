@@ -48,16 +48,18 @@ public readonly record struct RationalNumber
 
     public RationalNumber Exprational(int power)
     {
-        if (power >= 0)
+        (int a, int b, int x) = power switch
         {
-            return new((int)Math.Pow(Numerator, power), (int)Math.Pow(Denominator, power));
-        }
-
-        power = Math.Abs(power);
-        return new((int)Math.Pow(Denominator, power), (int)Math.Pow(Numerator, power));
+            >= 0 => (Numerator, Denominator, power),
+            _ => (Denominator, Numerator, -power)
+        };
+        return new((int)Math.Pow(a, x), (int)Math.Pow(b, x));
     }
 
     public double Expreal(int baseNumber) => Math.Pow(baseNumber, (double)Numerator / Denominator);
+
+    public static implicit operator RationalNumber((int Numerator, int Denominator) t) =>
+        new(t.Numerator, t.Denominator);
 
     private static (int Numerator, int Denominator) Reduce(int numerator, int denominator)
     {
@@ -86,7 +88,4 @@ public readonly record struct RationalNumber
 
         return a == 0 ? b : a;
     }
-
-    public static implicit operator RationalNumber((int Numerator, int Denominator) t) =>
-        new(t.Numerator, t.Denominator);
 }
