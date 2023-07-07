@@ -5,6 +5,7 @@
 #include "test/catch.hpp"
 #endif
 
+#define EXERCISM_RUN_ALL_TESTS
 
 TEST_CASE( "ghost gets eaten") {
   REQUIRE( can_eat_ghost(true, true));
