@@ -5,6 +5,8 @@
 #include "test/catch.hpp"
 #endif
 
+#define EXERCISM_RUN_ALL_TESTS
+
 using namespace std;
 
 TEST_CASE("it's the hourly_rate times 8") { REQUIRE(daily_rate(50) == 400.0); }
