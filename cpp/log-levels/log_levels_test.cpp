@@ -5,6 +5,8 @@
 #include "test/catch.hpp"
 #endif
 
+#define EXERCISM_RUN_ALL_TESTS
+
 using namespace std;
 
 TEST_CASE("Error message")
