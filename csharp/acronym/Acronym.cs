@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 
 public static class Acronym
@@ -11,26 +12,25 @@ public static class Acronym
 
         var acronymBuilder = new StringBuilder();
 
-        bool pickNextLetter = true;
-        foreach (char character in phrase)
+        ReadOnlySpan<char> remainder = phrase.AsSpan();
+        char prevChar = '\0';
+        while (remainder.Length > 0)
         {
-            if (IsLetter(character))
+            char currChar = remainder[0];
+
+            if (char.IsAsciiLetter(currChar) &&
+                // Not part of word
+                !(char.IsAsciiLetter(prevChar) || IsDiacriticalMark(prevChar)))
             {
-                if (pickNextLetter)
-                {
-                    acronymBuilder.Append(char.ToUpperInvariant(character));
-                    pickNextLetter = false;
-                }
+                char capitalized = char.ToUpperInvariant(currChar);
+                acronymBuilder.Append(capitalized);
             }
-            else if (!IsDiacriticalMark(character))
-            {
-                pickNextLetter = true;
-            }
+
+            remainder = remainder[1..];
+            prevChar = currChar;
         }
 
         return acronymBuilder.ToString();
     }
-
-    private static bool IsLetter(char character) => character is (>= 'a' and <= 'z') or (>= 'A' and <= 'Z');
     private static bool IsDiacriticalMark(char character) => character is '\'';
 }
