@@ -1,15 +1,15 @@
 pub fn squareOfSum(number: usize) usize {
     var sum: usize = 0;
-    for (0..number + 1) |i| {
-        sum += i;
+    for (1..number + 1) |n| {
+        sum += n;
     }
     return sum * sum;
 }
 
 pub fn sumOfSquares(number: usize) usize {
     var sum: usize = 0;
-    for (0..number + 1) |i| {
-        sum += i * i;
+    for (1..number + 1) |n| {
+        sum += n * n;
     }
     return sum;
 }

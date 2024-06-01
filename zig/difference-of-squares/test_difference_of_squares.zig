@@ -56,3 +56,22 @@ test "difference of squares up to 100" {
     const actual = difference_of_squares.differenceOfSquares(100);
     try testing.expectEqual(expected, actual);
 }
+
+// Custom tests
+test "square of sum with 0 is safe" {
+    const expected: usize = 0;
+    const actual = difference_of_squares.squareOfSum(0);
+    try testing.expectEqual(expected, actual);
+}
+
+test "sum of squares with 0 is safe" {
+    const expected: usize = 0;
+    const actual = difference_of_squares.sumOfSquares(0);
+    try testing.expectEqual(expected, actual);
+}
+
+test "difference of squares with 0 is safe" {
+    const expected: usize = 0;
+    const actual = difference_of_squares.differenceOfSquares(0);
+    try testing.expectEqual(expected, actual);
+}
