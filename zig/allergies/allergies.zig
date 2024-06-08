@@ -13,22 +13,17 @@ pub const Allergen = enum(u8) {
 };
 
 pub fn isAllergicTo(score: u8, allergen: Allergen) bool {
-    const allergen_set = initAllergenSet(score);
-    return allergen_set.contains(allergen);
+    return score & @intFromEnum(allergen) != 0;
 }
 
 pub fn initAllergenSet(score: usize) EnumSet(Allergen) {
     var allergen_set = EnumSet(Allergen).initEmpty();
 
-    inline for (std.meta.fields(Allergen)) |allergen| {
-        if (is_set(score, allergen.value)) {
-            allergen_set.insert(@enumFromInt(allergen.value));
+    for (std.enums.values(Allergen)) |allergen| {
+        if (isAllergicTo(@truncate(score), allergen)) {
+            allergen_set.insert(allergen);
         }
     }
 
     return allergen_set;
-}
-
-inline fn is_set(value: usize, bit_mask: usize) bool {
-    return value & bit_mask != 0;
 }
