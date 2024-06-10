@@ -1,39 +1,33 @@
 const std = @import("std");
 
 const FIRST_PRIME = 2;
-// 💀
-var sieve_mask_buffer: [10_000]bool = undefined;
 
-pub fn primes(buffer: []u32, limit: u32) []u32 {
+pub fn primes(buffer: []u32, comptime limit: u32) []u32 {
     if (limit < FIRST_PRIME) {
         return buffer[0..0];
     }
 
-    if (limit > sieve_mask_buffer.len - 1) {
-        @panic(std.fmt.comptimePrint("maximum supported limit is {}", .{sieve_mask_buffer.len - 1}));
-    }
-
-    var sieve_mask = sieve_mask_buffer[0..(limit + 1)];
+    var sieve_mask = std.StaticBitSet(limit + 1).initFull();
     // 0 and 1 are not primes
-    //@memset(sieve_mask[0..FIRST_PRIME], false);
-    @memset(sieve_mask[FIRST_PRIME..], true);
+    // sieve_mask.unset(0);
+    // sieve_mask.unset(1);
 
     const largest_prime: u32 = sqrt(limit);
-    for (FIRST_PRIME..(largest_prime + 1)) |n| {
-        if (!sieve_mask[n]) {
+    for (FIRST_PRIME..largest_prime + 1) |n| {
+        if (!sieve_mask.isSet(n)) {
             continue;
         }
         // mark prime composites
         const p = n;
         var i = p * p;
-        while (i < sieve_mask.len) : (i += p) {
-            sieve_mask[i] = false;
+        while (i <= limit) : (i += p) {
+            sieve_mask.unset(i);
         }
     }
 
     var unused_buffer = buffer[0..];
-    for (sieve_mask[FIRST_PRIME..], FIRST_PRIME..) |is_prime, n| {
-        if (is_prime) {
+    for (FIRST_PRIME..limit + 1) |n| {
+        if (sieve_mask.isSet(n)) {
             unused_buffer[0] = @intCast(n);
             unused_buffer = unused_buffer[1..];
         }
