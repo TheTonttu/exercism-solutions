@@ -111,7 +111,7 @@ public class StreetTests
 
         Assert.True(LiveNextToEachOther(chesterfieldsSmokerHouseNumber, foxOwnerHouseNumber),
             $"""
-            Chesterfields smoker should live next to fow owner.
+            Chesterfields smoker should live next to fox owner.
             Chesterfields h#={chesterfieldsSmokerHouseNumber}, Fox h#={foxOwnerHouseNumber}
             """);
 
@@ -167,7 +167,7 @@ public class StreetTests
         AssertHouseUniqueness(street);
     }
 
-    private bool LiveNextToEachOther(int houseNumber1, int houseNumber2) =>
+    private static bool LiveNextToEachOther(int houseNumber1, int houseNumber2) =>
         (houseNumber2 == houseNumber1 - 1) ||
         (houseNumber2 == houseNumber1 + 1);
 
