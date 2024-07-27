@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 using static Color;
+using static Drink;
 using static Nationality;
 using static Pet;
-using static Drink;
 using static Smoke;
 
 public enum Color { Red, Green, Ivory, Yellow, Blue }
@@ -67,51 +70,40 @@ public static class ZebraPuzzle
         };
 
         // The Norwegian lives in the first house.
-        builders[0] = norwegian;
-        if (builders[0] is var h0)
-        {
-            // Kools are smoked in the yellow house.
-            h0.Color = Yellow;
-            h0.Drink = Water;
-            h0.Pet = Fox;
-            h0.Smoke = Kools;
-        }
-        builders[1] = ukrainian;
-        if (builders[1] is var h1)
-        {
-            // The Norwegian lives next to the blue house.
-            h1.Color = Blue;
-            // Kools are smoked in the house next to the house where the horse is kept.
-            h1.Pet = Horse;
-            // The man who smokes Chesterfields lives in the house next to the man with the fox.
-            h1.Smoke = Chesterfields;
-        }
-        builders[2] = english;
-        if (builders[2] is var h2)
-        {
-            // Milk is drunk in the middle house.
-            h2.Drink = Milk;
-            // The Old Gold smoker owns snails.
-            h2.Pet = Snails;
-            h2.Smoke = OldGold;
-        }
-        builders[3] = spanish;
-        if (builders[3] is var h3)
-        {
-            // The green house is immediately to the right of the ivory house.
-            h3.Color = Ivory;
-            // The Lucky Strike smoker drinks orange juice.
-            h3.Drink = OrangeJuice;
-            h3.Smoke = LuckyStrike;
-        }
-        builders[4] = japanese;
-        if (builders[4] is var h4)
-        {
-            // Coffee is drunk in the green house.
-            h4.Color = Green;
-            h4.Drink = Coffee;
-            h4.Pet = Zebra;
-        }
+        var h0 = builders[0] = norwegian;
+        // Kools are smoked in the yellow house.
+        h0.Color = Yellow;
+        h0.Drink = Water;
+        h0.Pet = Fox;
+        h0.Smoke = Kools;
+
+        var h1 = builders[1] = ukrainian;
+        // The Norwegian lives next to the blue house.
+        h1.Color = Blue;
+        // Kools are smoked in the house next to the house where the horse is kept.
+        h1.Pet = Horse;
+        // The man who smokes Chesterfields lives in the house next to the man with the fox.
+        h1.Smoke = Chesterfields;
+
+        var h2 = builders[2] = english;
+        // Milk is drunk in the middle house.
+        h2.Drink = Milk;
+        // The Old Gold smoker owns snails.
+        h2.Pet = Snails;
+        h2.Smoke = OldGold;
+
+        var h3 = builders[3] = spanish;
+        // The green house is immediately to the right of the ivory house.
+        h3.Color = Ivory;
+        // The Lucky Strike smoker drinks orange juice.
+        h3.Drink = OrangeJuice;
+        h3.Smoke = LuckyStrike;
+
+        var h4 = builders[4] = japanese;
+        // Coffee is drunk in the green house.
+        h4.Color = Green;
+        h4.Drink = Coffee;
+        h4.Pet = Zebra;
 
         var street = BuildStreet(builders);
 
@@ -123,22 +115,28 @@ public static class ZebraPuzzle
         House[] houses = new House[builders.Length];
 
         var failures = new List<Exception>();
+        var failureMessageBuilder = new StringBuilder();
         for (int i = 0; i < builders.Length; i++)
         {
-            try
+            if (!builders[i].TryBuild(out House? house, out var missingProperties))
             {
-                houses[i] = builders[i].Build();
+                failureMessageBuilder.Clear();
+                failureMessageBuilder.AppendLine($"Building house #{i} failed.");
+                failureMessageBuilder.AppendLine($"Missing characteristics:");
+                foreach (string propertyName in missingProperties)
+                {
+                    failureMessageBuilder.AppendLine($"- {propertyName}");
+                }
+
+                failures.Add(new InvalidOperationException(failureMessageBuilder.ToString()));
+                continue;
             }
-            catch (Exception e)
-            {
-                failures.Add(new InvalidOperationException($"Building house #{i} failed.", e));
-            }
+            houses[i] = house;
         }
-        if (failures.Count > 0)
-        {
-            throw new AggregateException(failures);
-        }
-        return houses;
+
+        return failures.Count == 0
+            ? houses
+            : throw new AggregateException(failures);
     }
 
     public class HouseBuilder()
@@ -154,10 +152,7 @@ public static class ZebraPuzzle
             get => _color;
             set
             {
-                if (_color != null)
-                {
-                    throw new InvalidOperationException("Color already set");
-                }
+                GuardNotSet(_color);
                 _color = value;
             }
         }
@@ -166,10 +161,7 @@ public static class ZebraPuzzle
             get => _nationality;
             set
             {
-                if (_nationality != null)
-                {
-                    throw new InvalidOperationException("Nationality already set");
-                }
+                GuardNotSet(_nationality);
                 _nationality = value;
             }
         }
@@ -178,10 +170,7 @@ public static class ZebraPuzzle
             get => _pet;
             set
             {
-                if (_pet != null)
-                {
-                    throw new InvalidOperationException("Pet already set");
-                }
+                GuardNotSet(_pet);
                 _pet = value;
             }
         }
@@ -190,10 +179,7 @@ public static class ZebraPuzzle
             get => _drink;
             set
             {
-                if (_drink != null)
-                {
-                    throw new InvalidOperationException("Drink already set");
-                }
+                GuardNotSet(_drink);
                 _drink = value;
             }
         }
@@ -202,29 +188,68 @@ public static class ZebraPuzzle
             get => _smoke;
             set
             {
-                if (_smoke != null)
-                {
-                    throw new InvalidOperationException("Smoke already set");
-                }
+                GuardNotSet(_smoke);
                 _smoke = value;
             }
         }
 
-        public House Build()
+        public bool TryBuild([NotNullWhen(true)] out House? house, out IEnumerable<string> missingProperties)
         {
-            return new House(
+            var missingPropertiesList = new List<string>();
+            missingProperties = missingPropertiesList;
+
+            if (Color == null)
+            {
+                missingPropertiesList.Add(nameof(House.Color));
+            }
+
+            if (Nationality == null)
+            {
+                missingPropertiesList.Add(nameof(House.Nationality));
+            }
+
+            if (Pet == null)
+            {
+                missingPropertiesList.Add(nameof(House.Pet));
+            }
+
+            if (Drink == null)
+            {
+                missingPropertiesList.Add(nameof(House.Drink));
+            }
+
+            if (Smoke == null)
+            {
+                missingPropertiesList.Add(nameof(House.Smoke));
+            }
+
+            if (missingPropertiesList.Count != 0)
+            {
+                house = null;
+                return false;
+            }
+
+            house = new House(
                 Color ?? throw new InvalidOperationException("Color missing"),
                 Nationality ?? throw new InvalidOperationException("Nationality missing"),
                 Pet ?? throw new InvalidOperationException("Pet missing"),
                 Drink ?? throw new InvalidOperationException("Drink missing"),
                 Smoke ?? throw new InvalidOperationException("Smoke missing")
             );
+            return true;
+        }
+
+        private void GuardNotSet<T>(T? value, [CallerMemberName] string valueName = "")
+        {
+            if (value != null)
+            {
+                throw new InvalidOperationException($"{valueName} is already set");
+            }
         }
     }
 
     public record House(Color Color, Nationality Nationality, Pet Pet, Drink Drink, Smoke Smoke)
     {
-
         public bool HasSameCharacteristics(House? other)
         {
             if (other == null)
