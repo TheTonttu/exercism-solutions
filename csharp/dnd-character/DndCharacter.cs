@@ -2,7 +2,7 @@ using System;
 
 public class DndCharacter
 {
-    private static readonly Random Rng = new();
+    private static readonly Die D6 = new(6);
 
     public int Strength { get; }
     public int Dexterity { get; }
@@ -33,7 +33,7 @@ public class DndCharacter
         int statSum = 0;
         for (int i = 0; i < TotalRolls; i++)
         {
-            int d6Roll = RollD6();
+            int d6Roll = D6.Roll();
             if (discardedMinRoll > d6Roll)
             {
                 discardedMinRoll = d6Roll;
@@ -53,8 +53,18 @@ public class DndCharacter
             wisdom: Ability(),
             charisma: Ability()
         );
+}
 
-    private static int RollD6() =>
-        // Upper limit is exclusive.
-        Rng.Next(1, 7);
+public class Die
+{
+    private readonly Random Random = new();
+    private readonly int _exclusiveMaxRoll;
+
+    public Die(int sides)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(sides);
+        _exclusiveMaxRoll = sides + 1;
+    }
+
+    public int Roll() => Random.Next(1, _exclusiveMaxRoll); 
 }
