@@ -2,6 +2,8 @@ using System;
 
 public class DndCharacter
 {
+    private static readonly Random Rng = new();
+
     public int Strength { get; }
     public int Dexterity { get; }
     public int Constitution { get; }
@@ -31,8 +33,7 @@ public class DndCharacter
         int statSum = 0;
         for (int i = 0; i < TotalRolls; i++)
         {
-            // Upper limit is exclusive
-            int d6Roll = Random.Shared.Next(1, 7);
+            int d6Roll = RollD6();
             if (discardedMinRoll > d6Roll)
             {
                 discardedMinRoll = d6Roll;
@@ -52,4 +53,8 @@ public class DndCharacter
             wisdom: Ability(),
             charisma: Ability()
         );
+
+    private static int RollD6() =>
+        // Upper limit is exclusive.
+        Rng.Next(1, 7);
 }
