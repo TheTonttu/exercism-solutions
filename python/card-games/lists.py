@@ -69,7 +69,7 @@ def approx_average_is_average(hand: list[int]) -> bool:
     middle = hand[len(hand) // 2]
     last = hand[-1]
 
-    return (first + last) / 2 == avg or middle == avg
+    return avg in {(first + last) / 2, middle}
 
 
 def average_even_is_average_odd(hand: list[int]) -> bool:
