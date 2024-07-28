@@ -6,12 +6,12 @@ How to play blackjack:    https://bicyclecards.com/how-to-play/blackjack/
 
 from __future__ import annotations
 
-BLACK_JACK = 21
+ACE_CARD = "A"
 ACE_LOW = 1
 ACE_HIGH = 11
 FACE_CARDS = {"J", "Q", "K"}
+FACE_CARD_VALUE = 10
 MAX_NATURAL_VALUE = 10
-ACE_CARD = "A"
 
 
 def value_of_card(card: str) -> int:
@@ -25,7 +25,7 @@ def value_of_card(card: str) -> int:
     3.  '2' - '10' = numerical value.
     """
     if card in FACE_CARDS:
-        return MAX_NATURAL_VALUE
+        return FACE_CARD_VALUE
     if card == ACE_CARD:
         return ACE_LOW
     return int(card)
@@ -62,11 +62,9 @@ def value_of_ace(card_one: str, card_two: str) -> int:
     """
     if "A" in {card_one, card_two}:
         return ACE_LOW
-
-    ace_high_hand_value = value_of_card(card_one) + value_of_card(card_two) + ACE_HIGH
-    if ace_high_hand_value > BLACK_JACK:
-        return ACE_LOW
-    return ACE_HIGH
+    if value_of_card(card_one) + value_of_card(card_two) <= MAX_NATURAL_VALUE:
+        return ACE_HIGH
+    return ACE_LOW
 
 
 def is_blackjack(card_one: str, card_two: str) -> bool:
