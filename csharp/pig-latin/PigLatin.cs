@@ -14,90 +14,73 @@ public static class PigLatin
 
     public static string Translate(string word)
     {
-        // Word is a bit misleading name if it can contain multiple words.
+        // Word is a bit misleading name when it can contain multiple words.
         ReadOnlySpan<char> phrase = word.AsSpan().Trim();
         if (phrase.IsEmpty)
         {
             return string.Empty;
         }
 
-        const int MaxWordCount = 50;
+        // ~1/2 kB stack allocation, Range = 2 * Int32 = 8 B
+        const int MaxWordCount = 64;
         Span<Range> wordRangeBuffer = stackalloc Range[MaxWordCount];
         int wordCount = phrase.Split(wordRangeBuffer, ' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
         ReadOnlySpan<Range> words = wordRangeBuffer[..wordCount];
-
         if (words.Length == 0)
         {
             return string.Empty;
         }
-
+        
+        // ~1/2 kB stack allocation, char = 2 B
+        const int MaxWordLength = 256;
+        Span<char> translationBuffer = stackalloc char[MaxWordLength];
         if (words.Length == 1)
         {
-            return TranslateWord(word);
+            int writtenChars = TranslateWord(word, translationBuffer);
+            return translationBuffer[..writtenChars].ToString();
         }
 
         StringBuilder pigLatinBuilder = new();
         foreach (Range wordRange in words)
         {
             ReadOnlySpan<char> actualWord = phrase[wordRange];
-            TranslateAndAppendWord(actualWord, pigLatinBuilder);
+            int writtenChars = TranslateWord(actualWord, translationBuffer);
+            ReadOnlySpan<char> translatedWord = translationBuffer[..writtenChars].ToString();
+            pigLatinBuilder.Append(translatedWord);
             pigLatinBuilder.Append(' ');
         }
 
         return pigLatinBuilder
-            // Trim any leftover whitespace.
             .TrimEnd()
             .ToString();
     }
 
-    private static void TranslateAndAppendWord(ReadOnlySpan<char> word, StringBuilder builder)
+    private static int TranslateWord(ReadOnlySpan<char> word, Span<char> destination)
     {
+        Span<char>remainingDestination = destination;
         if (Vowels.Contains(word[0]) ||
             word.StartsWith("xr", StringComparison.OrdinalIgnoreCase) ||
             word.StartsWith("yt", StringComparison.OrdinalIgnoreCase))
         {
-            builder.Append(word);
-            builder.Append(PigLatinWordEnding);
-            return;
+            word.CopyTo(remainingDestination);
+            remainingDestination = remainingDestination[word.Length..];
+            PigLatinWordEnding.CopyTo(remainingDestination);
+            return word.Length + PigLatinWordEnding.Length;
         }
 
         ReadOnlySpan<char> remainingWord = word;
-        Span<char> suffixBuffer = stackalloc char[100];
-        Span<char> remainingSuffixBuffer = suffixBuffer;
+        ReadOnlySpan<char> consonants = remainingWord[..CountConsecutiveConsonants(remainingWord)];
+        remainingWord = remainingWord[consonants.Length..];
 
-        ReadOnlySpan<char> consonantPrefix = remainingWord[..CountConsecutiveConsonants(remainingWord)];
-        consonantPrefix.CopyTo(remainingSuffixBuffer);
-        remainingSuffixBuffer = remainingSuffixBuffer[consonantPrefix.Length..];
-        remainingWord = remainingWord[consonantPrefix.Length..];
+        remainingWord.CopyTo(remainingDestination);
+        remainingDestination = remainingDestination[remainingWord.Length..];
 
-        ReadOnlySpan<char> suffix = suffixBuffer[..^remainingSuffixBuffer.Length];
-        builder.Append(remainingWord);
-        builder.Append(suffix);
-        builder.Append(PigLatinWordEnding);
-    }
+        consonants.CopyTo(remainingDestination);
+        remainingDestination = remainingDestination[consonants.Length..];
 
-    private static string TranslateWord(ReadOnlySpan<char> word)
-    {
-        // Rule 1
-        if (Vowels.Contains(word[0]) ||
-            word.StartsWith("xr", StringComparison.OrdinalIgnoreCase) ||
-            word.StartsWith("yt", StringComparison.OrdinalIgnoreCase))
-        {
-            return string.Concat(word, PigLatinWordEnding);
-        }
+        PigLatinWordEnding.CopyTo(remainingDestination);
 
-        ReadOnlySpan<char> remainingWord = word;
-        Span<char> suffixBuffer = stackalloc char[100];
-        Span<char> remainingSuffixBuffer = suffixBuffer;
-
-        ReadOnlySpan<char> consonantPrefix = remainingWord[..CountConsecutiveConsonants(remainingWord)];
-        consonantPrefix.CopyTo(remainingSuffixBuffer);
-        remainingSuffixBuffer = remainingSuffixBuffer[consonantPrefix.Length..];
-        remainingWord = remainingWord[consonantPrefix.Length..];
-
-        ReadOnlySpan<char> suffix = suffixBuffer[..^remainingSuffixBuffer.Length];
-        return string.Concat(remainingWord, suffix, PigLatinWordEnding);
+        return remainingWord.Length + consonants.Length + PigLatinWordEnding.Length;
     }
 
     private static int CountConsecutiveConsonants(ReadOnlySpan<char> word)
