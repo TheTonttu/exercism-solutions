@@ -10,18 +10,46 @@ public class DndCharacter
     public int Charisma { get; }
     public int Hitpoints { get; }
 
-    public static int Modifier(int score)
+    private DndCharacter(int strength, int dexterity, int constitution, int intelligence, int wisdom, int charisma)
     {
-        throw new NotImplementedException("You need to implement this method.");
+        Strength = strength;
+        Dexterity = dexterity;
+        Constitution = constitution;
+        Intelligence = intelligence;
+        Wisdom = wisdom;
+        Charisma = charisma;
+        Hitpoints = 10 + Modifier(constitution);
     }
 
-    public static int Ability() 
+    public static int Modifier(int score) => (score / 2) - 5;
+
+    public static int Ability()
     {
-        throw new NotImplementedException("You need to implement this method.");
+        const int TotalRolls = 4;
+
+        int discardedMinRoll = int.MaxValue;
+        int statSum = 0;
+        for (int i = 0; i < TotalRolls; i++)
+        {
+            // Upper limit is exclusive
+            int d6Roll = Random.Shared.Next(1, 7);
+            if (discardedMinRoll > d6Roll)
+            {
+                discardedMinRoll = d6Roll;
+            }
+            statSum += d6Roll;
+        }
+
+        return statSum - discardedMinRoll;
     }
 
-    public static DndCharacter Generate()
-    {
-        throw new NotImplementedException("You need to implement this method.");
-    }
+    public static DndCharacter Generate() => 
+        new(
+            strength: Ability(),
+            dexterity: Ability(),
+            constitution: Ability(),
+            intelligence: Ability(),
+            wisdom: Ability(),
+            charisma: Ability()
+        );
 }
