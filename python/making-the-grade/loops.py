@@ -73,7 +73,7 @@ def student_ranking(student_scores: list[int], student_names: list[str]) -> list
     ]
 
 
-def perfect_score(student_info: list[list[str, int]]) -> list[str, int]:
+def perfect_score(student_info: list[list[str | int]]) -> list[str | int]:
     """Create a list that contains the name and grade of the first student to make a perfect score on the exam.
 
     :param student_info: list - of [<student name>, <score>] lists.
@@ -82,5 +82,5 @@ def perfect_score(student_info: list[list[str, int]]) -> list[str, int]:
     return next(
         ([name, score] for [name, score] in student_info if score == PERFECT_SCORE),
         # default
-        [],
+        [],  # type: ignore
     )

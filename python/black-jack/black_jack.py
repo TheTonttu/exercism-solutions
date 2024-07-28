@@ -31,7 +31,7 @@ def value_of_card(card: str) -> int:
     return int(card)
 
 
-def higher_card(card_one: str, card_two: str) -> str | (str, str):
+def higher_card(card_one: str, card_two: str) -> str | tuple[str, str]:
     """Determine which card has a higher value in the hand.
 
     :param card_one, card_two: str - cards dealt in hand.  See below for values.
