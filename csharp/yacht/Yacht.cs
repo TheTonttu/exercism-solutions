@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 public enum YachtCategory
 {
@@ -58,30 +57,44 @@ public static class YachtGame
 
     private static int ScoreFullHouse(int[] dice)
     {
-        List<int> countCriteria = [2, 3];
-        var dictionary = new Dictionary<int, int>();
+        Span<int> countGoals = [2, 3];
+        Span<int> rolls = stackalloc int[RollArraySize];
+        rolls.Clear();
+
         foreach (int die in dice)
         {
-            if (!dictionary.TryGetValue(die, out int count))
-            {
-                count = 0;
-            }
-            dictionary[die] = ++count;
+            rolls[die]++;
         }
 
+        // Mark goals completed + update score
+        const int CompletedGoal = 0;
         int score = 0;
-        foreach ((int die, int count) in dictionary)
+        for (int die = 0; die < rolls.Length; die++)
         {
-            if (!countCriteria.Remove(count))
+            int count = rolls[die];
+            for (int i = 0; i < countGoals.Length; i++)
+            {
+                if (countGoals[i] == CompletedGoal)
+                {
+                    continue;
+                }
+
+                int goal = countGoals[i];
+                if (count == goal)
+                {
+                    countGoals[i] = CompletedGoal;
+                    score += die * count;
+                }
+            }
+        }
+
+        // Check that all goals are completed
+        foreach (int count in countGoals)
+        {
+            if (count != CompletedGoal)
             {
                 return 0;
             }
-            score += die * count;
-        }
-
-        if (countCriteria.Count != 0)
-        {
-            return 0;
         }
 
         return score;
@@ -89,20 +102,18 @@ public static class YachtGame
 
     private static int ScoreFourOfAKind(int[] dice)
     {
-        var dictionary = new Dictionary<int, int>();
+        const int FourOfAKindRolls = 4;
+
+        Span<int> rolls = stackalloc int[RollArraySize];
+        rolls.Clear();
+
         foreach (int die in dice)
         {
-            if (!dictionary.TryGetValue(die, out int count))
-            {
-                count = 0;
-            }
-
-            count++;
-            if (count == 4)
+            int count = ++rolls[die];
+            if (count == FourOfAKindRolls)
             {
                 return die * count;
             }
-            dictionary[die] = count;
         }
         return 0;
     }
@@ -112,6 +123,7 @@ public static class YachtGame
         const int LittleStraightScore = 30;
 
         Span<int> rolls = stackalloc int[RollArraySize];
+        rolls.Clear();
 
         foreach (var die in dice)
         {
@@ -136,6 +148,7 @@ public static class YachtGame
         const int BigStraightScore = 30;
 
         Span<int> rolls = stackalloc int[RollArraySize];
+        rolls.Clear();
 
         foreach (var die in dice)
         {
@@ -167,13 +180,16 @@ public static class YachtGame
 
     private static int ScoreYacht(int[] dice)
     {
+        const int YachtRolls = 5;
         const int YachtScore = 50;
 
-        int totalRolls = dice.Length;
         Span<int> rolls = stackalloc int[RollArraySize];
+        rolls.Clear();
+
         foreach (var die in dice)
         {
-            if (++rolls[die] == totalRolls)
+            int count = ++rolls[die];
+            if (count == YachtRolls)
             {
                 return YachtScore;
             }
