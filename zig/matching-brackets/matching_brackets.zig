@@ -19,9 +19,5 @@ pub fn isBalanced(allocator: mem.Allocator, s: []const u8) !bool {
 }
 
 fn expectedClosedPair(closed_pair: u8, closed_pair_queue: *std.ArrayList(u8)) bool {
-    const expected_closed_pair = closed_pair_queue.popOrNull();
-    if (expected_closed_pair == null) {
-        return false;
-    }
-    return expected_closed_pair == closed_pair;
+    return closed_pair_queue.popOrNull() == closed_pair;
 }
