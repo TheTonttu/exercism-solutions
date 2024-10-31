@@ -1,10 +1,6 @@
 const std = @import("std");
 const mem = std.mem;
 
-pub const std_options = struct {
-    pub const log_level = .debug;
-};
-
 const alphabet_count = 'z' - 'a' + 1;
 
 /// Returns the set of strings in `candidates` that are anagrams of `word`.
