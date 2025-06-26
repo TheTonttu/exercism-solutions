@@ -1,2 +1,3 @@
-# exercism-solutions
-My exercism.io exercise solutions
+# Exercism solutions
+
+My solutions to various programming language exercises at [Exercism](https://exercism.org) website.
